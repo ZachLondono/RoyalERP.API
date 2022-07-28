@@ -54,19 +54,19 @@ public class OrderRepository : IOrderRepository {
 
             if (domainEvent is Events.OrderConfirmedEvent confirmed) {
 
-                const string command = "UPDATE orders SET status = @Status, confirmeddate = @ConfirmedDate WHERE id = @Id;";
+                const string command = "UPDATE sales.orders SET status = @Status, confirmeddate = @ConfirmedDate WHERE id = @Id;";
 
                 await _connection.ExecuteAsync(command, entity, _transaction);
 
             } else if (domainEvent is Events.OrderCompletedEvent completed) {
 
-                const string command = "UPDATE orders SET status = @Status, completeddate = @CompletedDate WHERE id = @Id;";
+                const string command = "UPDATE sales.orders SET status = @Status, completeddate = @CompletedDate WHERE id = @Id;";
 
                 await _connection.ExecuteAsync(command, entity, _transaction);
 
             } else if (domainEvent is Events.OrderCanceledEvent canceled) {
 
-                const string command = "UPDATE orders SET status = @Status WHERE id = @Id;";
+                const string command = "UPDATE sales.orders SET status = @Status WHERE id = @Id;";
 
                 await _connection.ExecuteAsync(command, entity, _transaction);
 
