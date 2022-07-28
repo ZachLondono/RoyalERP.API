@@ -17,6 +17,12 @@ public abstract record DomainEvent : INotification {
     [JsonIgnore]
     public Guid EventId { get; init; }
 
+    /// <summary>
+    /// The id of another event which is correlated with this one
+    /// </summary>
+    [JsonIgnore]
+    public Guid? CorrelationId { get; init; }
+
     [JsonIgnore]
     public bool IsPublished { get; private set; } = false;
 
@@ -31,6 +37,10 @@ public abstract record DomainEvent : INotification {
     public DomainEvent(Guid aggregateId) {
         AggregateId = aggregateId;
         EventId = Guid.NewGuid();
+    }
+
+    public DomainEvent(Guid aggregateId, Guid? correlationId = null) : this(aggregateId) {
+        CorrelationId = correlationId;
     }
 
 }
