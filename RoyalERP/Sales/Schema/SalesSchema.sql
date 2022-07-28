@@ -10,6 +10,7 @@ CREATE TABLE sales.companies (
 CREATE TABLE sales.orders (
     id uuid NOT NULL,
     version integer NOT NULL DEFAULT 0,
+    number character varying(255) NOT NULL,
     name character varying(255) NOT NULL,
     placeddate timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     confirmeddate timestamp with time zone,
