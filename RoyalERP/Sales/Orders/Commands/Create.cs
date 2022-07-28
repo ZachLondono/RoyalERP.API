@@ -1,0 +1,42 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.Sales.Orders.DTO;
+
+namespace RoyalERP.Sales.Orders.Commands;
+
+public class Create {
+
+    public record Command(NewOrder NewOrder) : IRequest<IActionResult>;
+
+    public class Handler : IRequestHandler<Command, IActionResult> {
+
+        private readonly ISalesUnitOfWork _work;
+
+        public Handler(ISalesUnitOfWork work) {
+            _work = work;
+        }
+
+        public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
+
+            var order = Order.Create(request.NewOrder.Number, request.NewOrder.Name);
+
+            await _work.Orders.AddAsync(order);
+
+            await _work.CommitAsync();
+
+            return new CreatedResult($"/orders/{order.Id}", new OrderDTO() {
+                Id = order.Id,
+                Number = order.Number,
+                Name = order.Name,
+                PlacedDate = order.PlacedDate,
+                ConfirmedDate = order.ConfirmedDate,
+                CompletedDate = order.CompletedDate,
+                Status = order.Status
+            });
+
+
+        }
+    }
+
+}
