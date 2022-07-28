@@ -10,8 +10,8 @@
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
-    <PackageReference Include="Npgsql" Version="6.0.5" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="Npgsql" Version="7.0.0-preview.6" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +19,7 @@
     <Folder Include="Manufacturing\WorkOrders\Commands\Data\" />
     <Folder Include="Manufacturing\WorkOrders\Commands\" />
     <Folder Include="Manufacturing\WorkOrders\Queries\" />
-    <Folder Include="Sales\Companies\DTO\" />
     <Folder Include="Sales\Companies\Commands\Data\" />
-    <Folder Include="Sales\Companies\Commands\" />
-    <Folder Include="Sales\Companies\Queries\" />
     <Folder Include="Sales\Orders\DTO\" />
     <Folder Include="Sales\Orders\Commands\Data\" />
     <Folder Include="Sales\Orders\Commands\" />
