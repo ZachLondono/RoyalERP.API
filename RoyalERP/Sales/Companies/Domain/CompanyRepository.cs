@@ -16,7 +16,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public async Task AddAsync(Company entity) {
 
-        const string command = "INSERT INTO companies (id, name) values (@Id, @Name);";
+        const string command = "INSERT INTO sales.companies (id, name) values (@Id, @Name);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
 
@@ -24,7 +24,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public Task<IEnumerable<Company>> GetAllAsync() {
 
-        const string query = "SELECT (id, version, name) FROM companies;";
+        const string query = "SELECT (id, version, name) FROM sales.companies;";
 
         return _connection.QueryAsync<Company>(query, transaction: _transaction);
 
@@ -32,7 +32,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public Task<Company?> GetAsync(Guid id) {
 
-        const string query = "SELECT (id, version, name) FROM companies WHERE id = @Id;";
+        const string query = "SELECT (id, version, name) FROM sales.companies WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<Company?>(query, transaction: _transaction, param: new { Id = id });
 
@@ -40,7 +40,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public Task RemoveAsync(Company entity) {
 
-        const string query = "DELETE FROM companies WHERE id = @Id;";
+        const string query = "DELETE FROM sales.companies WHERE id = @Id;";
 
         return _connection.ExecuteAsync(query, transaction: _transaction, param: new { entity.Id });
 
