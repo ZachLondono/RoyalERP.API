@@ -13,7 +13,7 @@ public static class ConfigureServices {
 
         services.AddTransient<IManufacturingUnitOfWork, ManufacturingUnitOfWork>();
 
-        services.AddTransient<NpgsqlManufacturingConnectionFactory>();
+        services.AddTransient<IManufacturingConnectionFactory, NpgsqlManufacturingConnectionFactory>();
 
         return services;
 
