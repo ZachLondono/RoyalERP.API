@@ -1,6 +1,5 @@
 ﻿using RoyalERP.Common.Data;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
-using RoyalERP.Sales.Orders.Domain;
 using System.Data;
 
 namespace RoyalERP.Manufacturing;
@@ -8,6 +7,8 @@ namespace RoyalERP.Manufacturing;
 public static class ConfigureServices {
 
     public static IServiceCollection AddManufacturing(this IServiceCollection services) {
+
+        Dapper.SqlMapper.AddTypeMap(typeof(WorkOrderStatus), DbType.String);
 
         services.AddSingleton<Func<IDbConnection, IDbTransaction, IWorkOrderRepository>>(s => (c, t) => new WorkOrderRepository(new DapperConnection(c), t));
 
