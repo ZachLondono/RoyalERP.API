@@ -14,13 +14,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Manufacturing\WorkOrders\DTO\" />
-    <Folder Include="Manufacturing\WorkOrders\Commands\Data\" />
-    <Folder Include="Manufacturing\WorkOrders\Commands\" />
-    <Folder Include="Manufacturing\WorkOrders\Queries\" />
-    <Folder Include="Sales\Companies\Commands\Data\" />
-    <Folder Include="Sales\Orders\Commands\Data\" />
-  </ItemGroup>
-
 </Project>
