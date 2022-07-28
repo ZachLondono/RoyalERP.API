@@ -9,12 +9,14 @@ public static class ConfigureServices {
 
     public static IServiceCollection AddSales(this IServiceCollection services) {
 
+        Dapper.SqlMapper.AddTypeMap(typeof(OrderStatus), DbType.String);
+
         services.AddSingleton<Func<IDbConnection, IDbTransaction, IOrderRepository>>(s => (c, t) => new OrderRepository(new DapperConnection(c), t));
         services.AddSingleton<Func<IDbConnection, IDbTransaction, ICompanyRepository>>(s => (c, t) => new CompanyRepository(new DapperConnection(c), t));
 
         services.AddTransient<ISalesUnitOfWork, SalesUnitOfWork>();
 
-        services.AddTransient<NpgsqlSalesConnectionFactory>();
+        services.AddTransient<ISalesConnectionFactory, NpgsqlSalesConnectionFactory>();
 
         return services;
 

@@ -1,11 +1,10 @@
 ﻿using Npgsql;
-using RoyalERP.Common.Data;
 using System.Data;
 
 namespace RoyalERP.Sales;
 
-public class NpgsqlSalesConnectionFactory : IDbConnectionFactory {
-    
+public class NpgsqlSalesConnectionFactory : ISalesConnectionFactory {
+
     private readonly IConfiguration _config;
 
     public NpgsqlSalesConnectionFactory(IConfiguration config) {
