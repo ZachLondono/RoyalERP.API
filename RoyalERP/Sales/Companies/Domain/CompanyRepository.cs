@@ -24,7 +24,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public Task<IEnumerable<Company>> GetAllAsync() {
 
-        const string query = "SELECT (id, version, name) FROM sales.companies;";
+        const string query = "SELECT id, version, name FROM sales.companies;";
 
         return _connection.QueryAsync<Company>(query, transaction: _transaction);
 
@@ -32,7 +32,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public Task<Company?> GetAsync(Guid id) {
 
-        const string query = "SELECT (id, version, name) FROM sales.companies WHERE id = @Id;";
+        const string query = "SELECT id, version, name FROM sales.companies WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<Company?>(query, transaction: _transaction, param: new { Id = id });
 
@@ -54,4 +54,11 @@ public class CompanyRepository : ICompanyRepository {
         return Task.CompletedTask;
     }
 
+    public Task<IEnumerable<Guid>> GetCompanyIdsWithName(string name) {
+        
+        const string query = "SELECT id FROM sales.companies WHERE LOWER(name) = @Name;";
+
+        return _connection.QueryAsync<Guid>(query, transaction: _transaction, param: new { Name = name.ToLower() });
+
+    }
 }

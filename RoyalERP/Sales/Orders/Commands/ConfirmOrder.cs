@@ -23,6 +23,7 @@ public class ConfirmOrder {
             if (order is null) return new NotFoundResult();
 
             order.Confirm();
+            await _work.Orders.UpdateAsync(order);
 
             await _work.CommitAsync();
 

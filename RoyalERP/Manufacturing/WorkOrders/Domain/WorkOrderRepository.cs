@@ -26,7 +26,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<IEnumerable<WorkOrder>> GetAllAsync() {
 
-        const string query = "SELECT (id, version, number, name, releaseddate, fulfilleddate, status) FROM manufacturing.workorders;";
+        const string query = "SELECT id, version, number, name, releaseddate, fulfilleddate, status FROM manufacturing.workorders;";
 
         return _connection.QueryAsync<WorkOrder>(query, transaction: _transaction);
 
@@ -34,7 +34,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<WorkOrder?> GetAsync(Guid id) {
 
-        const string query = "SELECT (id, version, number, name, releaseddate, fulfilleddate, status) FROM manufacturing.workorders WHERE id = @Id;";
+        const string query = "SELECT id, version, number, name, releaseddate, fulfilleddate, status FROM manufacturing.workorders WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<WorkOrder?>(query, transaction: _transaction, param: new { Id = id });
 

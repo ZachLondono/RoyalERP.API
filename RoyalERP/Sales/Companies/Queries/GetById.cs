@@ -20,7 +20,7 @@ public class GetById {
 
         public async Task<IActionResult> Handle(Query request, CancellationToken cancellationToken) {
 
-            const string query = "SELECT (id, version, name) FROM sales.companies WHERE id = @Id;";
+            const string query = "SELECT id, version, name FROM sales.companies WHERE id = @Id;";
 
             var connection = _connectionFactory.CreateConnection();
 

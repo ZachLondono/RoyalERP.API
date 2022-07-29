@@ -16,7 +16,7 @@ public class OrderTests {
         string name = "Company Name";
 
         // Act
-        var order = Order.Create(number, name);
+        var order = Order.Create(number, name, Guid.NewGuid(), Guid.NewGuid());
 
         // Assert
         order.Should().NotBeNull();;
@@ -33,7 +33,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Confirm();
@@ -52,7 +52,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Confirm();
@@ -70,7 +70,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         static void confirm(Order o) => o.Confirm();
@@ -86,7 +86,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -105,7 +105,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -126,7 +126,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -144,7 +144,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         static void complete(Order o) => o.Complete();
@@ -160,7 +160,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
 
         // Act
         order.Cancel();

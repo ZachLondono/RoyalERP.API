@@ -17,22 +17,29 @@ public class Order : AggregateRoot {
 
     public OrderStatus Status { get; private set; }
 
+    public Guid CustomerId { get; private set; }
+
+    public Guid VendorId { get; private set; }
+
     public Order(Guid id, int version,
-                string number, string name, OrderStatus status, DateTime placedDate,
-                DateTime? confirmedDate = null, DateTime? completedDate = null) : base(id, version) {
+                string number, string name, OrderStatus status, Guid customerId, Guid vendorId, 
+                DateTime placedDate, DateTime? confirmedDate = null, DateTime? completedDate = null)
+                : base(id, version) {
         Number = number;
         Name = name;
         PlacedDate = placedDate;
         ConfirmedDate = confirmedDate;
         CompletedDate = completedDate;
         Status = status;
+        CustomerId = customerId;
+        VendorId = vendorId;
     }
 
-    private Order(string number, string name) : this(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, DateTime.Today) {
+    private Order(string number, string name, Guid customerId, Guid vendorId) : this(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, customerId, vendorId, DateTime.Today) {
         AddEvent(new Events.OrderPlacedEvent(Id, number, name));
     }
 
-    public static Order Create(string number, string name) => new(number, name);
+    public static Order Create(string number, string name, Guid customerId, Guid vendorId) => new(number, name, customerId, vendorId);
 
     public void Confirm() {
         if (Status == OrderStatus.Confirmed || Status == OrderStatus.Completed)

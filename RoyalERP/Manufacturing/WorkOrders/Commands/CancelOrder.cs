@@ -23,6 +23,7 @@ public class CancelOrder {
             if (order is null) return new NotFoundResult();
 
             order.Cancel();
+            await _work.WorkOrders.UpdateAsync(order);
 
             await _work.CommitAsync();
 

@@ -18,15 +18,22 @@ public class OrderRepository : IOrderRepository {
 
     public async Task AddAsync(Order entity) {
 
-        const string command = "INSERT INTO sales.orders (id, number, name, status) values (@Id, @Number, @Name, @Status);";
+        const string command = "INSERT INTO sales.orders (id, number, name, status, customerid, vendorid) values (@Id, @Number, @Name, @Status, @CustomerId, @VendorId);";
         
-        await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
+        await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
+            entity.Id,
+            entity.Number,
+            entity.Name,
+            entity.CustomerId,
+            entity.VendorId,
+            Status = entity.Status.ToString()
+        });
 
     }
 
     public Task<IEnumerable<Order>> GetAllAsync() {
 
-        const string query = "SELECT (id, version, number, name, placeddate, confirmeddate, completeddate, status) FROM sales.orders;";
+        const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders;";
 
         return _connection.QueryAsync<Order>(query, transaction: _transaction);
 
@@ -34,7 +41,7 @@ public class OrderRepository : IOrderRepository {
 
     public Task<Order?> GetAsync(Guid id) {
 
-        const string query = "SELECT (id, version, number, name, placeddate, confirmeddate, completeddate, status) FROM sales.orders WHERE id = @Id;";
+        const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<Order?>(query, transaction: _transaction, param: new { Id = id });
 
@@ -56,19 +63,30 @@ public class OrderRepository : IOrderRepository {
 
                 const string command = "UPDATE sales.orders SET status = @Status, confirmeddate = @ConfirmedDate WHERE id = @Id;";
 
-                await _connection.ExecuteAsync(command, entity, _transaction);
+                await _connection.ExecuteAsync(command, param: new {
+                    entity.Id,
+                    entity.ConfirmedDate,
+                    Status = entity.Status.ToString()
+                }, _transaction);
 
             } else if (domainEvent is Events.OrderCompletedEvent completed) {
 
                 const string command = "UPDATE sales.orders SET status = @Status, completeddate = @CompletedDate WHERE id = @Id;";
 
-                await _connection.ExecuteAsync(command, entity, _transaction);
+                await _connection.ExecuteAsync(command, param: new {
+                    entity.Id,
+                    entity.ConfirmedDate,
+                    Status = entity.Status.ToString()
+                }, _transaction);
 
             } else if (domainEvent is Events.OrderCanceledEvent canceled) {
 
                 const string command = "UPDATE sales.orders SET status = @Status WHERE id = @Id;";
 
-                await _connection.ExecuteAsync(command, entity, _transaction);
+                await _connection.ExecuteAsync(command, param: new {
+                    entity.Id,
+                    Status = entity.Status.ToString()
+                }, _transaction);
 
             }
 
