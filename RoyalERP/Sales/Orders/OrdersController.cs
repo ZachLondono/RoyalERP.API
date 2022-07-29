@@ -60,7 +60,7 @@ public class OrdersController {
         return _sender.Send(new GetById.Query(orderId));
     }
 
-    [Route("/search/{orderNumber}")]
+    [Route("search/{orderNumber}")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderSearchResult>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
