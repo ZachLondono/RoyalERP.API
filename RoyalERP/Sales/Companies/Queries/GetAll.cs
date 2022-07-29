@@ -12,9 +12,9 @@ public class GetAll {
 
     public class Handler : IRequestHandler<Query, IActionResult> {
         
-        private readonly IDbConnectionFactory _connectionFactory;
+        private readonly ISalesConnectionFactory _connectionFactory;
 
-        public Handler(IDbConnectionFactory connectionFactory) {
+        public Handler(ISalesConnectionFactory connectionFactory) {
             _connectionFactory = connectionFactory;
         }
 

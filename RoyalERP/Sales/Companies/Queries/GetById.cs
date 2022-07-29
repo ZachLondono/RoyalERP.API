@@ -8,13 +8,13 @@ namespace RoyalERP.Sales.Companies.Queries;
 
 public class GetById {
 
-    public record Query(Guid Id) : IRequest<IActionResult>;
+    public record Query(Guid ComapnyId) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Query, IActionResult> {
 
-        private readonly IDbConnectionFactory _connectionFactory;
+        private readonly ISalesConnectionFactory _connectionFactory;
 
-        public Handler(IDbConnectionFactory connectionFactory) {
+        public Handler(ISalesConnectionFactory connectionFactory) {
             _connectionFactory = connectionFactory;
         }
 
@@ -24,7 +24,7 @@ public class GetById {
 
             var connection = _connectionFactory.CreateConnection();
 
-            var company = await connection.QuerySingleOrDefaultAsync<CompanyDTO>(query, param: new { Id = id });
+            var company = await connection.QuerySingleOrDefaultAsync<CompanyDTO>(query, param: new { Id = request.ComapnyId });
 
             return new OkObjectResult(company);
 

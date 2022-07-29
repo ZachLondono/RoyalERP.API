@@ -12,7 +12,7 @@ public class ManufacturingUnitOfWork : UnitOfWork, IManufacturingUnitOfWork {
     private IPublisher _publisher;
     private readonly Func<IDbConnection, IDbTransaction, IWorkOrderRepository> _workOrdersFactory;
 
-    public ManufacturingUnitOfWork(NpgsqlManufacturingConnectionFactory factory, IPublisher publisher,
+    public ManufacturingUnitOfWork(IManufacturingConnectionFactory factory, IPublisher publisher,
                                     Func<IDbConnection, IDbTransaction, IWorkOrderRepository> workOrdersFactory)
                                     : base(factory) {
         _publisher = publisher;
