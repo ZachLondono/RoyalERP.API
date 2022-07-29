@@ -34,7 +34,7 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
-        script: rm -rf ~/app/src/
+        script: rm -rf ~/app/webapi/
 
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master
@@ -45,7 +45,7 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
       with:
         source: "."
-        target: "~/app/src"
+        target: "~/app/webapi"
 
     - name: Building docker image
       uses: appleboy/ssh-action@master
@@ -54,7 +54,7 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
-        script: docker build -t webapi ~/app/src/ExampleAPI --rm
+        script: docker build -t webapi ~/app/webapi/RoyalERP --rm
 
     - name: Deploy updated image
       uses: appleboy/ssh-action@master
