@@ -60,6 +60,14 @@ public class OrdersController {
         return _sender.Send(new GetById.Query(orderId));
     }
 
+    [Route("/search/{orderNumber}")]
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderSearchResult>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> GetById(string orderNumber) {
+        return _sender.Send(new GetByNumber.Query(orderNumber));
+    }
+
     [Route("{orderId}")]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
