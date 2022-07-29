@@ -23,6 +23,7 @@ public class FulfillOrder {
             if (order is null) return new NotFoundResult();
 
             order.Fulfill();
+            await _work.WorkOrders.UpdateAsync(order);
 
             await _work.CommitAsync();
 

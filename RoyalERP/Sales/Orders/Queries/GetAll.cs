@@ -19,7 +19,7 @@ public class GetAll {
 
         public async Task<IActionResult> Handle(Query request, CancellationToken cancellationToken) {
 
-            const string query = "SELECT (id, version, number, name, placeddate, confirmeddate, completeddate, status) FROM sales.orders;";
+            const string query = "SELECT id, version, number, name, customerid, vendorid, placeddate, confirmeddate, completeddate, status FROM sales.orders;";
 
             var connection = _factory.CreateConnection();
 

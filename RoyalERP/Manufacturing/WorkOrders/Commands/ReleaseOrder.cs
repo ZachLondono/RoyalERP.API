@@ -23,6 +23,7 @@ public class ReleaseOrder {
             if (order is null) return new NotFoundResult();
 
             order.Release();
+            await _work.WorkOrders.UpdateAsync(order);
 
             await _work.CommitAsync();
 

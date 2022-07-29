@@ -23,6 +23,7 @@ public class CompleteOrder {
             if (order is null) return new NotFoundResult();
 
             order.Complete();
+            await _work.Orders.UpdateAsync(order);
 
             await _work.CommitAsync();
 
