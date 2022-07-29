@@ -22,7 +22,7 @@ public class GetByNumber {
 
             const string query = "SELECT id, number, name, placeddate FROM sales.orders WHERE LOWER(number) = @OrderNumber;";
 
-            var orders = await _connection.QueryAsync<OrderSearchResult>(query, request);
+            var orders = await _connection.QueryAsync<OrderSearchResult>(query, new { OrderNumber = request.OrderNumber.ToLower() });
 
             return new OkObjectResult(orders);
 
