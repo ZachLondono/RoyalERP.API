@@ -16,5 +16,5 @@ CREATE TABLE sales.orders (
     confirmeddate timestamp with time zone,
     completeddate timestamp with time zone,
     status character varying(255) NOT NULL,
-    CONSTRAINT companies_pkey PRIMARY KEY (id)
+    CONSTRAINT orders_pkey PRIMARY KEY (id)
 );
