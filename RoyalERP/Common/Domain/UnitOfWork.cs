@@ -46,6 +46,12 @@ public abstract class UnitOfWork : IUnitOfWork, IDisposable {
 
     }
 
+    public void Rollback() {
+
+        _transaction.Rollback();
+
+    }
+
     public void Dispose() {
         _transaction.Dispose();
         Connection.Dispose();
