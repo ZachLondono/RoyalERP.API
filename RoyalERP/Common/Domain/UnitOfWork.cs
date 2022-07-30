@@ -15,14 +15,14 @@ public abstract class UnitOfWork : IUnitOfWork, IDisposable {
         _transaction = Connection.BeginTransaction();
     }
 
-    public Task CommitAsync() {
+    public async Task CommitAsync() {
 
         try {
 
             _transaction.Commit();
 
             try {
-                PublishEvents();
+                await PublishEvents();
             } catch {
                 // TODO log exception
             }
@@ -41,8 +41,6 @@ public abstract class UnitOfWork : IUnitOfWork, IDisposable {
             ResetRepositories();
 
         }
-
-        return Task.CompletedTask;
 
     }
 
