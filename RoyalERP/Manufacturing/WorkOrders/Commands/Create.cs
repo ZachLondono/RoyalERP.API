@@ -19,7 +19,7 @@ public class Create {
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
 
-            var newOrder = WorkOrder.Create(request.NewWorkOrder.Number, request.NewWorkOrder.Name);
+            var newOrder = WorkOrder.Create(request.NewWorkOrder.Number, request.NewWorkOrder.Name, request.NewWorkOrder.CustomerName, request.NewWorkOrder.VendorName);
 
             await _work.WorkOrders.AddAsync(newOrder);
 
@@ -29,6 +29,8 @@ public class Create {
                 Id = newOrder.Id,
                 Number = newOrder.Number,
                 Name = newOrder.Name,
+                CustomerName = newOrder.CustomerName,
+                VendorName = newOrder.VendorName,
                 ReleasedDate = newOrder.ReleasedDate,
                 FulfilledDate = newOrder.FulfilledDate,
                 Status = newOrder.Status
