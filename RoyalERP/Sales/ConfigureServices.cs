@@ -1,6 +1,7 @@
 ﻿using RoyalERP.Common.Data;
 using RoyalERP.Sales.Companies.Domain;
 using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.Sales.Contracts;
 using System.Data;
 
 namespace RoyalERP.Sales;
@@ -17,6 +18,10 @@ public static class ConfigureServices {
         services.AddTransient<ISalesUnitOfWork, SalesUnitOfWork>();
 
         services.AddTransient<ISalesConnectionFactory, NpgsqlSalesConnectionFactory>();
+
+        services.AddSingleton<SalesQueries>();
+        services.AddTransient<SalesOrders.GetOrderById>(s => s.GetRequiredService<SalesQueries>().GetByOrderId);
+        services.AddTransient<SalesCompanies.GetCompanyById>(s => s.GetRequiredService<SalesQueries>().GetByCompanyId);
 
         return services;
 

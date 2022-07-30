@@ -10,6 +10,10 @@ public class OrderDTO {
 
     public string Name { get; set; } = string.Empty;
 
+    public Guid CustomerId { get; set; } = Guid.Empty;
+
+    public Guid VendorId { get; set; } = Guid.Empty;
+
     public DateTime PlacedDate { get; set; }
 
     public DateTime? ConfirmedDate { get; set; } = null;

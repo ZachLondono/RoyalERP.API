@@ -61,6 +61,8 @@ public class Create {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,
+                CustomerId = order.CustomerId,
+                VendorId = order.VendorId,
                 PlacedDate = order.PlacedDate,
                 ConfirmedDate = order.ConfirmedDate,
                 CompletedDate = order.CompletedDate,

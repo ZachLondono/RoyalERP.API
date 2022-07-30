@@ -14,9 +14,11 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
+        string customername = "Company A";
+        string vendorname = "Company B";
 
         // Act
-        var order = WorkOrder.Create(number, name);
+        var order = WorkOrder.Create(number, name, customername, vendorname);
 
         // Assert
         order.Should().NotBeNull();
@@ -35,7 +37,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, WorkOrderStatus.Pending, null, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, customername, vendorname, WorkOrderStatus.Pending, null, null);
 
         // Act
         order.Release();
@@ -54,7 +58,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, WorkOrderStatus.Pending, null, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Pending, null, null);
 
         // Act
         order.Fulfill();
@@ -75,7 +81,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, WorkOrderStatus.InProgress, DateTime.Today, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null);
 
         // Act
         order.Fulfill();
@@ -94,7 +102,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, WorkOrderStatus.InProgress, DateTime.Today, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null);
 
         // Act
         order.Cancel();
@@ -112,7 +122,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, WorkOrderStatus.Cancelled, null, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Release();
@@ -128,7 +140,9 @@ public class WorkOrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Order Name";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, WorkOrderStatus.Cancelled, null, null);
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Fulfill();

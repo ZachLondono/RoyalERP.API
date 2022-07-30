@@ -6,4 +6,8 @@ public class NewWorkOrder {
 
     public string Name { get; set; } = string.Empty;
 
+    public string CustomerName { get; set; } = string.Empty;
+
+    public string VendorName { get; set; } = string.Empty;
+
 }

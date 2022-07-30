@@ -8,7 +8,7 @@ namespace RoyalERP.Sales.Orders;
 
 [ApiController]
 [Route("[controller]")]
-public class OrdersController {
+public class OrdersController : ControllerBase {
 
     private readonly ISender _sender;
 
@@ -56,8 +56,10 @@ public class OrdersController {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> GetById(Guid orderId) {
-        return _sender.Send(new GetById.Query(orderId));
+    public async Task<IActionResult> GetById(Guid orderId) {
+        var order = await _sender.Send(new GetById.Query(orderId));
+        if (order is null) return NotFound();
+        return Ok(order);
     }
 
     [Route("search/{orderNumber}")]
