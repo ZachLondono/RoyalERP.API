@@ -32,8 +32,10 @@ public class CompaniesController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> GetById(Guid companyId) {
-        return _sender.Send(new GetById.Query(companyId));
+    public async Task<IActionResult> GetById(Guid companyId) {
+        var order = await _sender.Send(new GetById.Query(companyId));
+        if (order is null) return NotFound();
+        return Ok(order);
     }
 
     [Route("{companyId}")]

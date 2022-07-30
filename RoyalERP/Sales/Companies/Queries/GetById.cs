@@ -1,16 +1,14 @@
 ﻿using Dapper;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Common.Data;
 using RoyalERP.Sales.Companies.DTO;
 
 namespace RoyalERP.Sales.Companies.Queries;
 
 public class GetById {
 
-    public record Query(Guid ComapnyId) : IRequest<IActionResult>;
+    public record Query(Guid ComapnyId) : IRequest<CompanyDTO?>;
 
-    public class Handler : IRequestHandler<Query, IActionResult> {
+    public class Handler : IRequestHandler<Query, CompanyDTO?> {
 
         private readonly ISalesConnectionFactory _connectionFactory;
 
@@ -18,15 +16,15 @@ public class GetById {
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<IActionResult> Handle(Query request, CancellationToken cancellationToken) {
+        public async Task<CompanyDTO?> Handle(Query request, CancellationToken cancellationToken) {
 
             const string query = "SELECT id, version, name FROM sales.companies WHERE id = @Id;";
 
             var connection = _connectionFactory.CreateConnection();
 
-            var company = await connection.QuerySingleOrDefaultAsync<CompanyDTO>(query, param: new { Id = request.ComapnyId });
+            var company = await connection.QuerySingleOrDefaultAsync<CompanyDTO?>(query, param: new { Id = request.ComapnyId });
 
-            return new OkObjectResult(company);
+            return company;
 
         }
 
