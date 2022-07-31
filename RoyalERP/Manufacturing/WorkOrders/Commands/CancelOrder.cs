@@ -32,6 +32,7 @@ public class CancelOrder {
                 Number = order.Number,
                 Name = order.Name,
                 ReleasedDate = order.ReleasedDate,
+                ScheduledDate = order.ScheduledDate,
                 FulfilledDate = order.FulfilledDate,
                 Status = order.Status
             });

@@ -4,9 +4,9 @@ using RoyalERP.Manufacturing.WorkOrders.DTO;
 
 namespace RoyalERP.Manufacturing.WorkOrders.Commands;
 
-public class ReleaseOrder {
+public class ScheduleOrder {
 
-    public record Command(Guid OrderId) : IRequest<IActionResult>;
+    public record Command(Guid OrderId, DateTime ScheduledDate) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -22,7 +22,7 @@ public class ReleaseOrder {
 
             if (order is null) return new NotFoundResult();
 
-            order.Release();
+            order.Schedule(request.ScheduledDate);
             await _work.WorkOrders.UpdateAsync(order);
 
             await _work.CommitAsync();

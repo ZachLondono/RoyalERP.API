@@ -39,7 +39,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, customername, vendorname, WorkOrderStatus.Pending, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, customername, vendorname, WorkOrderStatus.Pending, null, null, null);
 
         // Act
         order.Release();
@@ -53,6 +53,27 @@ public class WorkOrderTests {
     }
 
     [Fact]
+    public void Schedule_Should_UpdateState_And_CreateEvent() {
+
+        // Arrange
+        string number = "Order Number";
+        string name = "Order Name";
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, null, null, null);
+
+        // Act
+        order.Schedule(DateTime.Today);
+
+        // Assert
+        order.Should().NotBeNull();
+        order.ScheduledDate.Should().Be(DateTime.Today);
+        order.Status.Should().Be(WorkOrderStatus.InProgress);
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderScheduledEvent)x).OrderId == order.Id);
+
+    }
+
+    [Fact]
     public void Fulfill_Should_ReleaseFirstAndUpdateState_And_CreateEvent() {
 
         // Arrange
@@ -60,7 +81,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Pending, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Pending, null, null, null);
 
         // Act
         order.Fulfill();
@@ -83,7 +104,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
 
         // Act
         order.Fulfill();
@@ -104,7 +125,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
 
         // Act
         order.Cancel();
@@ -124,13 +145,31 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Release();
 
         // Assert
-        Assert.Throws<CantUpdateCancelledOrderException>(() => action(order));
+        Assert.Throws<CantUpdateOrderException>(() => action(order));
+
+    }
+
+    [Fact]
+    public void Schedule_Should_ThrowException_WhenCancled() {
+
+        // Arrange
+        string number = "Order Number";
+        string name = "Order Name";
+        string customername = "Company A";
+        string vendorname = "Company B";
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
+
+        // Act
+        static void action(WorkOrder o) => o.Schedule(DateTime.Today);
+
+        // Assert
+        Assert.Throws<CantUpdateOrderException>(() => action(order));
 
     }
 
@@ -142,13 +181,13 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Fulfill();
 
         // Assert
-        Assert.Throws<CantUpdateCancelledOrderException>(() => action(order));
+        Assert.Throws<CantUpdateOrderException>(() => action(order));
 
     }
 }

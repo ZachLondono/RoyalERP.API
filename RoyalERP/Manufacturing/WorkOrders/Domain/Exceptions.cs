@@ -2,6 +2,6 @@
 
 public static class Exceptions {
 
-    public class CantUpdateCancelledOrderException : InvalidOperationException { }
+    public class CantUpdateOrderException : InvalidOperationException { }
 
 }
