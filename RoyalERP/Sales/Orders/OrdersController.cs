@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RoyalERP.Common;
 using RoyalERP.Sales.Orders.Commands;
 using RoyalERP.Sales.Orders.DTO;
 using RoyalERP.Sales.Orders.Queries;
@@ -8,6 +9,7 @@ namespace RoyalERP.Sales.Orders;
 
 [ApiController]
 [Route("[controller]")]
+[ApiKeyAuthentication]
 public class OrdersController : ControllerBase {
 
     private readonly ISender _sender;
