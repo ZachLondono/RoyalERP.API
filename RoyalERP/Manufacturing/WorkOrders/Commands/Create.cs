@@ -32,6 +32,7 @@ public class Create {
                 CustomerName = newOrder.CustomerName,
                 VendorName = newOrder.VendorName,
                 ReleasedDate = newOrder.ReleasedDate,
+                ScheduledDate = newOrder.ScheduledDate,
                 FulfilledDate = newOrder.FulfilledDate,
                 Status = newOrder.Status
             });

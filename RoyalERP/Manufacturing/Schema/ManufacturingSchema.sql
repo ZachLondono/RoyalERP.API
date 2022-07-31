@@ -8,6 +8,7 @@ CREATE TABLE manufacturing.workorders (
     customername character varying(255) NOT NULL,
     vendorname character varying(255) NOT NULL,
     releaseddate timestamp with time zone,
+    scheduledddate timestamp with time zone,
     fulfilleddate timestamp with time zone,
     status character varying(255) NOT NULL,
     CONSTRAINT workorders_pkey PRIMARY KEY (id)

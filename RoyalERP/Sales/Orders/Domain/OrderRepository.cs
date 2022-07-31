@@ -59,6 +59,8 @@ public class OrderRepository : IOrderRepository {
         
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
+            // TODO: the events should hold the relevant data to update the db, the entity may have been updated since the event occurred
+
             if (domainEvent is Events.OrderConfirmedEvent confirmed) {
 
                 const string command = "UPDATE sales.orders SET status = @Status, confirmeddate = @ConfirmedDate WHERE id = @Id;";

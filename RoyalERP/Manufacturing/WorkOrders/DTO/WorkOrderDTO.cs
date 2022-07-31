@@ -16,6 +16,8 @@ public class WorkOrderDTO {
 
     public DateTime? ReleasedDate { get; set; }
 
+    public DateTime? ScheduledDate { get; set; }
+
     public DateTime? FulfilledDate { get; set; }
 
     public WorkOrderStatus Status { get; set; }

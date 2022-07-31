@@ -33,7 +33,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<IEnumerable<WorkOrder>> GetAllAsync() {
 
-        const string query = "SELECT id, version, number, name, customername, vendorname, releaseddate, fulfilleddate, status FROM manufacturing.workorders;";
+        const string query = "SELECT id, version, number, name, customername, vendorname, releaseddate, scheduleddate, fulfilleddate, status FROM manufacturing.workorders;";
 
         return _connection.QueryAsync<WorkOrder>(query, transaction: _transaction);
 
@@ -41,7 +41,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<WorkOrder?> GetAsync(Guid id) {
 
-        const string query = "SELECT id, version, number, name, customername, vendorname, releaseddate, fulfilleddate, status FROM manufacturing.workorders WHERE id = @Id;";
+        const string query = "SELECT id, version, number, name, customername, vendorname, releaseddate, scheduleddate, fulfilleddate, status FROM manufacturing.workorders WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<WorkOrder?>(query, transaction: _transaction, param: new { Id = id });
 
@@ -59,9 +59,11 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
+            // TODO: the events should hold the relevant data to update the db, the entity may have been updated since the event occurred
+
             if (domainEvent is Events.WorkOrderReleasedEvent released) {
 
-                const string command = "UPDATE manufacturing.workorders SET status = @Status, releaseddate = @ConfirmedDate WHERE id = @Id;";
+                const string command = "UPDATE manufacturing.workorders SET status = @Status, releaseddate = @ConfirmedDate WHERE id = @OrderId;";
 
                 await _connection.ExecuteAsync(command, entity, _transaction);
 
@@ -70,6 +72,13 @@ public class WorkOrderRepository : IWorkOrderRepository {
                 const string command = "UPDATE manufacturing.workorders SET status = @Status, fulfilleddate = @CompletedDate WHERE id = @Id;";
 
                 await _connection.ExecuteAsync(command, entity, _transaction);
+
+            } else if (domainEvent is Events.WorkOrderCanceledEvent scheduled) {
+
+                const string command = "UPDATE manufacturing.workorders SET scheduleddate = @ScheduledDate WHERE id = @OrderId;";
+
+                await _connection.ExecuteAsync(command, scheduled, _transaction);
+
 
             } else if (domainEvent is Events.WorkOrderCanceledEvent canceled) {
 

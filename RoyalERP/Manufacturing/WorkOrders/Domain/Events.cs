@@ -11,6 +11,8 @@ public static class Events {
 
     public record WorkOrderReleasedEvent(Guid OrderId) : WorkOrderEvent(OrderId);
 
+    public record WorkOrderScheduledEvent(Guid OrderId, DateTime ScheduledDate) : WorkOrderEvent(OrderId);
+
     public record WorkOrderFulfilledEvent(Guid OrderId) : WorkOrderEvent(OrderId);
 
     public record WorkOrderCanceledEvent(Guid OrderId) : WorkOrderEvent(OrderId);
