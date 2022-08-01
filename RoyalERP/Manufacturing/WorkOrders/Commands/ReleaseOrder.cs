@@ -31,6 +31,8 @@ public class ReleaseOrder {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,
+                CustomerName = order.CustomerName,
+                VendorName = order.VendorName,
                 ReleasedDate = order.ReleasedDate,
                 ScheduledDate = order.ScheduledDate,
                 FulfilledDate = order.FulfilledDate,
