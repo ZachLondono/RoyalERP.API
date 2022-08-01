@@ -27,7 +27,7 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
         }
 
         var customer = await _getCompanyById(salesorder.CustomerId);
-        var vendor = customer; //await _getCompanyById(salesorder.VendorId);
+        var vendor = await _getCompanyById(salesorder.VendorId);
 
         if (customer is null) {
             // Log null customer in notification

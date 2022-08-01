@@ -33,6 +33,14 @@ public class WorkOrdersController {
     }
 
     [HttpPost]
+    [Route("{workorderId}/schedule")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> Schedule(Guid workorderId, [FromBody] WorkOrderSchedule schedule) {
+        return _sender.Send(new ScheduleOrder.Command(workorderId, schedule.ScheduledDate));
+    }
+
+    [HttpPost]
     [Route("{workorderId}/fulfill")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
