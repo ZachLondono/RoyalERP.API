@@ -16,6 +16,16 @@ builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddManufacturing();
 builder.Services.AddSales();
 
+var AllowAllOriginsPolicy = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options => {
+    options.AddPolicy(name: AllowAllOriginsPolicy, 
+                      policy => {
+                          policy.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                      });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +33,8 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(AllowAllOriginsPolicy);
 
 //app.UseHttpsRedirection();
 
