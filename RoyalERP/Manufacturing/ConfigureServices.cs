@@ -1,6 +1,9 @@
-﻿using RoyalERP.Common.Data;
+﻿using MediatR;
+using RoyalERP.Common.Data;
+using RoyalERP.Manufacturing.WorkOrders;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
 using System.Data;
+using static RoyalERP.Sales.Orders.Domain.Events;
 
 namespace RoyalERP.Manufacturing;
 
@@ -15,6 +18,8 @@ public static class ConfigureServices {
         services.AddTransient<IManufacturingUnitOfWork, ManufacturingUnitOfWork>();
 
         services.AddTransient<IManufacturingConnectionFactory, NpgsqlManufacturingConnectionFactory>();
+
+        services.AddTransient<INotificationHandler<OrderConfirmedEvent>, OrderConfirmedHandler>();
 
         return services;
 
