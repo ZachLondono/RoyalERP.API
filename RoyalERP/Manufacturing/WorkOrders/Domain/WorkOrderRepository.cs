@@ -93,7 +93,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
             } else if (domainEvent is Events.WorkOrderCanceledEvent canceled) {
 
-                const string command = "UPDATE manufacturing.workorders SET status = @Status WHERE id = @Id;";
+                const string command = "UPDATE manufacturing.workorders SET status = @Status WHERE id = @OrderId;";
 
                 await _connection.ExecuteAsync(command, param: new {
                     canceled.OrderId,
