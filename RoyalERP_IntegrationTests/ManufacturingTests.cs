@@ -84,7 +84,7 @@ public sealed partial class ManufacturingTests : DbTests {
         var handler = new Delete.Handler(CreateUOW());
         var request = new Delete.Command(dto.Id);
 
-        var getHandler = new GetById.Handler(new ConnFactory(dbcontainer.ConnectionString));
+        var getHandler = new GetById.Handler(new ManufConnFactory(dbcontainer.ConnectionString));
         var getRequest = new GetById.Query(dto.Id);
 
         // Act
@@ -183,21 +183,21 @@ public sealed partial class ManufacturingTests : DbTests {
     }
 
     private WorkOrderDTO GetOrder(Guid id) {
-        var getHandler = new GetById.Handler(new ConnFactory(dbcontainer.ConnectionString));
+        var getHandler = new GetById.Handler(new ManufConnFactory(dbcontainer.ConnectionString));
         var getRequest = new GetById.Query(id);
         var getResponse = getHandler.Handle(getRequest, _token).Result;
         return (((OkObjectResult)getResponse).Value as WorkOrderDTO)!;
     }
 
     private IManufacturingUnitOfWork CreateUOW() {
-        var factory = new ConnFactory(dbcontainer.ConnectionString);
+        var factory = new ManufConnFactory(dbcontainer.ConnectionString);
         return new ManufacturingUnitOfWork(factory, new FakePublisher(), (conn, trx) => new WorkOrderRepository(new DapperConnection(conn), trx));
     }
 
-    private class ConnFactory : IManufacturingConnectionFactory {
+    private class ManufConnFactory : IManufacturingConnectionFactory {
 
         private readonly string _connString;
-        public ConnFactory(string connString) {
+        public ManufConnFactory(string connString) {
             _connString = connString;
         }
 
