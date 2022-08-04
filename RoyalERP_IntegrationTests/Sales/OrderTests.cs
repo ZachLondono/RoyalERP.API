@@ -13,7 +13,7 @@ namespace RoyalERP_IntegrationTests.Sales;
 public sealed partial class OrderTests : SalesTests {
 
     [Fact]
-    public void Create_ShouldReturnNewWorkOrder() {
+    public void Create_ShouldReturnNewOrder() {
 
         // Arrange
         var expected = new NewOrder() {
