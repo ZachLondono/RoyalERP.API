@@ -20,7 +20,6 @@ public class Create {
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
 
-
             Guid customerId;
             if (request.NewOrder.CustomerId is not null) {
                 // TODO: Check that company exists

@@ -18,7 +18,7 @@ public class OrderRepository : IOrderRepository {
 
     public async Task AddAsync(Order entity) {
 
-        const string command = "INSERT INTO sales.orders (id, number, name, status, customerid, vendorid) values (@Id, @Number, @Name, @Status, @CustomerId, @VendorId);";
+        const string command = "INSERT INTO sales.orders (id, number, name, status, customerid, vendorid, placeddate) values (@Id, @Number, @Name, @Status, @CustomerId, @VendorId, @PlacedDate);";
         
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
             entity.Id,
@@ -26,6 +26,7 @@ public class OrderRepository : IOrderRepository {
             entity.Name,
             entity.CustomerId,
             entity.VendorId,
+            entity.PlacedDate,
             Status = entity.Status.ToString()
         });
 
@@ -77,7 +78,7 @@ public class OrderRepository : IOrderRepository {
 
                 await _connection.ExecuteAsync(command, param: new {
                     entity.Id,
-                    entity.ConfirmedDate,
+                    entity.CompletedDate,
                     Status = entity.Status.ToString()
                 }, _transaction);
 
