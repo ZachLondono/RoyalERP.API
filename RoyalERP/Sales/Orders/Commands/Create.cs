@@ -22,8 +22,18 @@ public class Create {
 
             Guid customerId;
             if (request.NewOrder.CustomerId is not null) {
-                // TODO: Check that company exists
-                customerId = Guid.NewGuid();
+
+                customerId = (Guid) request.NewOrder.CustomerId;
+                var customer = await _work.Companies.GetAsync(customerId);
+                if (customer is null) {
+                    _work.Rollback();
+                    return new BadRequestObjectResult(new ProblemDetails() {
+                        Title = "Invalid customer Id",
+                        Detail = $"No customer exists with given id '{customerId}'",
+                        Status = 400
+                    });
+                }
+
             } else if (request.NewOrder.CustomerName is not null) {
                 customerId = await GetCompanyIdByName(request.NewOrder.CustomerName);
             } else {
@@ -37,8 +47,18 @@ public class Create {
 
             Guid vendorId;
             if (request.NewOrder.VendorId is not null) {
-                // TODO: Check that company exists
-                vendorId = Guid.NewGuid();
+
+                vendorId = (Guid)request.NewOrder.VendorId;
+                var vendor = await _work.Companies.GetAsync(customerId);
+                if (vendor is null) {
+                    _work.Rollback();
+                    return new BadRequestObjectResult(new ProblemDetails() {
+                        Title = "Invalid vendor Id",
+                        Detail = $"No vendor exists with given id '{customerId}'",
+                        Status = 400
+                    });
+                }
+
             } else if (request.NewOrder.VendorName is not null) {
                 vendorId = await GetCompanyIdByName(request.NewOrder.VendorName);
             } else {
