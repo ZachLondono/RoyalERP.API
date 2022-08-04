@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.Manufacturing.WorkOrders.Commands;
 using RoyalERP.Sales.Contracts;
 using static RoyalERP.Sales.Orders.Domain.Events;
 
@@ -7,12 +7,12 @@ namespace RoyalERP.Manufacturing.WorkOrders;
 
 public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
 
-    private readonly IManufacturingUnitOfWork _work;
+    private readonly ISender _sender;
     private readonly SalesOrders.GetOrderById _getOrderById;
     private readonly SalesCompanies.GetCompanyById _getCompanyById;
 
-    public OrderConfirmedHandler(IManufacturingUnitOfWork work, SalesOrders.GetOrderById getOrderById, SalesCompanies.GetCompanyById getCompanyById) {
-        _work = work;
+    public OrderConfirmedHandler(ISender sender, SalesOrders.GetOrderById getOrderById, SalesCompanies.GetCompanyById getCompanyById) {
+        _sender = sender;
         _getOrderById = getOrderById;
         _getCompanyById = getCompanyById;
     }
@@ -39,11 +39,12 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
             return;
         }
 
-        var newOrder = WorkOrder.Create(salesorder.Number, salesorder.Name, customer.Name, vendor.Name);
-
-        await _work.WorkOrders.AddAsync(newOrder);
-
-        await _work.CommitAsync();
+        await _sender.Send(new Create.Command(new() {
+            Number = salesorder.Number,
+            Name = salesorder.Name,
+            CustomerName = customer.Name,
+            VendorName = vendor.Name,
+        }), cancellationToken);
 
     }
 

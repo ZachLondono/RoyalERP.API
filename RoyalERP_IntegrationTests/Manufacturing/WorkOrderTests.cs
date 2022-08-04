@@ -26,41 +26,6 @@ public sealed partial class WorkOrderTests : DbTests {
     }
 
     [Fact]
-    public void Create_ShouldReturnNewWorkOrder() {
-
-        // Arrange
-        var expected = new NewWorkOrder() {
-            Name = "Order Name",
-            Number = "OT123",
-            CustomerName = "Customer Name",
-            VendorName = "Vendor Name"
-        };
-
-        var handler = new Create.Handler(CreateUOW());
-        var request = new Create.Command(expected);
-
-        // Act
-        var response = handler.Handle(request, _token).Result;
-
-
-        // Assert
-        response.Should().BeOfType<CreatedResult>();
-
-        var created = response as CreatedResult;
-
-        created!.Value.Should().NotBeNull();
-        created!.Value.Should().BeOfType<WorkOrderDTO>();
-
-        var returnedEntity = created.Value as WorkOrderDTO;
-        returnedEntity!.Should().NotBeNull();
-        returnedEntity.Should().BeEquivalentTo(expected);
-
-        var actual = GetOrder(returnedEntity!.Id);
-        actual.Should().BeEquivalentTo(expected);
-
-    }
-
-    [Fact]
     public void Delete_ShouldReturnNotFound_WhenDoesntExist() {
 
         // Arrange
