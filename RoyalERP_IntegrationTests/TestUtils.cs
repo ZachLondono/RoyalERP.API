@@ -14,8 +14,8 @@ public static class TestUtils {
         if (directory is null)
             throw new InvalidDataException("Could not find path to db schema");
 
-        var salesSchemaPath = Path.Combine(directory.FullName, @"RoyalERP\Sales\Schema\SalesSchema.sql");
-        var manufSchemaPath = Path.Combine(directory.FullName, @"RoyalERP\Manufacturing\Schema\ManufacturingSchema.sql");
+        var salesSchemaPath = Path.Combine(directory.FullName, "RoyalERP","Sales", "Schema", "SalesSchema.sql");
+        var manufSchemaPath = Path.Combine(directory.FullName, "RoyalERP","Manufacturing", "Schema", "ManufacturingSchema.sql");
 
         using var connection = new NpgsqlConnection(connectionString);
 
