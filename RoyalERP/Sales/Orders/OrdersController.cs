@@ -24,7 +24,7 @@ public class OrdersController : ControllerBase {
         return _sender.Send(new Create.Command(newOrder));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{orderId}/confirm")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +32,7 @@ public class OrdersController : ControllerBase {
         return _sender.Send(new ConfirmOrder.Command(orderId));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{orderId}/complete")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,7 +40,7 @@ public class OrdersController : ControllerBase {
         return _sender.Send(new CompleteOrder.Command(orderId));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{orderId}/cancel")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

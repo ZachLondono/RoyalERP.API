@@ -24,7 +24,7 @@ public class WorkOrdersController {
         return _sender.Send(new Create.Command(newOrder));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{workorderId}/release")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,7 +32,7 @@ public class WorkOrdersController {
         return _sender.Send(new ReleaseOrder.Command(workorderId));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{workorderId}/schedule")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -40,7 +40,7 @@ public class WorkOrdersController {
         return _sender.Send(new ScheduleOrder.Command(workorderId, schedule.ScheduledDate));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{workorderId}/fulfill")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,7 +48,7 @@ public class WorkOrdersController {
         return _sender.Send(new FulfillOrder.Command(workorderId));
     }
 
-    [HttpPost]
+    [HttpPut]
     [Route("{workorderId}/cancel")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
