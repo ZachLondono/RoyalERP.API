@@ -20,55 +20,8 @@ public class Create {
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
 
-            Guid customerId;
-            if (request.NewOrder.CustomerId is not null) {
-
-                customerId = (Guid) request.NewOrder.CustomerId;
-                var customer = await _work.Companies.GetAsync(customerId);
-                if (customer is null) {
-                    _work.Rollback();
-                    return new BadRequestObjectResult(new ProblemDetails() {
-                        Title = "Invalid customer Id",
-                        Detail = $"No customer exists with given id '{customerId}'",
-                        Status = 400
-                    });
-                }
-
-            } else if (request.NewOrder.CustomerName is not null) {
-                customerId = await GetCompanyIdByName(request.NewOrder.CustomerName);
-            } else {
-                _work.Rollback();
-                return new BadRequestObjectResult(new ProblemDetails() {
-                    Title = "Missing customer",
-                    Detail = "Either the Customer's Id or Name must be provided.",
-                    Status = 400
-                });
-            }
-
-            Guid vendorId;
-            if (request.NewOrder.VendorId is not null) {
-
-                vendorId = (Guid)request.NewOrder.VendorId;
-                var vendor = await _work.Companies.GetAsync(customerId);
-                if (vendor is null) {
-                    _work.Rollback();
-                    return new BadRequestObjectResult(new ProblemDetails() {
-                        Title = "Invalid vendor Id",
-                        Detail = $"No vendor exists with given id '{customerId}'",
-                        Status = 400
-                    });
-                }
-
-            } else if (request.NewOrder.VendorName is not null) {
-                vendorId = await GetCompanyIdByName(request.NewOrder.VendorName);
-            } else {
-                _work.Rollback(); // if a company was created, it should be rolled back
-                return new BadRequestObjectResult(new ProblemDetails() {
-                    Title = "Missing vendor",
-                    Detail = "Either the Vendor's Id or Name must be provided.",
-                    Status = 400
-                });
-            }
+            Guid customerId = await GetCompanyId(request.NewOrder.CustomerId, request.NewOrder.CustomerName);
+            Guid vendorId = await GetCompanyId(request.NewOrder.VendorId, request.NewOrder.VendorName);
 
             var order = Order.Create(request.NewOrder.Number, request.NewOrder.Name, customerId, vendorId);
 
@@ -88,6 +41,31 @@ public class Create {
                 Status = order.Status
             });
 
+
+        }
+
+        /// <summary>
+        /// Tries to get the company with the given name or id, if one does not exist a new company is created with the given name. If a name is not provided, a new company is created with a default name
+        /// </summary>
+        /// <returns>The id of the company</returns>
+        private async Task<Guid> GetCompanyId(Guid? potentialId, string? potentialName) {
+            
+            Guid companyId = Guid.Empty;
+            if (potentialId is not null) {
+                
+                var customer = await _work.Companies.GetAsync((Guid)potentialId);
+                if (customer is not null)
+                    companyId = (Guid)potentialId;
+
+            } else if (potentialName is not null) {
+                companyId = await GetCompanyIdByName(potentialName);
+            } 
+            
+            if (companyId.Equals(Guid.Empty)) {
+                companyId = await GetCompanyIdByName("Unknown Company");
+            }
+
+            return companyId;
 
         }
 
