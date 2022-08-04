@@ -13,9 +13,11 @@ public class Create {
     public class Handler : IRequestHandler<Command, IActionResult> {
 
         private readonly ISalesUnitOfWork _work;
+        private readonly ILogger<Handler> _logger;
 
-        public Handler(ISalesUnitOfWork work) {
+        public Handler(ISalesUnitOfWork work, ILogger<Handler> logger) {
             _work = work;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
@@ -28,6 +30,8 @@ public class Create {
             await _work.Orders.AddAsync(order);
 
             await _work.CommitAsync();
+
+            _logger.LogTrace("Created order with id {OrderId}", order.Id);
 
             return new CreatedResult($"/orders/{order.Id}", new OrderDTO() {
                 Id = order.Id,
@@ -54,14 +58,18 @@ public class Create {
             if (potentialId is not null) {
                 
                 var customer = await _work.Companies.GetAsync((Guid)potentialId);
-                if (customer is not null)
+                if (customer is not null) {
                     companyId = (Guid)potentialId;
+                } else {
+                    _logger.LogWarning("An invalid company id was given while attempting to create a new order {CompanyId}", potentialId);
+                }
 
             } else if (potentialName is not null) {
                 companyId = await GetCompanyIdByName(potentialName);
             } 
             
             if (companyId.Equals(Guid.Empty)) {
+                _logger.LogTrace("Using default company name for new order");
                 companyId = await GetCompanyIdByName("Unknown Company");
             }
 
@@ -80,6 +88,8 @@ public class Create {
 
             var newCompany = Company.Create(name);
             await _work.Companies.AddAsync(newCompany);
+
+            _logger.LogTrace("Created new company with name {CompanyName}, while creating a new posting", name);
 
             return newCompany.Id;
 

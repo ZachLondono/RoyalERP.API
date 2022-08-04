@@ -7,6 +7,7 @@ using System;
 using Xunit;
 using RoyalERP.Sales.Orders.Queries;
 using Bogus;
+using RoyalERP_IntegrationTests.Infrastructure;
 
 namespace RoyalERP_IntegrationTests.Sales;
 
@@ -23,7 +24,7 @@ public sealed partial class OrderTests : SalesTests {
             VendorName = "Vendor Name"
         };
 
-        var handler = new Create.Handler(CreateUOW());
+        var handler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var request = new Create.Command(expected);
 
         // Act
@@ -63,7 +64,7 @@ public sealed partial class OrderTests : SalesTests {
 
         var expected = fake.Generate();
 
-        var handler = new Create.Handler(CreateUOW());
+        var handler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var request = new Create.Command(expected);
 
         // Act
@@ -93,7 +94,7 @@ public sealed partial class OrderTests : SalesTests {
 
         // Arrange
         var orderId = Guid.NewGuid();
-        var handler = new Delete.Handler(CreateUOW());
+        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var request = new Delete.Command(orderId);
 
         // Act
@@ -110,7 +111,7 @@ public sealed partial class OrderTests : SalesTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new Delete.Handler(CreateUOW());
+        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var request = new Delete.Command(dto.Id);
 
         var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
@@ -132,7 +133,7 @@ public sealed partial class OrderTests : SalesTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new CancelOrder.Handler(CreateUOW());
+        var handler = new CancelOrder.Handler(CreateUOW(), new FakeLogger<CancelOrder.Handler>());
         var request = new CancelOrder.Command(dto.Id);
 
         // Act
@@ -151,7 +152,7 @@ public sealed partial class OrderTests : SalesTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new CompleteOrder.Handler(CreateUOW());
+        var handler = new CompleteOrder.Handler(CreateUOW(), new FakeLogger<CompleteOrder.Handler>());
         var request = new CompleteOrder.Command(dto.Id);
 
         // Act
@@ -171,7 +172,7 @@ public sealed partial class OrderTests : SalesTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new ConfirmOrder.Handler(CreateUOW());
+        var handler = new ConfirmOrder.Handler(CreateUOW(), new FakeLogger<ConfirmOrder.Handler>());
         var request = new ConfirmOrder.Command(dto.Id);
 
         // Act
@@ -197,7 +198,7 @@ public sealed partial class OrderTests : SalesTests {
 
         var newOrder = fake.Generate();
 
-        var createHandler = new Create.Handler(CreateUOW());
+        var createHandler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var createRequest = new Create.Command(newOrder);
         var createResponse = createHandler.Handle(createRequest, _token).Result;
         return (((CreatedResult)createResponse).Value as OrderDTO)!;

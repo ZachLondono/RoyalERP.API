@@ -11,21 +11,28 @@ public class FulfillOrder {
     public class Handler : IRequestHandler<Command, IActionResult> {
 
         private readonly IManufacturingUnitOfWork _work;
+        private readonly ILogger<Handler> _logger;
 
-        public Handler(IManufacturingUnitOfWork work) {
+        public Handler(IManufacturingUnitOfWork work, ILogger<Handler> logger) {
             _work = work;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
 
             var order = await _work.WorkOrders.GetAsync(request.OrderId);
 
-            if (order is null) return new NotFoundResult();
+            if (order is null) {
+                _logger.LogWarning("Tried to fulfill order that does not exist with id: {OrderId}", request.OrderId);
+                return new NotFoundResult();
+            }
 
             order.Fulfill();
             await _work.WorkOrders.UpdateAsync(order);
 
             await _work.CommitAsync();
+
+            _logger.LogTrace("Fulfilled order with id: {OrderId}", request.OrderId);
 
             return new OkObjectResult(new WorkOrderDTO() {
                 Id = order.Id,

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RoyalERP.Common.Data;
+using RoyalERP.Common.Domain;
 using RoyalERP.Manufacturing;
 using RoyalERP.Manufacturing.WorkOrders.Commands;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
@@ -21,7 +22,7 @@ public sealed partial class WorkOrderTests : DbTests {
 
     public WorkOrderTests() {
 
-        CancellationTokenSource source = new CancellationTokenSource();
+        CancellationTokenSource source = new();
         _token = source.Token;
     }
 
@@ -30,7 +31,7 @@ public sealed partial class WorkOrderTests : DbTests {
 
         // Arrange
         var orderId = Guid.NewGuid();
-        var handler = new Delete.Handler(CreateUOW());
+        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var request = new Delete.Command(orderId);
 
         // Act
@@ -47,7 +48,7 @@ public sealed partial class WorkOrderTests : DbTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new Delete.Handler(CreateUOW());
+        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var request = new Delete.Command(dto.Id);
 
         var getHandler = new GetById.Handler(new ManufConnFactory(dbcontainer.ConnectionString));
@@ -69,7 +70,7 @@ public sealed partial class WorkOrderTests : DbTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new CancelOrder.Handler(CreateUOW());
+        var handler = new CancelOrder.Handler(CreateUOW(), new FakeLogger<CancelOrder.Handler>());
         var request = new CancelOrder.Command(dto.Id);
 
         // Act
@@ -88,7 +89,7 @@ public sealed partial class WorkOrderTests : DbTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new FulfillOrder.Handler(CreateUOW());
+        var handler = new FulfillOrder.Handler(CreateUOW(), new FakeLogger<FulfillOrder.Handler>());
         var request = new FulfillOrder.Command(dto.Id);
 
         // Act
@@ -108,7 +109,7 @@ public sealed partial class WorkOrderTests : DbTests {
         // Arrange
         var dto = CreateNew();
 
-        var handler = new ReleaseOrder.Handler(CreateUOW());
+        var handler = new ReleaseOrder.Handler(CreateUOW(), new FakeLogger<ReleaseOrder.Handler>());
         var request = new ReleaseOrder.Command(dto.Id);
 
         // Act
@@ -128,7 +129,7 @@ public sealed partial class WorkOrderTests : DbTests {
         // Arrange
         var dto = CreateNew();
         var scheduledDate = DateTime.Today;
-        var handler = new ScheduleOrder.Handler(CreateUOW());
+        var handler = new ScheduleOrder.Handler(CreateUOW(), new FakeLogger<ScheduleOrder.Handler>());
         var request = new ScheduleOrder.Command(dto.Id, scheduledDate);
 
         // Act
@@ -142,7 +143,7 @@ public sealed partial class WorkOrderTests : DbTests {
     }
 
     private WorkOrderDTO CreateNew() {
-        var createHandler = new Create.Handler(CreateUOW());
+        var createHandler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var createRequest = new Create.Command(new() { CustomerName = "A", Name = "B", Number = "C", VendorName = "D" });
         var createResponse = createHandler.Handle(createRequest, _token).Result;
         return (((CreatedResult)createResponse).Value as WorkOrderDTO)!;
@@ -157,7 +158,7 @@ public sealed partial class WorkOrderTests : DbTests {
 
     private IManufacturingUnitOfWork CreateUOW() {
         var factory = new ManufConnFactory(dbcontainer.ConnectionString);
-        return new ManufacturingUnitOfWork(factory, new FakePublisher(), (conn, trx) => new WorkOrderRepository(new DapperConnection(conn), trx));
+        return new ManufacturingUnitOfWork(factory, new FakeLogger<UnitOfWork>(), new FakePublisher(), (conn, trx) => new WorkOrderRepository(new DapperConnection(conn), trx));
     }
 
     private class ManufConnFactory : IManufacturingConnectionFactory {

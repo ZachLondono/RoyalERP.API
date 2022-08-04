@@ -15,10 +15,10 @@ public class SalesUnitOfWork : UnitOfWork, ISalesUnitOfWork {
     public ICompanyRepository Companies { get; set; }
     public IOrderRepository Orders { get; set; }
 
-    public SalesUnitOfWork(ISalesConnectionFactory factory, IPublisher publisher,
+    public SalesUnitOfWork(ISalesConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
                             Func<IDbConnection, IDbTransaction, ICompanyRepository> companiesFactory,
                             Func<IDbConnection, IDbTransaction, IOrderRepository> ordersFactory)
-                            : base(factory) {
+                            : base(factory, logger) {
         _companiesFactory = companiesFactory;
         _publisher = publisher;
         _ordersFactory = ordersFactory;

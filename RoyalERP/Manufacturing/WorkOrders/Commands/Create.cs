@@ -10,11 +10,13 @@ public class Create {
     public record Command(NewWorkOrder NewWorkOrder) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
-        
-        private readonly IManufacturingUnitOfWork _work;
 
-        public Handler(IManufacturingUnitOfWork work) {
+        private readonly IManufacturingUnitOfWork _work;
+        private readonly ILogger<Handler> _logger;
+
+        public Handler(IManufacturingUnitOfWork work, ILogger<Handler> logger) {
             _work = work;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
@@ -24,6 +26,8 @@ public class Create {
             await _work.WorkOrders.AddAsync(newOrder);
 
             await _work.CommitAsync();
+
+            _logger.LogTrace("Created order with id: {OrderId}", newOrder.Id);
 
             return new CreatedResult($"workorders/{newOrder.Id}", new WorkOrderDTO() {
                 Id = newOrder.Id,

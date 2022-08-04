@@ -12,9 +12,9 @@ public class ManufacturingUnitOfWork : UnitOfWork, IManufacturingUnitOfWork {
     private IPublisher _publisher;
     private readonly Func<IDbConnection, IDbTransaction, IWorkOrderRepository> _workOrdersFactory;
 
-    public ManufacturingUnitOfWork(IManufacturingConnectionFactory factory, IPublisher publisher,
+    public ManufacturingUnitOfWork(IManufacturingConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
                                     Func<IDbConnection, IDbTransaction, IWorkOrderRepository> workOrdersFactory)
-                                    : base(factory) {
+                                    : base(factory, logger) {
         _publisher = publisher;
         _workOrdersFactory = workOrdersFactory;
         WorkOrders = _workOrdersFactory(Connection, Transaction);

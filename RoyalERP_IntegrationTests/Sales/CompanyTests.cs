@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Sales.Companies.Commands;
 using RoyalERP.Sales.Companies.DTO;
 using RoyalERP.Sales.Companies.Queries;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using Xunit;
 
@@ -19,7 +19,7 @@ public class CompanyTests : SalesTests {
         var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
         var newCompany = faker.Generate();
 
-        var handler = new Create.Handler(CreateUOW());
+        var handler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var request = new Create.Command(newCompany);
 
         var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
@@ -49,7 +49,7 @@ public class CompanyTests : SalesTests {
 
         // Arrange
         var orderId = Guid.NewGuid();
-        var handler = new Delete.Handler(CreateUOW());
+        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var request = new Delete.Command(orderId);
 
         // Act
@@ -67,12 +67,12 @@ public class CompanyTests : SalesTests {
         var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
         var newCompany = faker.Generate();
 
-        var createHandler = new Create.Handler(CreateUOW());
+        var createHandler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
         var createRequest = new Create.Command(newCompany);
 
         var result = (createHandler.Handle(createRequest, _token).Result as CreatedResult)!.Value as CompanyDTO;
 
-        var deleteHandler = new Delete.Handler(CreateUOW());
+        var deleteHandler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
         var deleteRequest = new Delete.Command(result!.Id);
 
         var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));

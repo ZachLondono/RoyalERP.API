@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using RoyalERP.Common.Data;
+using RoyalERP.Common.Domain;
 using RoyalERP.Sales;
 using RoyalERP.Sales.Companies.Domain;
 using RoyalERP.Sales.Orders.Domain;
@@ -23,7 +24,7 @@ public abstract class SalesTests : DbTests {
         var factory = new SalesConnFactory(dbcontainer.ConnectionString);
         Func<IDbConnection, IDbTransaction, IOrderRepository> orderRepoFactory = (conn, trx) => new OrderRepository(new DapperConnection(conn), trx);
         Func<IDbConnection, IDbTransaction, ICompanyRepository> companyRepoFactory = (conn, trx) => new CompanyRepository(new DapperConnection(conn), trx);
-        return new SalesUnitOfWork(factory, new FakePublisher(), companyRepoFactory, orderRepoFactory);
+        return new SalesUnitOfWork(factory, new FakeLogger<UnitOfWork>(), new FakePublisher(), companyRepoFactory, orderRepoFactory);
     }
 
     protected class SalesConnFactory : ISalesConnectionFactory {

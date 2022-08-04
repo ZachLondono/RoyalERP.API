@@ -8,11 +8,13 @@ public abstract class UnitOfWork : IUnitOfWork, IDisposable {
     protected readonly IDbConnection Connection;
     private IDbTransaction _transaction;
     protected IDbTransaction Transaction => _transaction;
+    private readonly ILogger<UnitOfWork> _logger;
 
-    public UnitOfWork(IDbConnectionFactory factory) {
+    public UnitOfWork(IDbConnectionFactory factory, ILogger<UnitOfWork> logger) {
         Connection = factory.CreateConnection();
         Connection.Open();
         _transaction = Connection.BeginTransaction();
+        _logger = logger;
     }
 
     public async Task CommitAsync() {
@@ -23,13 +25,13 @@ public abstract class UnitOfWork : IUnitOfWork, IDisposable {
 
             try {
                 await PublishEvents();
-            } catch {
-                // TODO log exception
+            } catch (Exception ex) {
+                _logger.LogError("Failed to publish domain events: {Exception}", ex);
             }
 
-        } catch {
+        } catch (Exception ex) {
 
-            // TODO log exception
+            _logger.LogError("Failed to commit changes to database: {Exception}", ex);
             _transaction.Rollback();
             throw;
 
