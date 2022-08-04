@@ -62,20 +62,20 @@ public class WorkOrdersController {
         return _sender.Send(new GetAll.Query());
     }
 
-    [Route("{orderId}")]
+    [Route("{workorderId}")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> GetById(Guid orderId) {
-        return _sender.Send(new GetById.Query(orderId));
+    public Task<IActionResult> GetById(Guid workorderId) {
+        return _sender.Send(new GetById.Query(workorderId));
     }
 
-    [Route("{orderId}")]
+    [Route("{workorderId}")]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> Delete(Guid orderId) {
-        return _sender.Send(new Delete.Command(orderId));
+    public Task<IActionResult> Delete(Guid workorderId) {
+        return _sender.Send(new Delete.Command(workorderId));
     }
 
 }
