@@ -7,19 +7,20 @@ using RoyalERP.Manufacturing.WorkOrders.Commands;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
 using RoyalERP.Manufacturing.WorkOrders.DTO;
 using RoyalERP.Manufacturing.WorkOrders.Queries;
+using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Data;
 using System.Threading;
 using Xunit;
 
-namespace RoyalERP_IntegrationTests;
+namespace RoyalERP_IntegrationTests.Manufacturing;
 
-public sealed partial class ManufacturingTests : DbTests {
+public sealed partial class WorkOrderTests : DbTests {
 
     private readonly CancellationToken _token;
 
-    public ManufacturingTests() {
-        
+    public WorkOrderTests() {
+
         CancellationTokenSource source = new CancellationTokenSource();
         _token = source.Token;
     }

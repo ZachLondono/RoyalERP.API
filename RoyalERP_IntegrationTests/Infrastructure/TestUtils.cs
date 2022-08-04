@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoyalERP_IntegrationTests;
+namespace RoyalERP_IntegrationTests.Infrastructure;
 
 public static class TestUtils {
 
@@ -14,8 +14,8 @@ public static class TestUtils {
         if (directory is null)
             throw new InvalidDataException("Could not find path to db schema");
 
-        var salesSchemaPath = Path.Combine(directory.FullName, "RoyalERP","Sales", "Schema", "SalesSchema.sql");
-        var manufSchemaPath = Path.Combine(directory.FullName, "RoyalERP","Manufacturing", "Schema", "ManufacturingSchema.sql");
+        var salesSchemaPath = Path.Combine(directory.FullName, "RoyalERP", "Sales", "Schema", "SalesSchema.sql");
+        var manufSchemaPath = Path.Combine(directory.FullName, "RoyalERP", "Manufacturing", "Schema", "ManufacturingSchema.sql");
 
         using var connection = new NpgsqlConnection(connectionString);
 
@@ -24,16 +24,16 @@ public static class TestUtils {
         await ExecuteScript(connection, salesSchemaPath);
         await ExecuteScript(connection, manufSchemaPath);
 
-        connection.Close();        
+        connection.Close();
 
     }
 
     private static async Task ExecuteScript(IDbConnection connection, string path) {
 
-        var script = await System.IO.File.ReadAllTextAsync(path);
+        var script = await File.ReadAllTextAsync(path);
 
         bool closeConnection = false;
-        if (connection.State == ConnectionState.Closed) { 
+        if (connection.State == ConnectionState.Closed) {
             connection.Open();
             closeConnection = true;
         }

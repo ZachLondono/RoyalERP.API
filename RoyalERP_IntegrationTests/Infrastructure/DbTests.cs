@@ -4,7 +4,7 @@ using DotNet.Testcontainers.Containers;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RoyalERP_IntegrationTests;
+namespace RoyalERP_IntegrationTests.Infrastructure;
 
 public abstract class DbTests : IAsyncLifetime {
 

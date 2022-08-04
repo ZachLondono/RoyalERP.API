@@ -1,29 +1,16 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using RoyalERP.Common.Data;
 using RoyalERP.Sales.Orders.Commands;
-using RoyalERP.Sales;
-using RoyalERP.Sales.Companies.Domain;
 using RoyalERP.Sales.Orders.Domain;
 using RoyalERP.Sales.Orders.DTO;
 using System;
-using System.Data;
-using System.Threading;
 using Xunit;
 using RoyalERP.Sales.Orders.Queries;
+using Bogus;
 
-namespace RoyalERP_IntegrationTests;
+namespace RoyalERP_IntegrationTests.Sales;
 
-public sealed partial class SalesTests : DbTests {
-
-    private readonly CancellationToken _token;
-
-    public SalesTests() {
-
-        CancellationTokenSource source = new CancellationTokenSource();
-        _token = source.Token;
-    }
+public sealed partial class OrderTests : SalesTests {
 
     [Fact]
     public void Create_ShouldReturnNewWorkOrder() {
@@ -59,6 +46,45 @@ public sealed partial class SalesTests : DbTests {
         actual.Status.Should().Be(OrderStatus.Unconfirmed);
 
         returnedEntity.Should().BeEquivalentTo(actual);
+
+    }
+
+    [Fact]
+    public void Create_ShouldCreateNewCompany_WhenNameDoesNotExist() {
+
+        // Arrange
+        var fake = new Faker<NewOrder>()
+                .RuleFor(o => o.CustomerId, f => null)
+                .RuleFor(o => o.CustomerId, f => null)
+                .RuleFor(o => o.CustomerName, f => f.Company.CompanyName())
+                .RuleFor(o => o.VendorName, f => f.Company.CompanyName())
+                .RuleFor(o => o.Number, f => f.Random.Number(999999).ToString())
+                .RuleFor(o => o.Name, f => f.Name.FirstName());
+
+        var expected = fake.Generate();
+
+        var handler = new Create.Handler(CreateUOW());
+        var request = new Create.Command(expected);
+
+        // Act
+        var response = handler.Handle(request, _token).Result;
+
+        // Assert
+        response.Should().BeOfType<CreatedResult>();
+        var okresult = response as CreatedResult;
+        var order = okresult!.Value as OrderDTO;
+
+        var customerQuery = new RoyalERP.Sales.Companies.Queries.GetById.Query(order!.CustomerId);
+        var vendorQuery = new RoyalERP.Sales.Companies.Queries.GetById.Query(order.VendorId);
+        var queryHandler = new RoyalERP.Sales.Companies.Queries.GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
+
+        var customer = queryHandler.Handle(customerQuery, _token).Result;
+        var vendor = queryHandler.Handle(vendorQuery, _token).Result;
+
+        customer.Should().NotBeNull();
+        customer!.Name.Should().Be(expected.CustomerName);
+        vendor.Should().NotBeNull();
+        vendor!.Name.Should().Be(expected.VendorName);
 
     }
 
@@ -160,8 +186,19 @@ public sealed partial class SalesTests : DbTests {
     }
 
     private OrderDTO CreateNew() {
+
+        var fake = new Faker<NewOrder>()
+                .RuleFor(o => o.CustomerId, f => null)
+                .RuleFor(o => o.CustomerId, f => null)
+                .RuleFor(o => o.CustomerName, f => f.Company.CompanyName())
+                .RuleFor(o => o.VendorName, f => f.Company.CompanyName())
+                .RuleFor(o => o.Number, f => f.Random.Number(999999).ToString())
+                .RuleFor(o => o.Name, f => f.Name.FirstName());
+
+        var newOrder = fake.Generate();
+
         var createHandler = new Create.Handler(CreateUOW());
-        var createRequest = new Create.Command(new() { CustomerName = "A", Name = "B", Number = "C", VendorName = "D" });
+        var createRequest = new Create.Command(newOrder);
         var createResponse = createHandler.Handle(createRequest, _token).Result;
         return (((CreatedResult)createResponse).Value as OrderDTO)!;
     }
@@ -170,26 +207,6 @@ public sealed partial class SalesTests : DbTests {
         var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
         var getRequest = new GetById.Query(id);
         return getHandler.Handle(getRequest, _token).Result!;
-    }
-
-    private ISalesUnitOfWork CreateUOW() {
-        var factory = new SalesConnFactory(dbcontainer.ConnectionString);
-        Func<IDbConnection, IDbTransaction, IOrderRepository> orderRepoFactory = (conn, trx) => new OrderRepository(new DapperConnection(conn), trx);
-        Func<IDbConnection, IDbTransaction, ICompanyRepository> companyRepoFactory = (conn, trx) => new CompanyRepository(new DapperConnection(conn), trx);
-        return new SalesUnitOfWork(factory, new FakePublisher(), companyRepoFactory, orderRepoFactory);
-    }
-
-    private class SalesConnFactory : ISalesConnectionFactory {
-
-        private readonly string _connString;
-        public SalesConnFactory(string connString) {
-            _connString = connString;
-        }
-
-        public IDbConnection CreateConnection() {
-            return new NpgsqlConnection(_connString);
-        }
-
     }
 
 }

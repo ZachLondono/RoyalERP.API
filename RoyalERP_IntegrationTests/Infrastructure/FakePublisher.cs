@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoyalERP_IntegrationTests;
+namespace RoyalERP_IntegrationTests.Infrastructure;
 
 public class FakePublisher : IPublisher {
     public Task Publish(object notification, CancellationToken cancellationToken = default) {
