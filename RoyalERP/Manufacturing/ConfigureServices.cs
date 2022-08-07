@@ -19,7 +19,6 @@ public static class ConfigureServices {
 
         services.AddTransient<IManufacturingConnectionFactory, NpgsqlManufacturingConnectionFactory>();
 
-        services.AddTransient<INotificationHandler<OrderConfirmedEvent>, OrderConfirmedHandler>();
 
         return services;
 
