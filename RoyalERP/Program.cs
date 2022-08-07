@@ -1,4 +1,5 @@
 using MediatR;
+using RoyalERP.Common;
 using RoyalERP.Manufacturing;
 using RoyalERP.Sales;
 using System.Text.Json.Serialization;
@@ -13,6 +14,7 @@ builder.Services.AddControllers().AddJsonOptions(x => {
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(typeof(Program).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 builder.Services.AddManufacturing();
 builder.Services.AddSales();
 
