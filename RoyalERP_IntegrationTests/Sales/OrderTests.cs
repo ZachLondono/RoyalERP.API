@@ -8,15 +8,22 @@ using Xunit;
 using RoyalERP.Sales.Orders.Queries;
 using Bogus;
 using RoyalERP_IntegrationTests.Infrastructure;
+using System.Net.Http.Json;
+using System.Net;
+using System.Threading.Tasks;
+using RoyalERP.Sales.Companies.DTO;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace RoyalERP_IntegrationTests.Sales;
 
-public class OrderTests : SalesTests {
+public class OrderTests : DbTests {
 
     [Fact]
-    public void Create_ShouldReturnNewOrder() {
+    public async Task Create_ShouldReturnNewOrder() {
 
         // Arrange
+        var client = CreateClientWithAuth();
         var expected = new NewOrder() {
             Name = "Order Name",
             Number = "OT123",
@@ -24,190 +31,153 @@ public class OrderTests : SalesTests {
             VendorName = "Vendor Name"
         };
 
-        var handler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
-        var request = new Create.Command(expected);
+        var content = JsonContent.Create(expected);
 
         // Act
-        var response = handler.Handle(request, _token).Result;
+        var response = await client.PostAsync("/orders", content);
 
         // Assert
-        response.Should().BeOfType<CreatedResult>();
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<OrderDTO>(responseContent);
+        order.Should().NotBeNull();
 
-        var created = response as CreatedResult;
-
-        created!.Value.Should().NotBeNull();
-        created!.Value.Should().BeOfType<OrderDTO>();
-
-        var returnedEntity = created.Value as OrderDTO;
-        returnedEntity!.Should().NotBeNull();
-
-        var actual = GetOrder(returnedEntity!.Id);
-        actual.Name.Should().Be(expected.Name);
-        actual.Number.Should().Be(expected.Number);
-        actual.Status.Should().Be(OrderStatus.Unconfirmed);
-
-        returnedEntity.Should().BeEquivalentTo(actual);
+        order!.Name.Should().BeEquivalentTo(expected.Name);
+        order.Number.Should().BeEquivalentTo(expected.Number);
+        order.CustomerId.Should().NotBeEmpty();
+        order.VendorId.Should().NotBeEmpty();
 
     }
 
     [Fact]
-    public void Create_ShouldCreateNewCompany_WhenNameDoesNotExist() {
+    public async Task Create_ShouldCreateNewCompany_WhenNameDoesNotExist() {
 
         // Arrange
-        var fake = new Faker<NewOrder>()
-                .RuleFor(o => o.CustomerId, f => null)
-                .RuleFor(o => o.CustomerId, f => null)
-                .RuleFor(o => o.CustomerName, f => f.Company.CompanyName())
-                .RuleFor(o => o.VendorName, f => f.Company.CompanyName())
-                .RuleFor(o => o.Number, f => f.Random.Number(999999).ToString())
-                .RuleFor(o => o.Name, f => f.Name.FirstName());
-
-        var expected = fake.Generate();
-
-        var handler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
-        var request = new Create.Command(expected);
+        var client = CreateClientWithAuth();
+        var expected = new NewOrder() {
+             Name = "Order Name",
+             Number = "OT123",
+             CustomerName = "Customer Name",
+             VendorName = "Vendor Name"
+        };
+        var dto = await  CreateNew(client, expected);
+        var customerId = dto!.CustomerId;
+        var vendorId = dto.VendorId;
 
         // Act
-        var response = handler.Handle(request, _token).Result;
+        var customerResponse = await client.GetAsync($"/companies/{customerId}");
+        var vendorResponse = await client.GetAsync($"/companies/{vendorId}");
 
         // Assert
-        response.Should().BeOfType<CreatedResult>();
-        var okresult = response as CreatedResult;
-        var order = okresult!.Value as OrderDTO;
+        customerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var customerContent = await customerResponse.Content.ReadFromJsonAsync<CompanyDTO>();
+        customerContent.Should().NotBeNull();
+        customerContent!.Name.Should().Be(expected.CustomerName);
 
-        var customerQuery = new RoyalERP.Sales.Companies.Queries.GetById.Query(order!.CustomerId);
-        var vendorQuery = new RoyalERP.Sales.Companies.Queries.GetById.Query(order.VendorId);
-        var queryHandler = new RoyalERP.Sales.Companies.Queries.GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
-
-        var customer = queryHandler.Handle(customerQuery, _token).Result;
-        var vendor = queryHandler.Handle(vendorQuery, _token).Result;
-
-        customer.Should().NotBeNull();
-        customer!.Name.Should().Be(expected.CustomerName);
-        vendor.Should().NotBeNull();
-        vendor!.Name.Should().Be(expected.VendorName);
+        vendorResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var vendorContent = await vendorResponse.Content.ReadFromJsonAsync<CompanyDTO>();
+        vendorContent.Should().NotBeNull();
+        vendorContent!.Name.Should().Be(expected.VendorName);
 
     }
 
     [Fact]
-    public void Delete_ShouldReturnNotFound_WhenDoesntExist() {
+    public async Task Delete_ShouldReturnNotFound_WhenDoesntExist() {
 
         // Arrange
-        var orderId = Guid.NewGuid();
-        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
-        var request = new Delete.Command(orderId);
+        var client = CreateClientWithAuth();
 
         // Act
-        var response = handler.Handle(request, _token).Result;
+        var response = await client.DeleteAsync($"/orders/{Guid.NewGuid()}");
 
         // Assert
-        response.Should().BeOfType<NotFoundResult>();
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 
     [Fact]
-    public void Delete_ShouldReturnNoContent_WhenSuccessful() {
+    public async Task Cancel_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
-        var dto = CreateNew();
-
-        var handler = new Delete.Handler(CreateUOW(), new FakeLogger<Delete.Handler>());
-        var request = new Delete.Command(dto.Id);
-
-        var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
-        var getRequest = new GetById.Query(dto.Id);
+        var client = CreateClientWithAuth();
+        var expected = new NewOrder() {
+            Name = "Order Name",
+            Number = "OT123",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        };
+        var dto = await CreateNew(client, expected);
 
         // Act
-        var response = handler.Handle(request, _token).Result;
-        var getResponse = getHandler.Handle(getRequest, _token).Result;
+        var response = await client.PutAsync($"/orders/{dto.Id}/cancel", null);
+        var updated = await GetOrder(client, dto.Id);
 
         // Assert
-        response.Should().BeOfType<NoContentResult>();
-        getResponse.Should().BeNull();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updated.Status.Should().Be(OrderStatus.Cancelled);
 
     }
 
     [Fact]
-    public void Cancel_ShouldUpdateReturnOk_AndUpdateDb() {
+    public async Task Complete_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
-        var dto = CreateNew();
-
-        var handler = new CancelOrder.Handler(CreateUOW(), new FakeLogger<CancelOrder.Handler>());
-        var request = new CancelOrder.Command(dto.Id);
+        var client = CreateClientWithAuth();
+        var expected = new NewOrder() {
+            Name = "Order Name",
+            Number = "OT123",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        };
+        var dto = await CreateNew(client, expected);
 
         // Act
-        var response = handler.Handle(request, _token).Result;
-        var queried = GetOrder(dto.Id);
+        var response = await client.PutAsync($"/orders/{dto.Id}/complete", null);
+        var updated = await GetOrder(client, dto.Id);
 
         // Assert
-        response.Should().BeOfType<OkObjectResult>();
-        queried.Status.Should().Be(OrderStatus.Cancelled);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updated.Status.Should().Be(OrderStatus.Completed);
 
     }
 
     [Fact]
-    public void Complete_ShouldUpdateReturnOk() {
+    public async Task Confirm_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
-        var dto = CreateNew();
-
-        var handler = new CompleteOrder.Handler(CreateUOW(), new FakeLogger<CompleteOrder.Handler>());
-        var request = new CompleteOrder.Command(dto.Id);
-
-        // Act
-        var response = handler.Handle(request, _token).Result;
-        var queried = GetOrder(dto.Id);
-
-        // Assert
-        response.Should().BeOfType<OkObjectResult>();
-        queried.CompletedDate.Should().Be(DateTime.Today);
-        queried.Status.Should().Be(OrderStatus.Completed);
-
-    }
-
-    [Fact]
-    public void Confirm_ShouldUpdateReturnOk() {
-
-        // Arrange
-        var dto = CreateNew();
-
-        var handler = new ConfirmOrder.Handler(CreateUOW(), new FakeLogger<ConfirmOrder.Handler>());
-        var request = new ConfirmOrder.Command(dto.Id);
+        var client = CreateClientWithAuth();
+        var expected = new NewOrder() {
+            Name = "Order Name",
+            Number = "OT123",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        };
+        var dto = await CreateNew(client, expected);
 
         // Act
-        var response = handler.Handle(request, _token).Result;
-        var queried = GetOrder(dto.Id);
+        var response = await client.PutAsync($"/orders/{dto.Id}/confirm", null);
+        var updated = await GetOrder(client, dto.Id);
 
         // Assert
-        response.Should().BeOfType<OkObjectResult>();
-        queried.ConfirmedDate.Should().Be(DateTime.Today);
-        queried.Status.Should().Be(OrderStatus.Confirmed);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updated.Status.Should().Be(OrderStatus.Confirmed);
 
     }
 
-    private OrderDTO CreateNew() {
-
-        var fake = new Faker<NewOrder>()
-                .RuleFor(o => o.CustomerId, f => null)
-                .RuleFor(o => o.CustomerId, f => null)
-                .RuleFor(o => o.CustomerName, f => f.Company.CompanyName())
-                .RuleFor(o => o.VendorName, f => f.Company.CompanyName())
-                .RuleFor(o => o.Number, f => f.Random.Number(999999).ToString())
-                .RuleFor(o => o.Name, f => f.Name.FirstName());
-
-        var newOrder = fake.Generate();
-
-        var createHandler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
-        var createRequest = new Create.Command(newOrder);
-        var createResponse = createHandler.Handle(createRequest, _token).Result;
-        return (((CreatedResult)createResponse).Value as OrderDTO)!;
+    private static async Task<OrderDTO> GetOrder(HttpClient client, Guid id) {
+        var response = await client.GetAsync($"/orders/{id}");
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<OrderDTO>(responseBody);
+        return order!;
     }
 
-    private OrderDTO GetOrder(Guid id) {
-        var getHandler = new GetById.Handler(new SalesConnFactory(dbcontainer.ConnectionString));
-        var getRequest = new GetById.Query(id);
-        return getHandler.Handle(getRequest, _token).Result!;
+    private static async Task<OrderDTO> CreateNew(HttpClient client, NewOrder expected) {
+        var content = JsonContent.Create(expected);
+        var createResponse = await client.PostAsync("/orders", content);
+        createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var responseBody = await createResponse.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<OrderDTO>(responseBody);
+        return order!;
     }
 
 }

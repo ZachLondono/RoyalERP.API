@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RoyalERP.Common.Data;
 using RoyalERP.Common.Domain;
 using RoyalERP.Manufacturing;
@@ -9,14 +10,18 @@ using RoyalERP.Manufacturing.WorkOrders.DTO;
 using RoyalERP.Manufacturing.WorkOrders.Queries;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace RoyalERP_IntegrationTests.Manufacturing;
 
 public class WorkOrderTests : DbTests {
 
-    private readonly CancellationToken _token;
+    /*private readonly CancellationToken _token;
 
     public WorkOrderTests() {
 
@@ -140,23 +145,25 @@ public class WorkOrderTests : DbTests {
 
     }
 
-    private WorkOrderDTO CreateNew() {
-        var createHandler = new Create.Handler(CreateUOW(), new FakeLogger<Create.Handler>());
-        var createRequest = new Create.Command(new() { CustomerName = "A", Name = "B", Number = "C", VendorName = "D" });
-        var createResponse = createHandler.Handle(createRequest, _token).Result;
-        return (((CreatedResult)createResponse).Value as WorkOrderDTO)!;
-    }
-
-    private WorkOrderDTO GetOrder(Guid id) {
-        var getHandler = new GetById.Handler(new ManufConnFactory(dbcontainer.ConnectionString));
-        var getRequest = new GetById.Query(id);
-        var getResponse = getHandler.Handle(getRequest, _token).Result;
-        return (((OkObjectResult)getResponse).Value as WorkOrderDTO)!;
-    }
-
     private IManufacturingUnitOfWork CreateUOW() {
         var factory = new ManufConnFactory(dbcontainer.ConnectionString);
         return new ManufacturingUnitOfWork(factory, new FakeLogger<UnitOfWork>(), new FakePublisher(), (conn, trx) => new WorkOrderRepository(new DapperConnection(conn), trx));
+    }*/
+
+    private static async Task<WorkOrderDTO> GetOrder(HttpClient client, Guid id) {
+        var response = await client.GetAsync($"/orders/{id}");
+        var responseBody = await response.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<WorkOrderDTO>(responseBody);
+        return order!;
+    }
+
+    private static async Task<WorkOrderDTO> CreateNew(HttpClient client, NewWorkOrder expected) {
+        var content = JsonContent.Create(expected);
+        var createResponse = await client.PostAsync("/orders", content);
+        createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var responseBody = await createResponse.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<WorkOrderDTO>(responseBody);
+        return order!;
     }
 
 }
