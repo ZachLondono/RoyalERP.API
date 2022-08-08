@@ -133,6 +133,7 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        // TODO: check that it is nolonger accessible
 
     }
 

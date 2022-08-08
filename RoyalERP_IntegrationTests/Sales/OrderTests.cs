@@ -115,6 +115,7 @@ public class OrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         updated.Status.Should().Be(OrderStatus.Cancelled);
+        // TODO: check that it is nolonger accessible
 
     }
 

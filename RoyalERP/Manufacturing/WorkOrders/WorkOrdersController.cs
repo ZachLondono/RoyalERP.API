@@ -18,6 +18,12 @@ public class WorkOrdersController {
         _sender = sender;
     }
 
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(WorkOrderDTO))]
+    public Task<IActionResult> Create([FromBody] NewWorkOrder newWorkOrder) {
+        return _sender.Send(new Create.Command(newWorkOrder));
+    }
+
     [HttpPut]
     [Route("{workorderId}/release")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
