@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
 using RoyalERP.Common.Data;
 using RoyalERP.Common.Domain;
 using RoyalERP.Manufacturing;
@@ -10,13 +9,12 @@ using RoyalERP.Manufacturing.WorkOrders.DTO;
 using RoyalERP.Manufacturing.WorkOrders.Queries;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
-using System.Data;
 using System.Threading;
 using Xunit;
 
 namespace RoyalERP_IntegrationTests.Manufacturing;
 
-public sealed partial class WorkOrderTests : DbTests {
+public class WorkOrderTests : DbTests {
 
     private readonly CancellationToken _token;
 
@@ -159,19 +157,6 @@ public sealed partial class WorkOrderTests : DbTests {
     private IManufacturingUnitOfWork CreateUOW() {
         var factory = new ManufConnFactory(dbcontainer.ConnectionString);
         return new ManufacturingUnitOfWork(factory, new FakeLogger<UnitOfWork>(), new FakePublisher(), (conn, trx) => new WorkOrderRepository(new DapperConnection(conn), trx));
-    }
-
-    private class ManufConnFactory : IManufacturingConnectionFactory {
-
-        private readonly string _connString;
-        public ManufConnFactory(string connString) {
-            _connString = connString;
-        }
-
-        public IDbConnection CreateConnection() {
-            return new NpgsqlConnection(_connString);
-        }
-
     }
 
 }

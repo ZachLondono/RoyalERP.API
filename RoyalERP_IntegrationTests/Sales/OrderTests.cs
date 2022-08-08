@@ -11,7 +11,7 @@ using RoyalERP_IntegrationTests.Infrastructure;
 
 namespace RoyalERP_IntegrationTests.Sales;
 
-public sealed partial class OrderTests : SalesTests {
+public class OrderTests : SalesTests {
 
     [Fact]
     public void Create_ShouldReturnNewOrder() {
