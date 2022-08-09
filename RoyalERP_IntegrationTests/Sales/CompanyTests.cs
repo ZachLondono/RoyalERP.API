@@ -1,20 +1,7 @@
 ﻿using Bogus;
 using FluentAssertions;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
-using RoyalERP;
-using RoyalERP.Common.Data;
-using RoyalERP.Manufacturing;
-using RoyalERP.Sales;
-using RoyalERP.Sales.Companies;
-using RoyalERP.Sales.Companies.Commands;
 using RoyalERP.Sales.Companies.DTO;
-using RoyalERP.Sales.Companies.Queries;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Net;
@@ -72,8 +59,44 @@ public class CompanyTests : DbTests {
 
     }
 
-    // TODO: get should return not found
-    // TODO: get should return created company
+    [Fact]
+    public async Task Get_ShouldReturnNotFound() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.GetAsync($"/companies/{Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task Get_ShouldReturnExistingCompany() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var company = faker.Generate();
+        var json = JsonConvert.SerializeObject(company);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var expectedStr = await createResponse.Content.ReadAsStringAsync();
+        var expected = JsonConvert.DeserializeObject<CompanyDTO>(expectedStr);
+
+        // Act
+        var response = await client.GetAsync($"/companies/{expected!.Id}");
+
+        // Assert
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var actual = JsonConvert.DeserializeObject<CompanyDTO>(responseContent);
+
+        actual.Should().NotBeNull();
+        actual.Should().BeEquivalentTo(expected);
+
+    }
 
     [Fact]
     public async Task Create_ShouldReturnNewCompany() {
@@ -133,7 +156,9 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // TODO: check that it is nolonger accessible
+
+        var check = await client.GetAsync($"/companies/{actual.Id}");
+        check.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 

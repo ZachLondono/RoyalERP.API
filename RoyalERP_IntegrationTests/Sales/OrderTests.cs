@@ -1,12 +1,8 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Sales.Orders.Commands;
 using RoyalERP.Sales.Orders.Domain;
 using RoyalERP.Sales.Orders.DTO;
 using System;
 using Xunit;
-using RoyalERP.Sales.Orders.Queries;
-using Bogus;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System.Net.Http.Json;
 using System.Net;
@@ -18,6 +14,20 @@ using Newtonsoft.Json;
 namespace RoyalERP_IntegrationTests.Sales;
 
 public class OrderTests : DbTests {
+
+    [Fact]
+    public async Task Get_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.GetAsync($"/orders/{Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
 
     [Fact]
     public async Task Create_ShouldReturnNewOrder() {
@@ -96,6 +106,29 @@ public class OrderTests : DbTests {
     }
 
     [Fact]
+    public async Task Delete_ShouldReturnNoContent_WhenDeleted() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var neworder = new NewOrder() {
+            Name = "Order Name",
+            Number = "OT123",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        };
+        var dto = await CreateNew(client, neworder);
+
+        // Act
+        var response = await client.DeleteAsync($"/orders/{dto.Id}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var check = await client.GetAsync($"/orders/{dto.Id}");
+        check.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
     public async Task Cancel_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
@@ -143,6 +176,20 @@ public class OrderTests : DbTests {
     }
 
     [Fact]
+    public async Task Complete_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/orders/{Guid.NewGuid()}/complete", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
     public async Task Confirm_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
@@ -162,6 +209,20 @@ public class OrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         updated.Status.Should().Be(OrderStatus.Confirmed);
+
+    }
+
+    [Fact]
+    public async Task Confirm_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/orders/{Guid.NewGuid()}/confirm", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 

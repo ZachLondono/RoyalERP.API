@@ -1,19 +1,12 @@
 ﻿using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using RoyalERP.Common.Data;
-using RoyalERP.Common.Domain;
-using RoyalERP.Manufacturing;
-using RoyalERP.Manufacturing.WorkOrders.Commands;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
 using RoyalERP.Manufacturing.WorkOrders.DTO;
-using RoyalERP.Manufacturing.WorkOrders.Queries;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -53,7 +46,22 @@ public class WorkOrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
-        // TODO: check that it is nolonger accessible
+        var check = await client.GetAsync($"/workorders/{dto.Id}");
+        check.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task Cancel_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/workorders/{Guid.NewGuid()}/cancel", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 
@@ -75,7 +83,22 @@ public class WorkOrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // TODO: check that get returns updated status
+        var order = await GetOrder(client, dto.Id);
+        order.Status.Should().Be(WorkOrderStatus.Cancelled);
+    }
+
+    [Fact]
+    public async Task Fulfill_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/workorders/{Guid.NewGuid()}/fulfill", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
     }
 
     [Fact]
@@ -96,7 +119,22 @@ public class WorkOrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // TODO: check that get returns updated status
+        var order = await GetOrder(client, dto.Id);
+        order.Status.Should().Be(WorkOrderStatus.Fulfilled);
+
+    }
+
+    [Fact]
+    public async Task Release_ShouldReturnNotFound_WhenIdDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/workorders/{Guid.NewGuid()}/release", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 
@@ -118,11 +156,12 @@ public class WorkOrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // TODO: check that get returns updated status
+        var order = await GetOrder(client, dto.Id);
+        order.Status.Should().Be(WorkOrderStatus.InProgress);
 
     }
 
-    /*[Fact]
+    [Fact]
     public async Task Schedule_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
@@ -133,15 +172,20 @@ public class WorkOrderTests : DbTests {
             CustomerName = "Customer Name",
             VendorName = "Vendor Name"
         });
+        var scheduledDate = DateTime.Today;
+        var content = JsonContent.Create(new WorkOrderSchedule() {
+            ScheduledDate = scheduledDate
+        });
 
         // Act
-        var response = await client.PutAsync($"/workorders/{dto.Id}/schedule", null);
+        var response = await client.PutAsync($"/workorders/{dto.Id}/schedule", content) ;
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        // TODO: check that get returns updated status
+        var order = await GetOrder(client, dto.Id);
+        order.ScheduledDate.Should().Be(scheduledDate);
 
-    }*/
+    }
 
     private static async Task<WorkOrderDTO> GetOrder(HttpClient client, Guid id) {
         var response = await client.GetAsync($"/workorders/{id}");
