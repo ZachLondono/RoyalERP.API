@@ -7,6 +7,18 @@ CREATE TABLE sales.companies (
     CONSTRAINT companies_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE sale.addresses (
+    id uuid NOT NULL,
+    companyid uuid NOT NULL REFERENCES sales.companies (id) ON DELETE CASCADE,
+    line1 character varying(255),
+    line2 character varying(255),
+    line3 character varying(255),
+    city character varying(255),
+    state character varying(255),
+    zip character varying(255)
+    CONSTRAINT addresses_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE sales.orders (
     id uuid NOT NULL,
     version integer NOT NULL DEFAULT 0,
