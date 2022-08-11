@@ -4,6 +4,8 @@ CREATE TABLE sales.companies (
     id uuid NOT NULL,
     version integer NOT NULL DEFAULT 0,
     name character varying(255) NOT NULL,
+    contact character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
     CONSTRAINT companies_pkey PRIMARY KEY (id)
 );
 
