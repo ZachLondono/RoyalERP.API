@@ -6,7 +6,7 @@ namespace RoyalERP.Sales.Companies.Queries;
 
 public class GetById {
 
-    public record Query(Guid ComapnyId) : IRequest<CompanyDTO?>;
+    public record Query(Guid CompanyId) : IRequest<CompanyDTO?>;
 
     public class Handler : IRequestHandler<Query, CompanyDTO?> {
 
@@ -18,13 +18,33 @@ public class GetById {
 
         public async Task<CompanyDTO?> Handle(Query request, CancellationToken cancellationToken) {
 
-            const string query = "SELECT id, version, name FROM sales.companies WHERE id = @Id;";
+            const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
+                                FROM sales.companies
+                                LEFT JOIN sales.addresses
+                                ON sales.companies.id = sales.addresses.companyid
+                                WHERE sales.companies.id = @Id;";
+
 
             var connection = _connectionFactory.CreateConnection();
 
-            var company = await connection.QuerySingleOrDefaultAsync<CompanyDTO?>(query, param: new { Id = request.ComapnyId });
+            var data = await connection.QuerySingleOrDefaultAsync<CompanyData?>(query, param: new { Id = request.CompanyId });
+            if (data is null) return null;
 
-            return company;
+            return new CompanyDTO() {
+                Id = data.Id,
+                Version = data.Version,
+                Name = data.Name,
+                Contact = data.Contact,
+                Email = data.Email,
+                Address = new() {
+                    Line1 = data.Line1,
+                    Line2 = data.Line2,
+                    Line3 = data.Line3,
+                    City = data.City,
+                    State = data.State,
+                    Zip = data.Zip,
+                }
+            };
 
         }
 

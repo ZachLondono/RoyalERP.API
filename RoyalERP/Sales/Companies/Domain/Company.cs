@@ -39,7 +39,7 @@ public class Company : AggregateRoot {
         Address.City = city;
         Address.State = state;
         Address.Zip = zip;
-        AddEvent(new Events.CompanyAddressUpdatedEvent(Id, Address.Id, line1, line2, line3, city, state, zip));
+        AddEvent(new Events.CompanyAddressUpdatedEvent(Id, line1, line2, line3, city, state, zip));
     }
 
 }

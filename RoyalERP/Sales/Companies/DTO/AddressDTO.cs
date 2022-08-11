@@ -1,6 +1,6 @@
-﻿namespace RoyalERP.Sales.Companies.Domain;
+﻿namespace RoyalERP.Sales.Companies.DTO;
 
-public class Address {
+public class AddressDTO {
 
     public string Line1 { get; set; } = string.Empty;
 
