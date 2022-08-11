@@ -9,4 +9,8 @@ public static class Events {
 
     public record CompanyCreatedEvent(Guid CompanyId, string Name) : CompanyEvent(CompanyId);
 
+    public record CompanyUpdatedEvent(Guid CompanyId, string Name, string Contact, string Email) : CompanyEvent(CompanyId);
+
+    public record CompanyAddressUpdatedEvent(Guid CompanyId, Guid AddressId, string Line1, string Line2, string Line3, string City, string State, string Zip) : CompanyEvent(CompanyId);
+
 }
