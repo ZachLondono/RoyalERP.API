@@ -20,11 +20,21 @@ public class GetAll {
 
         public async Task<IActionResult> Handle(Query request, CancellationToken cancellationToken) {
 
-            const string query = "SELECT id, version, name FROM sales.companies;";
-
             var connection = _connectionFactory.CreateConnection();
 
-            var companies = await connection.QueryAsync<CompanyDTO>(query);
+            const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
+                                FROM sales.companies
+                                LEFT JOIN sales.addresses
+                                ON sales.companies.id = sales.addresses.companyid;";
+
+            var companies =  await connection.QueryAsync<CompanyDTO, AddressDTO, CompanyDTO>(query, map: (c, a) => new() {
+                Id = c.Id,
+                Version = c.Version,
+                Name = c.Name,
+                Contact = c.Contact,
+                Email = c.Email,
+                Address = a
+            });
 
             return new OkObjectResult(companies);
 

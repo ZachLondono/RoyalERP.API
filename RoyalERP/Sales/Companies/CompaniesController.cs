@@ -41,6 +41,22 @@ public class CompaniesController : ControllerBase {
     }
 
     [Route("{companyId}")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> UpdateCompany(Guid companyId, [FromBody] UpdateCompany update) {
+        return _sender.Send(new Update.Command(companyId, update));
+    }
+
+    [Route("{companyId}/address")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> UpdateAddress(Guid companyId, [FromBody] UpdateAddress update) {
+        return _sender.Send(new UpdateCompanyAddress.Command(companyId, update));
+    }
+
+    [Route("{companyId}")]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

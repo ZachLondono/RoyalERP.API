@@ -6,6 +6,7 @@ using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -119,6 +120,87 @@ public class CompanyTests : DbTests {
 
         actual.Should().NotBeNull();
         actual!.Name.Should().Be(expected.Name);
+
+    }
+
+    [Fact]
+    public async Task Update_ShouldChangeCompany() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        string newName = "New Name";
+        string newContact = "New Contact";
+        string newEmail = "New Email";
+
+        var update = JsonContent.Create(new UpdateCompany() {
+            Name = newName,
+            Contact = newContact,
+            Email = newEmail
+        });
+
+        // Act
+        var response = await client.PutAsync($"/companies/{newOrder!.Id}", update);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Name.Should().Be(newName);
+        updatedCompany.Contact.Should().Be(newContact);
+        updatedCompany.Email.Should().Be(newEmail);
+
+    }
+
+    [Fact]
+    public async Task UpdateAddress_ShouldChangeCompanyAddress() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        string newLine1 = "new Line 1";
+        string newLine2 = "new Line 2";
+        string newLine3 = "new Line 3";
+        string newCity = "City";
+        string newState = "State";
+        string newZip = "Zip";
+
+        var update = JsonContent.Create(new UpdateAddress() {
+            Line1 = newLine1,
+            Line2 = newLine2,
+            Line3 = newLine3,
+            City = newCity,
+            State = newState,
+            Zip = newZip,
+        });
+
+        // Act
+        var response = await client.PutAsync($"/companies/{newOrder!.Id}/address", update);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Address.Line1.Should().Be(newLine1);
+        updatedCompany.Address.Line2.Should().Be(newLine2);
+        updatedCompany.Address.Line3.Should().Be(newLine3);
+        updatedCompany.Address.City.Should().Be(newCity);
+        updatedCompany.Address.State.Should().Be(newState);
+        updatedCompany.Address.Zip.Should().Be(newZip);
 
     }
 
