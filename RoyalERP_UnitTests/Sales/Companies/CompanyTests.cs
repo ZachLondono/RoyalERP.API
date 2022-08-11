@@ -41,7 +41,8 @@ public class CompanyTests {
         company.Email.Should().Be(newEmail);
         company.Events.Should().HaveCount(2);
         company.Events.Should().ContainSingle(x =>
-            ((Events.CompanyUpdatedEvent)x).CompanyId == company.Id 
+            x is Events.CompanyUpdatedEvent
+            && ((Events.CompanyUpdatedEvent)x).CompanyId == company.Id 
             && ((Events.CompanyUpdatedEvent)x).Name == company.Name
             && ((Events.CompanyUpdatedEvent)x).Contact == company.Contact
             && ((Events.CompanyUpdatedEvent)x).Email == company.Email
@@ -74,7 +75,8 @@ public class CompanyTests {
         company.Address.Zip.Should().Be(zip);
         company.Events.Should().HaveCount(2);
         company.Events.Should().ContainSingle(x =>
-            ((Events.CompanyAddressUpdatedEvent)x).Line1 == company.Address.Line1
+            x is Events.CompanyAddressUpdatedEvent
+            && ((Events.CompanyAddressUpdatedEvent)x).Line1 == company.Address.Line1
             && ((Events.CompanyAddressUpdatedEvent)x).Line2 == company.Address.Line2
             && ((Events.CompanyAddressUpdatedEvent)x).Line3 == company.Address.Line3
             && ((Events.CompanyAddressUpdatedEvent)x).City == company.Address.City
