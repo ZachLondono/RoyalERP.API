@@ -34,7 +34,7 @@ public class CompleteOrder {
 
             _logger.LogTrace("Completed order with id {OrderId}", request.OrderId);
 
-            return new OkObjectResult(new OrderDTO() {
+            return new OkObjectResult(new OrderDetails() {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,

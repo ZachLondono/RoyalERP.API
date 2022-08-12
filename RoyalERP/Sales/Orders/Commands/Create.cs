@@ -33,7 +33,7 @@ public class Create {
 
             _logger.LogTrace("Created order with id {OrderId}", order.Id);
 
-            return new CreatedResult($"/orders/{order.Id}", new OrderDTO() {
+            return new CreatedResult($"/orders/{order.Id}", new OrderDetails() {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,

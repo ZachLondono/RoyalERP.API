@@ -49,7 +49,7 @@ public class OrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
         var responseContent = await response.Content.ReadAsStringAsync();
-        var order = JsonConvert.DeserializeObject<OrderDTO>(responseContent);
+        var order = JsonConvert.DeserializeObject<OrderDetails>(responseContent);
         order.Should().NotBeNull();
 
         order!.Name.Should().BeEquivalentTo(expected.Name);
@@ -226,19 +226,19 @@ public class OrderTests : DbTests {
 
     }
 
-    private static async Task<OrderDTO> GetOrder(HttpClient client, Guid id) {
+    private static async Task<OrderDetails> GetOrder(HttpClient client, Guid id) {
         var response = await client.GetAsync($"/orders/{id}");
         var responseBody = await response.Content.ReadAsStringAsync();
-        var order = JsonConvert.DeserializeObject<OrderDTO>(responseBody);
+        var order = JsonConvert.DeserializeObject<OrderDetails>(responseBody);
         return order!;
     }
 
-    private static async Task<OrderDTO> CreateNew(HttpClient client, NewOrder expected) {
+    private static async Task<OrderDetails> CreateNew(HttpClient client, NewOrder expected) {
         var content = JsonContent.Create(expected);
         var createResponse = await client.PostAsync("/orders", content);
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         var responseBody = await createResponse.Content.ReadAsStringAsync();
-        var order = JsonConvert.DeserializeObject<OrderDTO>(responseBody);
+        var order = JsonConvert.DeserializeObject<OrderDetails>(responseBody);
         return order!;
     }
 

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
+using RoyalERP.Sales.Orders.DTO;
 using System.Data;
 
 namespace RoyalERP.Sales.Orders.Domain;
@@ -34,17 +35,26 @@ public class OrderRepository : IOrderRepository {
 
     public Task<IEnumerable<Order>> GetAllAsync() {
 
+        // TODO: get ordered items for each order
+
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders;";
 
         return _connection.QueryAsync<Order>(query, transaction: _transaction);
 
     }
 
-    public Task<Order?> GetAsync(Guid id) {
+    public async Task<Order?> GetAsync(Guid id) {
 
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders WHERE id = @Id;";
+        const string itemQuery = "SELECT id, orderid, productname, properties FROM sales.orderitems WHERE orderid = @OrderId;";
 
-        return _connection.QuerySingleOrDefaultAsync<Order?>(query, transaction: _transaction, param: new { Id = id });
+        var order = await _connection.QuerySingleOrDefaultAsync<OrderSummary?>(query, transaction: _transaction, param: new { Id = id });
+
+        if (order is null) return null;
+
+        var items = await _connection.QueryAsync<OrderedItem>(itemQuery, transaction: _transaction, param: new { OrderId = order.Id });
+
+        return new Order(order.Id, 0, order.Number, order.Name, order.Status, order.CustomerId, order.VendorId, new(items), order.PlacedDate, order.ConfirmedDate, order.CompletedDate);
 
     }
 

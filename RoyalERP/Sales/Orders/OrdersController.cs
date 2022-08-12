@@ -19,14 +19,14 @@ public class OrdersController : ControllerBase {
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(OrderDTO))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(OrderDetails))]
     public Task<IActionResult> Create([FromBody] NewOrder newOrder) {
         return _sender.Send(new Create.Command(newOrder));
     }
 
     [HttpPut]
     [Route("{orderId}/confirm")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IActionResult> Confirm(Guid orderId) {
         return _sender.Send(new ConfirmOrder.Command(orderId));
@@ -34,7 +34,7 @@ public class OrdersController : ControllerBase {
 
     [HttpPut]
     [Route("{orderId}/complete")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IActionResult> Complete(Guid orderId) {
         return _sender.Send(new CompleteOrder.Command(orderId));
@@ -42,21 +42,21 @@ public class OrdersController : ControllerBase {
 
     [HttpPut]
     [Route("{orderId}/cancel")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IActionResult> Cancel(Guid orderId) {
         return _sender.Send(new CancelOrder.Command(orderId));
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderDTO>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<OrderSummary>))]
     public Task<IActionResult> GetAll() {
         return _sender.Send(new GetAll.Query());
     }
 
     [Route("{orderId}")]
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDTO))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid orderId) {
         var order = await _sender.Send(new GetById.Query(orderId));

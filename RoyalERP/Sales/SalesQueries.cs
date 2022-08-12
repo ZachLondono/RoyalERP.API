@@ -12,7 +12,7 @@ public class SalesQueries {
         _sender = sender;
     }
 
-    public Task<OrderDTO?> GetByOrderId(Guid id) {
+    public Task<OrderDetails?> GetByOrderId(Guid id) {
         return _sender.Send(new Orders.Queries.GetById.Query(id));
     }
 

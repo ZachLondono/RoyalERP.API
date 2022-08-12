@@ -34,7 +34,17 @@ public class AddItemToOrder {
 
             _logger.LogTrace("Added new item to order {OrderId} with id {OrderedItemId}", request.OrderId, newitem.Id);
 
-            return new OkObjectResult(new OrderDTO() {
+            var items = new List<OrderedItemDTO>();
+            foreach (var item in order.Items) {
+                items.Add(new OrderedItemDTO() {
+                    Id = item.Id,
+                    ProductName = item.ProductName,
+                    Quantity = item.Quantity,
+                    Properties = item.Properties,
+                });
+            }
+
+            return new OkObjectResult(new OrderDetails() {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,
@@ -43,7 +53,8 @@ public class AddItemToOrder {
                 PlacedDate = order.PlacedDate,
                 ConfirmedDate = order.ConfirmedDate,
                 CompletedDate = order.CompletedDate,
-                Status = order.Status
+                Status = order.Status,
+                Items = items
             });
 
         }
