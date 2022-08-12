@@ -18,12 +18,13 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public async Task AddAsync(WorkOrder entity) {
 
-        const string command = "INSERT INTO manufacturing.workorders (id, number, name, customername, vendorname, status) values (@Id, @Number, @Name, @CustomerName, @VendorName, @Status);";
+        const string command = "INSERT INTO manufacturing.workorders (id, number, name, note, customername, vendorname, status) values (@Id, @Number, @Name, @Note, @CustomerName, @VendorName, @Status);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
             entity.Id,
             entity.Name,
             entity.Number,
+            entity.Note,
             entity.CustomerName, 
             entity.VendorName,
             Status = entity.Status.ToString()
@@ -33,7 +34,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<IEnumerable<WorkOrder>> GetAllAsync() {
 
-        const string query = "SELECT id, version, number, name, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders;";
+        const string query = "SELECT id, version, number, name, note, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders;";
 
         return _connection.QueryAsync<WorkOrder>(query, transaction: _transaction);
 
@@ -41,7 +42,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<WorkOrder?> GetAsync(Guid id) {
 
-        const string query = "SELECT id, version, number, name, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders WHERE id = @Id;";
+        const string query = "SELECT id, version, number, name, note, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<WorkOrder?>(query, transaction: _transaction, param: new { Id = id });
 
@@ -63,41 +64,50 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
             if (domainEvent is Events.WorkOrderReleasedEvent released) {
 
-                const string command = "UPDATE manufacturing.workorders SET status = @Status, releaseddate = @ReleasedDate WHERE id = @OrderId;";
+                const string command = "UPDATE manufacturing.workorders SET status = @Status, releaseddate = @ReleasedDate WHERE id = @WorkOrderId;";
 
                 await _connection.ExecuteAsync(command,param: new {
-                    released.OrderId,
+                    released.WorkOrderId,
                     entity.ReleasedDate,
                     Status = WorkOrderStatus.InProgress.ToString()
                 }, _transaction);
 
             } else if (domainEvent is Events.WorkOrderFulfilledEvent fulfilled) {
 
-                const string command = "UPDATE manufacturing.workorders SET status = @Status, fulfilleddate = @FulfilledDate WHERE id = @OrderId;";
+                const string command = "UPDATE manufacturing.workorders SET status = @Status, fulfilleddate = @FulfilledDate WHERE id = @WorkOrderId;";
 
                 await _connection.ExecuteAsync(command, param: new {
-                    fulfilled.OrderId,
+                    fulfilled.WorkOrderId,
                     entity.FulfilledDate,
                     Status = WorkOrderStatus.Fulfilled.ToString()
                 }, _transaction);
 
             } else if (domainEvent is Events.WorkOrderScheduledEvent scheduled) {
 
-                const string command = "UPDATE manufacturing.workorders SET scheduleddate = @ScheduledDate WHERE id = @OrderId;";
+                const string command = "UPDATE manufacturing.workorders SET scheduleddate = @ScheduledDate WHERE id = @WorkOrderId;";
 
                 await _connection.ExecuteAsync(command, param: new {
-                    scheduled.OrderId,
+                    scheduled.WorkOrderId,
                     scheduled.ScheduledDate
                 }, _transaction);
 
 
             } else if (domainEvent is Events.WorkOrderCanceledEvent canceled) {
 
-                const string command = "UPDATE manufacturing.workorders SET status = @Status WHERE id = @OrderId;";
+                const string command = "UPDATE manufacturing.workorders SET status = @Status WHERE id = @WorkOrderId;";
 
                 await _connection.ExecuteAsync(command, param: new {
-                    canceled.OrderId,
+                    canceled.WorkOrderId,
                     Status = WorkOrderStatus.Cancelled.ToString()
+                }, _transaction);
+
+            } else if (domainEvent is Events.WorkOrderNoteSet note) {
+
+                const string command = "UPDATE manufacturing.workorders SET note = @Note WHERE id = @WorkOrderId;";
+
+                await _connection.ExecuteAsync(command, param: new {
+                    note.WorkOrderId,
+                    note.Note,
                 }, _transaction);
 
             }

@@ -13,6 +13,8 @@ public class WorkOrder : AggregateRoot {
 
     public string VendorName { get; private set; }
 
+    public string Note { get; private set; }
+
     public DateTime? ReleasedDate { get; private set; }
     
     public DateTime? ScheduledDate { get; private set; }
@@ -22,19 +24,20 @@ public class WorkOrder : AggregateRoot {
     public WorkOrderStatus Status { get; private set; }
 
     public WorkOrder(Guid id, int version,
-                    string number, string name, string customerName, string vendorName,
+                    string number, string name, string note, string customerName, string vendorName,
                     WorkOrderStatus status, DateTime? releasedDate, DateTime? scheduledDate, DateTime? fulfilledDate) : base(id, version) {
         Number = number;
         Name = name;
         CustomerName = customerName;
         VendorName = vendorName;
+        Note = note;
         Status = status;
         ReleasedDate = releasedDate;
         ScheduledDate = scheduledDate;
         FulfilledDate = fulfilledDate;
     }
 
-    private WorkOrder(string number, string name, string customerName, string vendorName) : this(Guid.NewGuid(), 0, number, name, customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
+    private WorkOrder(string number, string name, string customerName, string vendorName) : this(Guid.NewGuid(), 0, number, name, "", customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
         AddEvent(new Events.WorkOrderCreatedEvent(Id, number, name));
     }
 
@@ -72,6 +75,11 @@ public class WorkOrder : AggregateRoot {
     public void Cancel() {
         Status = WorkOrderStatus.Cancelled;
         AddEvent(new Events.WorkOrderCanceledEvent(Id));
+    }
+
+    public void SetNote(string note) {
+        Note = note;
+        AddEvent(new Events.WorkOrderNoteSet(Id, note));
     }
 
 }

@@ -5,6 +5,7 @@ CREATE TABLE manufacturing.workorders (
     version integer NOT NULL DEFAULT 0,
     number character varying(255) NOT NULL,
     name character varying(255) NOT NULL,
+    note character varying(255) NOT NULL,
     customername character varying(255) NOT NULL,
     vendorname character varying(255) NOT NULL,
     releaseddate timestamp with time zone,

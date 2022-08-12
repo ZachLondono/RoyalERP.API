@@ -187,6 +187,34 @@ public class WorkOrderTests : DbTests {
 
     }
 
+
+
+    [Fact]
+    public async Task SetNote_ShouldUpdateNote() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var dto = await CreateNew(client, new() {
+            Number = "OT123",
+            Name = "ABC's Order",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        });
+        string note = "Order Note";
+        var content = JsonContent.Create(new WorkOrderNote() {
+            Note = note
+        });
+
+        // Act
+        var response = await client.PutAsync($"/workorders/{dto.Id}/note", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var order = await GetOrder(client, dto.Id);
+        order.Note.Should().Be(note);
+
+    }
+
     private static async Task<WorkOrderDTO> GetOrder(HttpClient client, Guid id) {
         var response = await client.GetAsync($"/workorders/{id}");
         var responseBody = await response.Content.ReadAsStringAsync();

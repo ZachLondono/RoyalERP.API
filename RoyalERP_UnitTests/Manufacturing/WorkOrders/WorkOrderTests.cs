@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Bogus;
+using FluentAssertions;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
 using System;
 using Xunit;
@@ -25,7 +26,7 @@ public class WorkOrderTests {
         order.Name.Should().Be(name);
         order.Number.Should().Be(number);
         order.Status.Should().Be(WorkOrderStatus.Pending);
-        order.Events.Should().ContainSingle(x => ((Events.WorkOrderCreatedEvent) x).OrderId == order.Id
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderCreatedEvent) x).WorkOrderId == order.Id
                                                 && ((Events.WorkOrderCreatedEvent)x).Number == number
                                                 && ((Events.WorkOrderCreatedEvent)x).Name == name);
 
@@ -39,7 +40,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, customername, vendorname, WorkOrderStatus.Pending, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0,number, name, "", customername, vendorname, WorkOrderStatus.Pending, null, null, null);
 
         // Act
         order.Release();
@@ -48,7 +49,7 @@ public class WorkOrderTests {
         order.Should().NotBeNull();
         order.ReleasedDate.Should().Be(DateTime.Today);
         order.Status.Should().Be(WorkOrderStatus.InProgress);
-        order.Events.Should().ContainSingle(x => ((Events.WorkOrderReleasedEvent)x).OrderId == order.Id);
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderReleasedEvent)x).WorkOrderId == order.Id);
 
     }
 
@@ -60,7 +61,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.InProgress, null, null, null);
 
         // Act
         order.Schedule(DateTime.Today);
@@ -69,7 +70,7 @@ public class WorkOrderTests {
         order.Should().NotBeNull();
         order.ScheduledDate.Should().Be(DateTime.Today);
         order.Status.Should().Be(WorkOrderStatus.InProgress);
-        order.Events.Should().ContainSingle(x => ((Events.WorkOrderScheduledEvent)x).OrderId == order.Id);
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderScheduledEvent)x).WorkOrderId == order.Id);
 
     }
 
@@ -81,7 +82,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Pending, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.Pending, null, null, null);
 
         // Act
         order.Fulfill();
@@ -91,8 +92,8 @@ public class WorkOrderTests {
         order.ReleasedDate.Should().Be(DateTime.Today);
         order.FulfilledDate.Should().Be(DateTime.Today);
         order.Status.Should().Be(WorkOrderStatus.Fulfilled);
-        order.Events.Should().ContainSingle(x => x is Events.WorkOrderReleasedEvent && ((Events.WorkOrderReleasedEvent)x).OrderId == order.Id);
-        order.Events.Should().ContainSingle(x => x is Events.WorkOrderFulfilledEvent && ((Events.WorkOrderFulfilledEvent)x).OrderId == order.Id);
+        order.Events.Should().ContainSingle(x => x is Events.WorkOrderReleasedEvent && ((Events.WorkOrderReleasedEvent)x).WorkOrderId == order.Id);
+        order.Events.Should().ContainSingle(x => x is Events.WorkOrderFulfilledEvent && ((Events.WorkOrderFulfilledEvent)x).WorkOrderId == order.Id);
 
     }
 
@@ -104,7 +105,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
 
         // Act
         order.Fulfill();
@@ -113,7 +114,7 @@ public class WorkOrderTests {
         order.Should().NotBeNull();
         order.FulfilledDate.Should().Be(DateTime.Today);
         order.Status.Should().Be(WorkOrderStatus.Fulfilled);
-        order.Events.Should().ContainSingle(x => ((Events.WorkOrderFulfilledEvent)x).OrderId == order.Id);
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderFulfilledEvent)x).WorkOrderId == order.Id);
 
     }
 
@@ -125,7 +126,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.InProgress, DateTime.Today, null, null);
 
         // Act
         order.Cancel();
@@ -133,7 +134,7 @@ public class WorkOrderTests {
         // Assert
         order.Should().NotBeNull();
         order.Status.Should().Be(WorkOrderStatus.Cancelled);
-        order.Events.Should().ContainSingle(x => ((Events.WorkOrderCanceledEvent)x).OrderId == order.Id);
+        order.Events.Should().ContainSingle(x => ((Events.WorkOrderCanceledEvent)x).WorkOrderId == order.Id);
 
     }
 
@@ -145,7 +146,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Release();
@@ -163,7 +164,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Schedule(DateTime.Today);
@@ -181,7 +182,7 @@ public class WorkOrderTests {
         string name = "Order Name";
         string customername = "Company A";
         string vendorname = "Company B";
-        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
+        var order = new WorkOrder(Guid.NewGuid(), 0, number, name, "", customername, vendorname, WorkOrderStatus.Cancelled, null, null, null);
 
         // Act
         static void action(WorkOrder o) => o.Fulfill();
@@ -190,4 +191,23 @@ public class WorkOrderTests {
         Assert.Throws<CantUpdateOrderException>(() => action(order));
 
     }
+
+    [Fact]
+    public void SetNote_ShouldUpdateNote_AndAddEvent() {
+
+        // Arrange
+        var order = new WorkOrder(Guid.NewGuid(), 0, "", "", "", "", "", WorkOrderStatus.Cancelled, null, null, null);
+        var note = new Faker().Random.Words();
+
+        // Act
+        order.SetNote(note);
+
+        // Assert
+        order.Note.Should().Be(note);
+        order.Events.Should().ContainSingle(x => x is Events.WorkOrderNoteSet 
+                                                && ((Events.WorkOrderNoteSet)x).WorkOrderId == order.Id
+                                                && ((Events.WorkOrderNoteSet)x).Note == note);
+
+    }
+
 }

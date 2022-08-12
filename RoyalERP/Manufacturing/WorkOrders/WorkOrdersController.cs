@@ -56,6 +56,14 @@ public class WorkOrdersController {
         return _sender.Send(new CancelOrder.Command(workorderId));
     }
 
+    [HttpPut]
+    [Route("{workorderId}/note")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WorkOrderDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> SetNote(Guid workorderId, [FromBody] WorkOrderNote update) {
+        return _sender.Send(new SetOrderNote.Command(workorderId, update));
+    }
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<WorkOrderDTO>))]
     public Task<IActionResult> GetAll() {

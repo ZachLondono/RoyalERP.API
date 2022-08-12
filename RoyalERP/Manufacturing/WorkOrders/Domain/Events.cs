@@ -5,16 +5,18 @@ namespace RoyalERP.Manufacturing.WorkOrders.Domain;
 
 public static class Events {
 
-    public abstract record WorkOrderEvent([property: JsonIgnore] Guid OrderId) : DomainEvent(OrderId);
+    public abstract record WorkOrderEvent([property: JsonIgnore] Guid WorkOrderId) : DomainEvent(WorkOrderId);
 
-    public record WorkOrderCreatedEvent(Guid OrderId, string Number, string Name) : WorkOrderEvent(OrderId);
+    public record WorkOrderCreatedEvent(Guid WorkOrderId, string Number, string Name) : WorkOrderEvent(WorkOrderId);
 
-    public record WorkOrderReleasedEvent(Guid OrderId) : WorkOrderEvent(OrderId);
+    public record WorkOrderReleasedEvent(Guid WorkOrderId) : WorkOrderEvent(WorkOrderId);
 
-    public record WorkOrderScheduledEvent(Guid OrderId, DateTime ScheduledDate) : WorkOrderEvent(OrderId);
+    public record WorkOrderScheduledEvent(Guid WorkOrderId, DateTime ScheduledDate) : WorkOrderEvent(WorkOrderId);
 
-    public record WorkOrderFulfilledEvent(Guid OrderId) : WorkOrderEvent(OrderId);
+    public record WorkOrderFulfilledEvent(Guid WorkOrderId) : WorkOrderEvent(WorkOrderId);
 
-    public record WorkOrderCanceledEvent(Guid OrderId) : WorkOrderEvent(OrderId);
+    public record WorkOrderCanceledEvent(Guid WorkOrderId) : WorkOrderEvent(WorkOrderId);
+
+    public record WorkOrderNoteSet(Guid WorkOrderId, string Note) : WorkOrderEvent(WorkOrderId);
 
 }
