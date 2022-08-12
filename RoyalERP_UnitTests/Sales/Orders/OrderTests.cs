@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using RoyalERP.Sales.Orders.Domain;
 using System;
+using System.Collections.Generic;
 using Xunit;
 using static RoyalERP.Sales.Orders.Domain.Exceptions;
 
@@ -33,7 +34,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Confirm();
@@ -52,7 +53,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Confirm();
@@ -70,7 +71,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         static void confirm(Order o) => o.Confirm();
@@ -86,7 +87,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Confirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -105,7 +106,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -126,7 +127,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Complete();
@@ -144,7 +145,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Cancelled, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         static void complete(Order o) => o.Complete();
@@ -160,7 +161,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
         order.Cancel();
@@ -169,6 +170,85 @@ public class OrderTests {
         order.Should().NotBeNull();
         order.Status.Should().Be(OrderStatus.Cancelled);
         order.Events.Should().ContainSingle(x => ((Events.OrderCanceledEvent)x).OrderId == order.Id);
+
+    }
+
+    [Fact]
+    public void AddItem_ShouldAddANewItemToItems() {
+
+        // Arrange
+        string number = "Order Number";
+        string name = "Company Name";
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+
+        var productName = "product name";
+        var quantity = 5;
+        var properties = new Dictionary<string, string>() {
+            { "A", "B" }
+        };
+
+        // Act
+        var newItem = order.AddItem(productName, quantity, properties);
+
+        // Assert
+        order.Items.Should().ContainEquivalentOf(newItem);
+        newItem.Should().NotBeNull();
+        newItem.ProductName.Should().Be(productName);
+        newItem.Quantity.Should().Be(quantity);
+        newItem.Properties.Should().BeEquivalentTo(properties);
+        newItem.Events.Should().ContainSingle(x => x is Events.OrderedItemCreated);
+
+    }
+
+    [Fact]
+    public void RemoveItem_ShouldRemoveItemFromList() {
+
+        // Arrange
+        string number = "Order Number";
+        string name = "Company Name";
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+
+        var productName = "product name";
+        var quantity = 5;
+        var properties = new Dictionary<string, string>() {
+            { "A", "B" }
+        };
+
+        var newItem = order.AddItem(productName, quantity, properties);
+
+        // Act
+        var result = order.RemoveItem(newItem);
+
+        // Assert
+        result.Should().Be(true);
+        order.Items.Should().NotContainEquivalentOf(newItem);
+        order.Events.Should().ContainSingle(x => x is Events.OrderedItemRemoved);
+
+    }
+
+    [Fact]
+    public void RemoveItem_ShouldNotDoAnything_WhenItemDoesNotExist() {
+
+        // Arrange
+        string number = "Order Number";
+        string name = "Company Name";
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+
+        var productName = "product name";
+        var quantity = 5;
+        var properties = new Dictionary<string, string>() {
+            { "A", "B" }
+        };
+
+        var newItem = OrderedItem.Create(Guid.NewGuid(), productName, quantity, properties);
+
+        // Act
+        var result = order.RemoveItem(newItem);
+
+        // Assert
+        result.Should().Be(false);
+        order.Items.Should().NotContainEquivalentOf(newItem);
+        order.Events.Should().NotContain(x => x is Events.OrderedItemRemoved);
 
     }
 
