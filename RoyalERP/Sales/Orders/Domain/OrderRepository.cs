@@ -61,6 +61,7 @@ public class OrderRepository : IOrderRepository {
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
             // TODO: the events should hold the relevant data to update the db, the entity may have been updated since the event occurred
+            // TODO: use switch 
 
             if (domainEvent is Events.OrderConfirmedEvent confirmed) {
 
@@ -91,13 +92,52 @@ public class OrderRepository : IOrderRepository {
                     Status = entity.Status.ToString()
                 }, _transaction);
 
+            } else if (domainEvent is Events.OrderedItemRemoved itemRemoved) {
+
+                const string command = "DELETE sales.ordereditems WHERE id = @Id";
+
+                await _connection.ExecuteAsync(command, param: new {
+                    Id = itemRemoved.OrderedItemId
+                }, _transaction);
+
             }
 
+        }
+
+        foreach (var item in entity.Items) {
+            await UpdateOrderedItem(item);
         }
 
         var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
         if (existing is not null) _activeEntities.Remove(existing);
         _activeEntities.Add(entity);
+
+    }
+
+    private async Task UpdateOrderedItem(OrderedItem item) {
+
+        foreach (var domainEvent in item.Events.Where(e => !e.IsPublished)) {
+
+            switch (domainEvent) {
+                case Events.OrderedItemCreated created:
+
+                    const string command = "INSERT INTO sales.ordereditems (id, orderid, productname, quantity, properties)  VALUES (@Id, @OrderId, @ProductName, @Quantity, @Properties);";
+
+                    await _connection.ExecuteAsync(command, param: new {
+                        Id = created.OrderedItemId,
+                        created.OrderId,
+                        created.ProductName,
+                        created.Quantity,
+                        Properties = new JsonParameter(created.Properties)
+                    }, _transaction);
+
+                    break;
+                default:
+                    // TODO: log unknown event
+                    break;
+            }
+
+        }
 
     }
 
