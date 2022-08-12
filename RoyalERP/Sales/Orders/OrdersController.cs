@@ -24,6 +24,13 @@ public class OrdersController : ControllerBase {
         return _sender.Send(new Create.Command(newOrder));
     }
 
+    [Route("{orderId}/items")]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(OrderDetails))]
+    public Task<IActionResult> AddItem(Guid orderId, [FromBody] NewItem newItem) {
+        return _sender.Send(new AddItemToOrder.Command(orderId, newItem));
+    }
+
     [HttpPut]
     [Route("{orderId}/confirm")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(OrderDetails))]
@@ -78,6 +85,14 @@ public class OrdersController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public Task<IActionResult> Delete(Guid orderId) {
         return _sender.Send(new Delete.Command(orderId));
+    }
+
+    [Route("{orderId}/items/{itemId}")]
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> Delete(Guid orderId, Guid itemId) {
+        return _sender.Send(new RemoveItemFromOrder.Command(orderId, itemId));
     }
 
 }
