@@ -34,7 +34,7 @@ public class GetAll {
                 Contact = c.Contact,
                 Email = c.Email,
                 Address = a
-            });
+            }, splitOn: "addressid");
 
             return new OkObjectResult(companies);
 
