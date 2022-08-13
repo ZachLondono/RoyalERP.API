@@ -40,5 +40,5 @@ CREATE TABLE sales.ordereditems (
     orderid uuid NOT NULL,
     productname character varying(255) NOT NULL,
     quantity integer NOT NULL DEFAULT 0,
-    properties json NOT NULL
+    properties jsonb NOT NULL
 );
