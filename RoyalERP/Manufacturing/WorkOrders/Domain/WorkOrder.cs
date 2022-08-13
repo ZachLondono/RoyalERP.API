@@ -7,13 +7,17 @@ public class WorkOrder : AggregateRoot {
 
     public Guid SalesOrderId { get; init; }
 
-    public string Number { get; private set; }
+    public string Number { get; init; }
 
-    public string Name { get; private set; }
+    public string Name { get; init; }
 
-    public string CustomerName { get; private set; }
+    public string CustomerName { get; init; }
 
-    public string VendorName { get; private set; }
+    public string VendorName { get; init; }
+
+    public string ProductName { get; init; }
+
+    public int Quantity { get; init; }
 
     public string Note { get; private set; }
 
@@ -26,13 +30,16 @@ public class WorkOrder : AggregateRoot {
     public WorkOrderStatus Status { get; private set; }
 
     public WorkOrder(Guid id, int version,
-                    Guid salesOrderId, string number, string name, string note, string customerName, string vendorName,
-                    WorkOrderStatus status, DateTime? releasedDate, DateTime? scheduledDate, DateTime? fulfilledDate) : base(id, version) {
+                    Guid salesOrderId, string number, string name, string note, string productName, int quantity, string customerName, string vendorName,
+                    WorkOrderStatus status, DateTime? releasedDate, DateTime? scheduledDate, DateTime? fulfilledDate)
+                    : base(id, version) {
         SalesOrderId = salesOrderId;
         Number = number;
         Name = name;
         CustomerName = customerName;
         VendorName = vendorName;
+        ProductName = productName;
+        Quantity = quantity;
         Note = note;
         Status = status;
         ReleasedDate = releasedDate;
@@ -40,11 +47,13 @@ public class WorkOrder : AggregateRoot {
         FulfilledDate = fulfilledDate;
     }
 
-    private WorkOrder(Guid salesOrderId, string number, string name, string customerName, string vendorName) : this(Guid.NewGuid(), 0, salesOrderId, number, name, "", customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
+    private WorkOrder(Guid salesOrderId, string number, string name, string productName, int quantity, string customerName, string vendorName)
+                    : this(Guid.NewGuid(), 0, salesOrderId, number, name, "", productName, quantity, customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
         AddEvent(new Events.WorkOrderCreatedEvent(Id, salesOrderId, number, name));
     }
 
-    public static WorkOrder Create(Guid salesOrderId, string number, string name, string customerName, string vendorName) => new(salesOrderId, number, name, customerName, vendorName);
+    public static WorkOrder Create(Guid salesOrderId, string number, string name, string productName, int quantity, string customerName, string vendorName)
+                            => new(salesOrderId, number, name, productName, quantity, customerName, vendorName);
 
     public void Release() {
         if (Status == WorkOrderStatus.Cancelled || Status == WorkOrderStatus.Fulfilled)

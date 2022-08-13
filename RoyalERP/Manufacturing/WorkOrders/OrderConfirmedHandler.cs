@@ -46,14 +46,19 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
             vendorName = vendor.Name;
         }
 
-        var productTypes = salesorder.Items
-                                    .Select(i => i.ProductName)
-                                    .Distinct();
+        var productQtyByType = salesorder.Items
+                                        .GroupBy(i => i.ProductName)
+                                        .ToDictionary(g => g.Key,
+                                                      g => g.Sum(i => i.Quantity));
 
-        foreach (var productType in productTypes) {
+        foreach (var product in productQtyByType) {
+
+            _logger.LogTrace("Creating a new work order for product {ProductName} with quantity {Quantity}", product.Key, product.Value);
 
             var newOrder = await _sender.Send(new Create.Command(new() {
                 SalesOrderId = salesorder.Id,
+                ProductName = product.Key,
+                Quantity = product.Value,
                 Number = salesorder.Number,
                 Name = salesorder.Name,
                 CustomerName = customerName,

@@ -12,4 +12,8 @@ public class NewWorkOrder {
 
     public string VendorName { get; set; } = string.Empty;
 
+    public string ProductName { get; set; } = string.Empty;
+
+    public int Quantity { get; set; }
+
 }

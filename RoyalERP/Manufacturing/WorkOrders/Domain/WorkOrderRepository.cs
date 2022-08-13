@@ -18,7 +18,10 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public async Task AddAsync(WorkOrder entity) {
 
-        const string command = "INSERT INTO manufacturing.workorders (id, salesorderid, number, name, note, customername, vendorname, status) values (@Id, @SalesOrderId, @Number, @Name, @Note, @CustomerName, @VendorName, @Status);";
+        const string command = @"INSERT INTO manufacturing.workorders
+                                (id, salesorderid, number, name, note, customername, vendorname, productname, quantity, status)
+                                VALUES
+                                (@Id, @SalesOrderId, @Number, @Name, @Note, @CustomerName, @VendorName, @ProductName, @Quantity, @Status);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
             entity.Id,
@@ -28,6 +31,8 @@ public class WorkOrderRepository : IWorkOrderRepository {
             entity.Note,
             entity.CustomerName, 
             entity.VendorName,
+            entity.ProductName,
+            entity.Quantity,
             Status = entity.Status.ToString()
         });
 
@@ -35,7 +40,8 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<IEnumerable<WorkOrder>> GetAllAsync() {
 
-        const string query = "SELECT id, version, salesorderid, number, name, note, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders;";
+        const string query = @"SELECT id, version, salesorderid, number, name, note, productName, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
+                                FROM manufacturing.workorders;";
 
         return _connection.QueryAsync<WorkOrder>(query, transaction: _transaction);
 
@@ -43,7 +49,9 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<WorkOrder?> GetAsync(Guid id) {
 
-        const string query = "SELECT id, version, salesorderid, number, name, note, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate FROM manufacturing.workorders WHERE id = @Id;";
+        const string query = @"SELECT id, version, salesorderid, number, name, note, productName, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
+                                FROM manufacturing.workorders
+                                WHERE id = @Id;";
 
         return _connection.QuerySingleOrDefaultAsync<WorkOrder?>(query, transaction: _transaction, param: new { Id = id });
 
