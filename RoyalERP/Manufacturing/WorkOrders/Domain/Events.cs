@@ -7,7 +7,7 @@ public static class Events {
 
     public abstract record WorkOrderEvent([property: JsonIgnore] Guid WorkOrderId) : DomainEvent(WorkOrderId);
 
-    public record WorkOrderCreatedEvent(Guid WorkOrderId, string Number, string Name) : WorkOrderEvent(WorkOrderId);
+    public record WorkOrderCreatedEvent(Guid WorkOrderId, Guid SalesOrderId, string Number, string Name) : WorkOrderEvent(WorkOrderId);
 
     public record WorkOrderReleasedEvent(Guid WorkOrderId) : WorkOrderEvent(WorkOrderId);
 

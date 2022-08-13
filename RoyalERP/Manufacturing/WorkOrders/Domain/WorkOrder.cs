@@ -5,6 +5,8 @@ namespace RoyalERP.Manufacturing.WorkOrders.Domain;
 
 public class WorkOrder : AggregateRoot {
 
+    public Guid SalesOrderId { get; init; }
+
     public string Number { get; private set; }
 
     public string Name { get; private set; }
@@ -24,8 +26,9 @@ public class WorkOrder : AggregateRoot {
     public WorkOrderStatus Status { get; private set; }
 
     public WorkOrder(Guid id, int version,
-                    string number, string name, string note, string customerName, string vendorName,
+                    Guid salesOrderId, string number, string name, string note, string customerName, string vendorName,
                     WorkOrderStatus status, DateTime? releasedDate, DateTime? scheduledDate, DateTime? fulfilledDate) : base(id, version) {
+        SalesOrderId = salesOrderId;
         Number = number;
         Name = name;
         CustomerName = customerName;
@@ -37,11 +40,11 @@ public class WorkOrder : AggregateRoot {
         FulfilledDate = fulfilledDate;
     }
 
-    private WorkOrder(string number, string name, string customerName, string vendorName) : this(Guid.NewGuid(), 0, number, name, "", customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
-        AddEvent(new Events.WorkOrderCreatedEvent(Id, number, name));
+    private WorkOrder(Guid salesOrderId, string number, string name, string customerName, string vendorName) : this(Guid.NewGuid(), 0, salesOrderId, number, name, "", customerName, vendorName, WorkOrderStatus.Pending, null, null, null) {
+        AddEvent(new Events.WorkOrderCreatedEvent(Id, salesOrderId, number, name));
     }
 
-    public static WorkOrder Create(string number, string name, string customerName, string vendorName) => new(number, name, customerName, vendorName);
+    public static WorkOrder Create(Guid salesOrderId, string number, string name, string customerName, string vendorName) => new(salesOrderId, number, name, customerName, vendorName);
 
     public void Release() {
         if (Status == WorkOrderStatus.Cancelled || Status == WorkOrderStatus.Fulfilled)

@@ -34,6 +34,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
@@ -71,6 +72,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
@@ -107,6 +109,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
@@ -144,6 +147,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
@@ -167,6 +171,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
@@ -195,6 +200,7 @@ public class WorkOrderTests : DbTests {
         // Arrange
         var client = CreateClientWithAuth();
         var dto = await CreateNew(client, new() {
+            SalesOrderId = Guid.NewGuid(),
             Number = "OT123",
             Name = "ABC's Order",
             CustomerName = "Customer Name",
