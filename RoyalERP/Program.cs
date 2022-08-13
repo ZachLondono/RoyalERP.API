@@ -2,6 +2,7 @@ using Dapper;
 using MediatR;
 using RoyalERP.Common;
 using RoyalERP.Common.Data;
+using RoyalERP.Common.Domain;
 using RoyalERP.Manufacturing;
 using RoyalERP.Sales;
 using System.Text.Json.Serialization;
@@ -41,11 +42,7 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseCors(AllowAllOriginsPolicy);
-
-//app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+app.UseDomainExceptionMiddleware();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment()) {
