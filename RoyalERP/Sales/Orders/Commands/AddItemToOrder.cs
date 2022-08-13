@@ -34,15 +34,12 @@ public class AddItemToOrder {
 
             _logger.LogTrace("Added new item to order {OrderId} with id {OrderedItemId}", request.OrderId, newitem.Id);
 
-            var items = new List<OrderedItemDTO>();
-            foreach (var item in order.Items) {
-                items.Add(new OrderedItemDTO() {
-                    Id = item.Id,
-                    ProductName = item.ProductName,
-                    Quantity = item.Quantity,
-                    Properties = item.Properties,
-                });
-            }
+            var items = order.Items.Select(item => new OrderedItemDTO() {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                Properties = item.Properties,
+            });
 
             return new OkObjectResult(new OrderDetails() {
                 Id = order.Id,
