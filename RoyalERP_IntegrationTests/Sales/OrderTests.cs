@@ -10,10 +10,16 @@ using System.Threading.Tasks;
 using RoyalERP.Sales.Companies.DTO;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Bogus;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RoyalERP_IntegrationTests.Sales;
 
 public class OrderTests : DbTests {
+
+
+    private readonly Faker _faker = new();
 
     [Fact]
     public async Task Get_ShouldReturnNotFound_WhenIdDoesNotExist() {
@@ -129,6 +135,41 @@ public class OrderTests : DbTests {
     }
 
     [Fact]
+    public async Task DeleteItem_ShouldReturnNotFound_WhenOrderDoesntExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.DeleteAsync($"/orders/{Guid.NewGuid()}/items/{Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task DeleteItem_ShouldReturnNotFound_WhenItemDoesntExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var neworder = new NewOrder() {
+            Name = "Order Name",
+            Number = "OT123",
+            CustomerName = "Customer Name",
+            VendorName = "Vendor Name"
+        };
+        var dto = await CreateNew(client, neworder);
+
+        // Act
+        var response = await client.DeleteAsync($"/orders/{dto.Id}/items/{Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
     public async Task Cancel_ShouldUpdateReturnOk_AndUpdateDb() {
 
         // Arrange
@@ -148,7 +189,6 @@ public class OrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         updated.Status.Should().Be(OrderStatus.Cancelled);
-        // TODO: check that it is nolonger accessible
 
     }
 
@@ -226,8 +266,81 @@ public class OrderTests : DbTests {
 
     }
 
+    [Fact]
+    public async Task AddItem_ShouldAddItemToOrder() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var expected = RandomNewOrder();
+        var dto = await CreateNew(client, expected);
+
+        var newItem = RandomNewItem();
+        var content = JsonContent.Create(newItem);
+
+        // Act
+        var response = await client.PostAsync($"/orders/{dto.Id}/items", content);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var contentStr = await response.Content.ReadAsStringAsync();
+        var order = JsonConvert.DeserializeObject<OrderDetails>(contentStr);
+        order.Should().NotBeNull();
+        order!.Items.Should().Contain(i => i.ProductName.Equals(newItem.ProductName) && i.Quantity.Equals(newItem.Quantity));
+        //order.Items.First().Properties.Should().BeEquivalentTo(newItem.Properties);
+
+        var getorder = await GetOrder(client, dto.Id);
+        getorder.Should().NotBeNull();
+        getorder!.Items.Should().Contain(i => i.ProductName.Equals(newItem.ProductName) && i.Quantity.Equals(newItem.Quantity));
+        //getorder.Items.First().Properties.Should().BeEquivalentTo(newItem.Properties);
+
+    }
+
+    [Fact]
+    public async Task AddItem_ShouldAddItemToOrder_WhenAddingMultiple() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var expected = RandomNewOrder();
+        var dto = await CreateNew(client, expected);
+
+        int count = 5;
+
+        List<NewItem> items = new();
+
+        // Act
+        for (int i = 0; i < count; i++) {
+            var newItem = RandomNewItem();
+            items.Add(newItem);
+            var content = JsonContent.Create(newItem);
+            var response = await client.PostAsync($"/orders/{dto.Id}/items", content);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        // Assert
+        var order = await GetOrder(client, dto.Id);
+        order.Items.Should().HaveCount(count);
+        foreach (var item in items) {
+            order.Items.Should().Contain(i => i.ProductName.Equals(item.ProductName) && i.Quantity.Equals(item.Quantity));
+        }
+
+    }
+
+    private NewItem RandomNewItem() => new() {
+        ProductName = _faker.Commerce.ProductName(),
+        Quantity = _faker.Random.Number(min: 0),
+        Properties = new() { { _faker.Random.String(), _faker.Random.String() } }
+    };
+
+    private NewOrder RandomNewOrder() => new() {
+        Name = _faker.Random.Word(),
+        Number = _faker.Random.Word(),
+        CustomerName = _faker.Company.CompanyName(),
+        VendorName = _faker.Company.CompanyName()
+    };
+
     private static async Task<OrderDetails> GetOrder(HttpClient client, Guid id) {
         var response = await client.GetAsync($"/orders/{id}");
+        response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         var order = JsonConvert.DeserializeObject<OrderDetails>(responseBody);
         return order!;
@@ -236,6 +349,7 @@ public class OrderTests : DbTests {
     private static async Task<OrderDetails> CreateNew(HttpClient client, NewOrder expected) {
         var content = JsonContent.Create(expected);
         var createResponse = await client.PostAsync("/orders", content);
+        createResponse.EnsureSuccessStatusCode();
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         var responseBody = await createResponse.Content.ReadAsStringAsync();
         var order = JsonConvert.DeserializeObject<OrderDetails>(responseBody);
