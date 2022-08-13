@@ -20,7 +20,7 @@ public class OrderedItem : Entity {
     }
 
     private OrderedItem(Guid orderId, string productName, int quantity, Dictionary<string, string> properties) : this(Guid.NewGuid(), orderId, productName, quantity, properties) {
-        AddEvent(new Events.OrderedItemCreated(Id, orderId, productName, quantity, properties));
+        AddEvent(new Events.OrderedItemCreated(orderId, Id, productName, quantity, properties));
     }
 
     public static OrderedItem Create(Guid orderId, string productName, int quantity, Dictionary<string, string> properties) => new(orderId, productName, quantity, properties);
