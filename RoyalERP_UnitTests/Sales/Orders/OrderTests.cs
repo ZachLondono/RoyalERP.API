@@ -282,4 +282,40 @@ public class OrderTests {
 
     }
 
+
+
+    [Fact]
+    public void RemoveItem_ShouldThrowException_WhenOrderIsCompleted() {
+
+        // Arrange
+        var status = OrderStatus.Unconfirmed;
+        var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+        var item = order.AddItem("", 0, new());
+        order.Complete();
+
+        // Act
+        var doAction = () => order.RemoveItem(item);
+
+        // Assert
+        doAction.Should().Throw<CantAddToConfirmedOrderException>();
+
+    }
+
+    [Fact]
+    public void RemoveItem_ShouldThrowException_WhenOrderIsCanceled() {
+
+        // Arrange
+        var status = OrderStatus.Unconfirmed;
+        var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+        var item = order.AddItem("", 0, new());
+        order.Cancel();
+
+        // Act
+        var doAction = () => order.RemoveItem(item);
+
+        // Assert
+        doAction.Should().Throw<CantUpdateCancelledOrderException>();
+
+    }
+
 }

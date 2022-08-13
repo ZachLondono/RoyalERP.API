@@ -84,6 +84,10 @@ public class Order : AggregateRoot {
     }
 
     public bool RemoveItem(OrderedItem item) {
+        if (Status == OrderStatus.Cancelled)
+            throw new CantUpdateCancelledOrderException();
+        if (Status != OrderStatus.Unconfirmed)
+            throw new CantAddToConfirmedOrderException();
         if (!_items.Remove(item)) return false;
         AddEvent(new Events.OrderedItemRemoved(Id, item.Id));
         return true;
