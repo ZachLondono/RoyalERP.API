@@ -9,7 +9,7 @@ public class ManufacturingUnitOfWork : UnitOfWork, IManufacturingUnitOfWork {
 
     public IWorkOrderRepository WorkOrders { get; private set; }
 
-    private IPublisher _publisher;
+    private readonly IPublisher _publisher;
     private readonly Func<IDbConnection, IDbTransaction, IWorkOrderRepository> _workOrdersFactory;
 
     public ManufacturingUnitOfWork(IManufacturingConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
