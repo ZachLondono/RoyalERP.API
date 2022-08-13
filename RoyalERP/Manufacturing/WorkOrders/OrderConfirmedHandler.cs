@@ -44,14 +44,25 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
             _logger.LogWarning("While trying to create work order, could not find vendor with id: {CompanyId}", salesorder.CustomerId);
         } else {
             vendorName = vendor.Name;
-        } 
+        }
 
-        await _sender.Send(new Create.Command(new() {
-            Number = salesorder.Number,
-            Name = salesorder.Name,
-            CustomerName = customerName,
-            VendorName = vendorName,
-        }), cancellationToken);
+        var productTypes = salesorder.Items
+                                    .Select(i => i.ProductName)
+                                    .Distinct();
+
+        foreach (var productType in productTypes) {
+
+            var newOrder = await _sender.Send(new Create.Command(new() {
+                SalesOrderId = salesorder.Id,
+                Number = salesorder.Number,
+                Name = salesorder.Name,
+                CustomerName = customerName,
+                VendorName = vendorName,
+            }), cancellationToken);
+
+            _logger.LogInformation("New Work Order created with id {WorkOrderId}", newOrder.Id);
+
+        }
 
     }
 
