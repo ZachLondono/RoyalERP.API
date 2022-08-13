@@ -179,7 +179,7 @@ public class OrderTests {
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         var productName = "product name";
         var quantity = 5;
@@ -201,12 +201,42 @@ public class OrderTests {
     }
 
     [Fact]
+    public void AddItem_ShouldThrowException_WhenOrderIsCompleted() {
+
+        // Arrange
+        var status = OrderStatus.Completed;
+        var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+
+        // Act
+        var doAction = () => order.AddItem("", 0, new());
+
+        // Assert
+        doAction.Should().Throw<CantAddToConfirmedOrderException>();
+
+    }
+
+    [Fact]
+    public void AddItem_ShouldThrowException_WhenOrderIsCanceled() {
+
+        // Arrange
+        var status = OrderStatus.Cancelled;
+        var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+
+        // Act
+        var doAction = () => order.AddItem("", 0, new());
+
+        // Assert
+        doAction.Should().Throw<CantUpdateCancelledOrderException>();
+
+    }
+
+    [Fact]
     public void RemoveItem_ShouldRemoveItemFromList() {
 
         // Arrange
         string number = "Order Number";
         string name = "Company Name";
-        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Completed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
+        var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         var productName = "product name";
         var quantity = 5;
