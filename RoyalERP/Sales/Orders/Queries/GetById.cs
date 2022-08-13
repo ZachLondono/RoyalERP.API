@@ -20,7 +20,7 @@ public class GetById {
         public async Task<OrderDetails?> Handle(Query request, CancellationToken cancellationToken) {
 
             const string query = "SELECT id, version, number, name, customerid, vendorid, placeddate, confirmeddate, completeddate, status FROM sales.orders WHERE id = @Id;";
-            const string itemQuery = "SELECT id, orderid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
+            const string itemQuery = "SELECT id, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
 
             var connection = _factory.CreateConnection();
 
