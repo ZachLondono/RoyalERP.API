@@ -69,7 +69,11 @@ public class OrderRepository : IOrderRepository {
     }
 
     public async Task UpdateAsync(Order entity) {
-        
+
+        foreach (var item in entity.Items) {
+            await UpdateOrderedItem(item);
+        }
+
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
             // TODO: the events should hold the relevant data to update the db, the entity may have been updated since the event occurred
@@ -116,10 +120,6 @@ public class OrderRepository : IOrderRepository {
 
         }
 
-        foreach (var item in entity.Items) {
-            await UpdateOrderedItem(item);
-        }
-
         var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
         if (existing is not null) _activeEntities.Remove(existing);
         _activeEntities.Add(entity);
@@ -135,7 +135,7 @@ public class OrderRepository : IOrderRepository {
 
                     const string command = "INSERT INTO sales.ordereditems (id, orderid, productname, quantity, properties)  VALUES (@Id, @OrderId, @ProductName, @Quantity, @Properties);";
 
-                    await _connection.ExecuteAsync(command, param: new {
+                    int rows = await _connection.ExecuteAsync(command, param: new {
                         Id = created.OrderedItemId,
                         created.OrderId,
                         created.ProductName,
