@@ -74,6 +74,8 @@ public class Order : AggregateRoot {
     }
 
     public OrderedItem AddItem(string productName, int quantity, Dictionary<string, string> properties) {
+        if (Status == OrderStatus.Cancelled)
+            throw new CantUpdateCancelledOrderException();
         if (Status != OrderStatus.Unconfirmed)
             throw new CantAddToConfirmedOrderException();
         var newItem = OrderedItem.Create(Id, productName, quantity, properties);
