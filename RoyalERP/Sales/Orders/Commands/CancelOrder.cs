@@ -34,7 +34,7 @@ public class CancelOrder {
 
             _logger.LogTrace("Canceled order with id {OrderId}", request.OrderId);
 
-            return new OkObjectResult(new OrderDTO() {
+            return new OkObjectResult(new OrderDetails() {
                 Id = order.Id,
                 Number = order.Number,
                 Name = order.Name,

@@ -23,7 +23,7 @@ public class GetAll {
 
             var connection = _factory.CreateConnection();
 
-            var orders = await connection.QueryAsync<OrderDTO>(query);
+            var orders = await connection.QueryAsync<OrderSummary>(query);
 
             return new OkObjectResult(orders);
 

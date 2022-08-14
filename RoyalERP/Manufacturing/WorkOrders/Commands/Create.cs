@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
 using RoyalERP.Manufacturing.WorkOrders.DTO;
 
@@ -7,9 +6,9 @@ namespace RoyalERP.Manufacturing.WorkOrders.Commands;
 
 public class Create {
 
-    public record Command(NewWorkOrder NewWorkOrder) : IRequest<IActionResult>;
+    public record Command(NewWorkOrder NewWorkOrder) : IRequest<WorkOrderDTO>;
 
-    public class Handler : IRequestHandler<Command, IActionResult> {
+    public class Handler : IRequestHandler<Command, WorkOrderDTO> {
 
         private readonly IManufacturingUnitOfWork _work;
         private readonly ILogger<Handler> _logger;
@@ -19,9 +18,9 @@ public class Create {
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
+        public async Task<WorkOrderDTO> Handle(Command request, CancellationToken cancellationToken) {
 
-            var newOrder = WorkOrder.Create(request.NewWorkOrder.Number, request.NewWorkOrder.Name, request.NewWorkOrder.CustomerName, request.NewWorkOrder.VendorName);
+            var newOrder = WorkOrder.Create(request.NewWorkOrder.SalesOrderId, request.NewWorkOrder.Number, request.NewWorkOrder.Name, request.NewWorkOrder.ProductName, request.NewWorkOrder.Quantity, request.NewWorkOrder.CustomerName, request.NewWorkOrder.VendorName);
 
             await _work.WorkOrders.AddAsync(newOrder);
 
@@ -29,17 +28,20 @@ public class Create {
 
             _logger.LogTrace("Created order with id: {OrderId}", newOrder.Id);
 
-            return new CreatedResult($"workorders/{newOrder.Id}", new WorkOrderDTO() {
+            return new WorkOrderDTO() {
                 Id = newOrder.Id,
+                SalesOrderId = newOrder.SalesOrderId,
                 Number = newOrder.Number,
                 Name = newOrder.Name,
+                ProductName = newOrder.ProductName,
+                Quantity = newOrder.Quantity,
                 CustomerName = newOrder.CustomerName,
                 VendorName = newOrder.VendorName,
                 ReleasedDate = newOrder.ReleasedDate,
                 ScheduledDate = newOrder.ScheduledDate,
                 FulfilledDate = newOrder.FulfilledDate,
                 Status = newOrder.Status
-            });
+            };
 
         }
     }

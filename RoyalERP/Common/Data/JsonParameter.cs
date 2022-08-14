@@ -1,6 +1,7 @@
 ﻿using Npgsql;
 using NpgsqlTypes;
 using System.Data;
+using System.Text.Json;
 using static Dapper.SqlMapper;
 
 namespace RoyalERP.Common.Data;
@@ -14,6 +15,10 @@ public class JsonParameter : ICustomQueryParameter {
 
     public JsonParameter(string value) {
         _value = value;
+    }
+
+    public JsonParameter(object data) {
+        _value = JsonSerializer.Serialize(data);
     }
 
     public void AddParameter(IDbCommand command, string name) {

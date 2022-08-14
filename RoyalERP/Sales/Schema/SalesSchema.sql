@@ -34,3 +34,11 @@ CREATE TABLE sales.orders (
     vendorid uuid NOT NULL,
     CONSTRAINT orders_pkey PRIMARY KEY (id)
 );
+
+CREATE TABLE sales.ordereditems (
+    id uuid NOT NULL,
+    orderid uuid NOT NULL,
+    productname character varying(255) NOT NULL,
+    quantity integer NOT NULL DEFAULT 0,
+    properties jsonb NOT NULL
+);

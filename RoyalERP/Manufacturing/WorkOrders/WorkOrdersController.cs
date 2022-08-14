@@ -20,8 +20,9 @@ public class WorkOrdersController {
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(WorkOrderDTO))]
-    public Task<IActionResult> Create([FromBody] NewWorkOrder newWorkOrder) {
-        return _sender.Send(new Create.Command(newWorkOrder));
+    public async Task<IActionResult> Create([FromBody] NewWorkOrder newWorkOrder) {
+        var newOrder = await _sender.Send(new Create.Command(newWorkOrder));
+        return new CreatedResult($"workorders/{newOrder.Id}", newOrder);
     }
 
     [HttpPut]

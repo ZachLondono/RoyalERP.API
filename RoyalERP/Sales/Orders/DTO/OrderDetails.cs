@@ -2,7 +2,7 @@
 
 namespace RoyalERP.Sales.Orders.DTO;
 
-public class OrderDTO {
+public class OrderDetails {
 
     public Guid Id { get; set; }
 
@@ -21,5 +21,7 @@ public class OrderDTO {
     public DateTime? CompletedDate { get; set; } = null;
 
     public OrderStatus Status { get; set; }
+
+    public IEnumerable<OrderedItemDTO> Items { get; set; } = Enumerable.Empty<OrderedItemDTO>();
 
 }

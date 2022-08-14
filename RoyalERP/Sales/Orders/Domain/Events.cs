@@ -15,4 +15,8 @@ public static class Events {
 
     public record OrderCanceledEvent(Guid OrderId) : OrderEvent(OrderId);
 
+    public record OrderedItemCreated(Guid OrderId, Guid OrderedItemId, string ProductName, int Quantity, Dictionary<string, string> Properties) : OrderEvent(OrderId);
+
+    public record OrderedItemRemoved(Guid OrderId, Guid OrderedItemId) : OrderEvent(OrderId);
+
 }

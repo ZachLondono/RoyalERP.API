@@ -1,5 +1,8 @@
+using Dapper;
 using MediatR;
 using RoyalERP.Common;
+using RoyalERP.Common.Data;
+using RoyalERP.Common.Domain;
 using RoyalERP.Manufacturing;
 using RoyalERP.Sales;
 using System.Text.Json.Serialization;
@@ -17,6 +20,8 @@ builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 builder.Services.AddManufacturing();
 builder.Services.AddSales();
+
+SqlMapper.AddTypeHandler(new JsonTypeHandler<Dictionary<string,string>>());
 
 var AllowAllOriginsPolicy = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options => {
@@ -37,11 +42,7 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseCors(AllowAllOriginsPolicy);
-
-//app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+app.UseDomainExceptionMiddleware();
 app.MapControllers();
 
 if (app.Environment.IsDevelopment()) {

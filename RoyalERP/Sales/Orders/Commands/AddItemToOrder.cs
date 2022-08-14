@@ -4,9 +4,9 @@ using RoyalERP.Sales.Orders.DTO;
 
 namespace RoyalERP.Sales.Orders.Commands;
 
-public class CompleteOrder {
+public class AddItemToOrder {
 
-    public record Command(Guid OrderId) : IRequest<IActionResult>;
+    public record Command(Guid OrderId, NewItem NewItem) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -23,16 +23,23 @@ public class CompleteOrder {
             var order = await _work.Orders.GetAsync(request.OrderId);
 
             if (order is null) {
-                _logger.LogWarning("Tried to complete order that does not exist with id: {OrderId}", request.OrderId);
+                _logger.LogWarning("Tried to add item to order that does not exist with id: {OrderId}", request.OrderId);
                 return new NotFoundResult();
             }
 
-            order.Complete();
+            var newitem = order.AddItem(request.NewItem.ProductName, request.NewItem.Quantity, request.NewItem.Properties);
             await _work.Orders.UpdateAsync(order);
 
             await _work.CommitAsync();
 
-            _logger.LogTrace("Completed order with id {OrderId}", request.OrderId);
+            _logger.LogTrace("Added new item to order {OrderId} with id {OrderedItemId}", request.OrderId, newitem.Id);
+
+            var items = order.Items.Select(item => new OrderedItemDTO() {
+                Id = item.Id,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                Properties = item.Properties,
+            });
 
             return new OkObjectResult(new OrderDetails() {
                 Id = order.Id,
@@ -43,7 +50,8 @@ public class CompleteOrder {
                 PlacedDate = order.PlacedDate,
                 ConfirmedDate = order.ConfirmedDate,
                 CompletedDate = order.CompletedDate,
-                Status = order.Status
+                Status = order.Status,
+                Items = items
             });
 
         }

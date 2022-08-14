@@ -1,4 +1,5 @@
-﻿using RoyalERP.Common.Domain;
+﻿using MediatR;
+using RoyalERP.Common.Domain;
 using static RoyalERP.Sales.Orders.Domain.Exceptions;
 
 namespace RoyalERP.Sales.Orders.Domain;
@@ -21,12 +22,16 @@ public class Order : AggregateRoot {
 
     public Guid VendorId { get; private set; }
 
+    public IReadOnlyCollection<OrderedItem> Items => _items.AsReadOnly();
+    private readonly List<OrderedItem> _items;
+
     public Order(Guid id, int version,
-                string number, string name, OrderStatus status, Guid customerId, Guid vendorId, 
+                string number, string name, OrderStatus status, Guid customerId, Guid vendorId, List<OrderedItem> items,
                 DateTime placedDate, DateTime? confirmedDate = null, DateTime? completedDate = null)
                 : base(id, version) {
         Number = number;
         Name = name;
+        _items = items;
         PlacedDate = placedDate;
         ConfirmedDate = confirmedDate;
         CompletedDate = completedDate;
@@ -35,7 +40,7 @@ public class Order : AggregateRoot {
         VendorId = vendorId;
     }
 
-    private Order(string number, string name, Guid customerId, Guid vendorId) : this(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, customerId, vendorId, DateTime.Today) {
+    private Order(string number, string name, Guid customerId, Guid vendorId) : this(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, customerId, vendorId, new(), DateTime.Today) {
         AddEvent(new Events.OrderPlacedEvent(Id, number, name));
     }
 
@@ -66,6 +71,34 @@ public class Order : AggregateRoot {
     public void Cancel() {
         Status = OrderStatus.Cancelled;
         AddEvent(new Events.OrderCanceledEvent(Id));
+    }
+
+    public OrderedItem AddItem(string productName, int quantity, Dictionary<string, string> properties) {
+        if (Status == OrderStatus.Cancelled)
+            throw new CantUpdateCancelledOrderException();
+        if (Status != OrderStatus.Unconfirmed)
+            throw new CantAddToConfirmedOrderException();
+        var newItem = OrderedItem.Create(Id, productName, quantity, properties);
+        _items.Add(newItem);
+        return newItem;
+    }
+
+    public bool RemoveItem(OrderedItem item) {
+        if (Status == OrderStatus.Cancelled)
+            throw new CantUpdateCancelledOrderException();
+        if (Status != OrderStatus.Unconfirmed)
+            throw new CantAddToConfirmedOrderException();
+        if (!_items.Remove(item)) return false;
+        AddEvent(new Events.OrderedItemRemoved(Id, item.Id));
+        return true;
+    }
+
+    public override async Task<int> PublishEvents(IPublisher publisher) {
+        int published = await base.PublishEvents(publisher);
+        foreach (var item in _items) {
+            published += await item.PublishEvents(publisher);
+        }
+        return published;
     }
 
 }

@@ -8,12 +8,12 @@ namespace RoyalERP.Sales;
 
 public class SalesUnitOfWork : UnitOfWork, ISalesUnitOfWork {
 
-    private IPublisher _publisher;
+    private readonly IPublisher _publisher;
     private readonly Func<IDbConnection, IDbTransaction, ICompanyRepository> _companiesFactory;
     private readonly Func<IDbConnection, IDbTransaction, IOrderRepository> _ordersFactory;
 
-    public ICompanyRepository Companies { get; set; }
-    public IOrderRepository Orders { get; set; }
+    public ICompanyRepository Companies { get; private set; }
+    public IOrderRepository Orders { get; private set; }
 
     public SalesUnitOfWork(ISalesConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
                             Func<IDbConnection, IDbTransaction, ICompanyRepository> companiesFactory,

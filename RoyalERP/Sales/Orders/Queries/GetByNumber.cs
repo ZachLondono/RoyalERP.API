@@ -20,7 +20,7 @@ public class GetByNumber {
 
         public async Task<IActionResult> Handle(Query request, CancellationToken cancellationToken) {
 
-            const string query = "SELECT id, number, name, placeddate FROM sales.orders WHERE LOWER(number) = @OrderNumber;";
+            const string query = "SELECT id, version, number, name, customerid, vendorid, placeddate, confirmeddate, completeddate, status FROM sales.orders WHERE LOWER(number) = @OrderNumber;";
 
             var orders = await _connection.QueryAsync<OrderSearchResult>(query, new { OrderNumber = request.OrderNumber.ToLower() });
 

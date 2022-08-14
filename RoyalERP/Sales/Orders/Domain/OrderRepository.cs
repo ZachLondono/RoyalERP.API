@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
+using RoyalERP.Sales.Orders.DTO;
 using System.Data;
 
 namespace RoyalERP.Sales.Orders.Domain;
@@ -34,17 +35,28 @@ public class OrderRepository : IOrderRepository {
 
     public Task<IEnumerable<Order>> GetAllAsync() {
 
+        // TODO: get ordered items for each order
+
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders;";
 
         return _connection.QueryAsync<Order>(query, transaction: _transaction);
 
     }
 
-    public Task<Order?> GetAsync(Guid id) {
+    public async Task<Order?> GetAsync(Guid id) {
 
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders WHERE id = @Id;";
+        const string itemQuery = "SELECT id, orderid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
 
-        return _connection.QuerySingleOrDefaultAsync<Order?>(query, transaction: _transaction, param: new { Id = id });
+        var order = await _connection.QuerySingleOrDefaultAsync<OrderSummary?>(query, transaction: _transaction, param: new { Id = id });
+
+        if (order is null) return null;
+
+        var itemsData = await _connection.QueryAsync<(Guid Id, Guid OrderId, string Productname, int Quantity, Json<Dictionary<string,string>> Properties)>(itemQuery, transaction: _transaction, param: new { OrderId = order.Id });
+
+        var items = itemsData.Select(i => new OrderedItem(i.Id, i.OrderId, i.Productname, i.Quantity, i.Properties.Value ?? new()));
+
+        return new Order(order.Id, 0, order.Number, order.Name, order.Status, order.CustomerId, order.VendorId, new(items), order.PlacedDate, order.ConfirmedDate, order.CompletedDate);
 
     }
 
@@ -57,10 +69,15 @@ public class OrderRepository : IOrderRepository {
     }
 
     public async Task UpdateAsync(Order entity) {
-        
+
+        foreach (var item in entity.Items) {
+            await UpdateOrderedItem(item);
+        }
+
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
             // TODO: the events should hold the relevant data to update the db, the entity may have been updated since the event occurred
+            // TODO: use switch 
 
             if (domainEvent is Events.OrderConfirmedEvent confirmed) {
 
@@ -91,6 +108,14 @@ public class OrderRepository : IOrderRepository {
                     Status = entity.Status.ToString()
                 }, _transaction);
 
+            } else if (domainEvent is Events.OrderedItemRemoved itemRemoved) {
+
+                const string command = "DELETE sales.ordereditems WHERE id = @Id";
+
+                await _connection.ExecuteAsync(command, param: new {
+                    Id = itemRemoved.OrderedItemId
+                }, _transaction);
+
             }
 
         }
@@ -98,6 +123,33 @@ public class OrderRepository : IOrderRepository {
         var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
         if (existing is not null) _activeEntities.Remove(existing);
         _activeEntities.Add(entity);
+
+    }
+
+    private async Task UpdateOrderedItem(OrderedItem item) {
+
+        foreach (var domainEvent in item.Events.Where(e => !e.IsPublished)) {
+
+            switch (domainEvent) {
+                case Events.OrderedItemCreated created:
+
+                    const string command = "INSERT INTO sales.ordereditems (id, orderid, productname, quantity, properties)  VALUES (@Id, @OrderId, @ProductName, @Quantity, @Properties);";
+
+                    int rows = await _connection.ExecuteAsync(command, param: new {
+                        Id = created.OrderedItemId,
+                        created.OrderId,
+                        created.ProductName,
+                        created.Quantity,
+                        Properties = new JsonParameter(created.Properties)
+                    }, _transaction);
+
+                    break;
+                default:
+                    // TODO: log unknown event
+                    break;
+            }
+
+        }
 
     }
 
