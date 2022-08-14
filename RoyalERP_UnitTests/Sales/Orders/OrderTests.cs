@@ -1,7 +1,11 @@
 ﻿using FluentAssertions;
+using MediatR;
 using RoyalERP.Sales.Orders.Domain;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using static RoyalERP.Sales.Orders.Domain.Exceptions;
 
@@ -315,6 +319,47 @@ public class OrderTests {
 
         // Assert
         doAction.Should().Throw<CantUpdateCancelledOrderException>();
+
+    }
+
+
+    [Fact]
+    public void Publish_ShouldPublishAllEvents() {
+
+        // Arrange
+        var order = Order.Create("", "", Guid.NewGuid(), Guid.NewGuid());
+        FakePublisher fakePublisher = new FakePublisher();
+
+        var item = order.AddItem("", 0, new());
+
+        // Act
+        order.PublishEvents(fakePublisher).Wait();
+
+        // Assert
+        foreach (var ev in order.Events) 
+            ev.IsPublished.Should().Be(true);
+
+        foreach (var ev in item.Events)
+            ev.IsPublished.Should().Be(true);
+
+        int totalEventCount = order.Events.Count() + item.Events.Count();
+        fakePublisher.PublishCount.Should().Be(totalEventCount);
+
+    }
+
+    class FakePublisher : IPublisher {
+
+        public int PublishCount { get; private set; }
+
+        public Task Publish(object notification, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task Publish<TNotification>(TNotification notification, CancellationToken cancellationToken = default) where TNotification : INotification {
+
+            PublishCount++;
+
+            return Task.CompletedTask;
+
+        }
 
     }
 
