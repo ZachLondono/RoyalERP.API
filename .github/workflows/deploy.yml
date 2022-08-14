@@ -63,4 +63,4 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
-        script: (cd ~/staging/scripts && sys_tests.sh)
+        script: (cd ~/staging/scripts && ./sys_tests.sh)
