@@ -40,5 +40,6 @@ CREATE TABLE sales.ordereditems (
     orderid uuid NOT NULL REFERENCES sales.orders(id) ON DELETE CASCADE,
     productname character varying(255) NOT NULL,
     quantity integer NOT NULL DEFAULT 0,
-    properties jsonb NOT NULL
+    properties jsonb NOT NULL,
+    CONSTRAINT ordereditem_pkey PRIMARY KEY (id)
 );
