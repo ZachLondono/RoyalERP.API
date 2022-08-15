@@ -55,3 +55,12 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
         script: docker build -t staging-webapi ~/staging/app/webapi/RoyalERP --rm
+
+    - name: Running system-integration tests
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.SSHKEY }}
+        script: (cd ~/staging/scripts && ./sys_tests.sh)
