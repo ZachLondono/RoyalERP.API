@@ -1,6 +1,4 @@
-﻿using RoyalERP.Sales.Orders.Domain;
-
-namespace RoyalERP.Sales.Orders.DTO;
+﻿namespace RoyalERP.Contracts.Orders;
 
 public class OrderDetails {
 
@@ -20,7 +18,7 @@ public class OrderDetails {
 
     public DateTime? CompletedDate { get; set; } = null;
 
-    public OrderStatus Status { get; set; }
+    public string Status { get; set; } = string.Empty;
 
     public IEnumerable<OrderedItemDTO> Items { get; set; } = Enumerable.Empty<OrderedItemDTO>();
 

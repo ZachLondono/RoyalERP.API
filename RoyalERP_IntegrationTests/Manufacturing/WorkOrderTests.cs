@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
-using RoyalERP.Manufacturing.WorkOrders.DTO;
+using RoyalERP.Contracts.WorkOrders;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Net;
@@ -86,7 +86,7 @@ public class WorkOrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var order = await GetOrder(client, dto.Id);
-        order.Status.Should().Be(WorkOrderStatus.Cancelled);
+        order.Status.Should().Be(WorkOrderStatus.Cancelled.ToString());
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public class WorkOrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var order = await GetOrder(client, dto.Id);
-        order.Status.Should().Be(WorkOrderStatus.Fulfilled);
+        order.Status.Should().Be(WorkOrderStatus.Fulfilled.ToString());
 
     }
 
@@ -161,7 +161,7 @@ public class WorkOrderTests : DbTests {
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var order = await GetOrder(client, dto.Id);
-        order.Status.Should().Be(WorkOrderStatus.InProgress);
+        order.Status.Should().Be(WorkOrderStatus.InProgress.ToString());
 
     }
 

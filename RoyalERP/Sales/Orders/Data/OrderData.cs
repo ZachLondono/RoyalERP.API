@@ -1,8 +1,8 @@
 ﻿using RoyalERP.Sales.Orders.Domain;
 
-namespace RoyalERP.Sales.Orders.DTO;
+namespace RoyalERP.Sales.Orders.Data;
 
-public class OrderSummary {
+public class OrderData {
 
     public Guid Id { get; set; }
 

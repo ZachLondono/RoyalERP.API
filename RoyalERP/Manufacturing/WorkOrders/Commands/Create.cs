@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.Manufacturing.WorkOrders.Domain;
-using RoyalERP.Manufacturing.WorkOrders.DTO;
+using RoyalERP.Contracts.WorkOrders;
 
 namespace RoyalERP.Manufacturing.WorkOrders.Commands;
 
@@ -40,7 +40,7 @@ public class Create {
                 ReleasedDate = newOrder.ReleasedDate,
                 ScheduledDate = newOrder.ScheduledDate,
                 FulfilledDate = newOrder.FulfilledDate,
-                Status = newOrder.Status
+                Status = newOrder.Status.ToString()
             };
 
         }

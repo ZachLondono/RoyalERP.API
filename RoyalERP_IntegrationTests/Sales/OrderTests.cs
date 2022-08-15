@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using RoyalERP.Sales.Orders.Domain;
-using RoyalERP.Sales.Orders.DTO;
+using RoyalERP.Contracts.Orders;
 using System;
 using Xunit;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System.Net.Http.Json;
 using System.Net;
 using System.Threading.Tasks;
-using RoyalERP.Sales.Companies.DTO;
+using RoyalERP.Contracts.Companies;
 using System.Net.Http;
 using Newtonsoft.Json;
 using Bogus;
@@ -188,7 +188,7 @@ public class OrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updated.Status.Should().Be(OrderStatus.Cancelled);
+        updated.Status.Should().Be(OrderStatus.Cancelled.ToString());
 
     }
 
@@ -211,7 +211,7 @@ public class OrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updated.Status.Should().Be(OrderStatus.Completed);
+        updated.Status.Should().Be(OrderStatus.Completed.ToString());
 
     }
 
@@ -248,7 +248,7 @@ public class OrderTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updated.Status.Should().Be(OrderStatus.Confirmed);
+        updated.Status.Should().Be(OrderStatus.Confirmed.ToString());
 
     }
 

@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Companies.DTO;
+﻿namespace RoyalERP.Sales.Companies.Data;
 
 public class CompanyData {
 

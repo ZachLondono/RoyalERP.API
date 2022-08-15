@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using RoyalERP.Sales.Companies.DTO;
-using RoyalERP.Sales.Orders.DTO;
+using RoyalERP.Contracts.Companies;
+using RoyalERP.Contracts.Orders;
 
 namespace RoyalERP.Sales;
 

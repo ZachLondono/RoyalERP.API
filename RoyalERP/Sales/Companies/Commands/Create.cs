@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Sales.Companies.Domain;
-using RoyalERP.Sales.Companies.DTO;
+using RoyalERP.Contracts.Companies;
 
 namespace RoyalERP.Sales.Companies.Commands;
 

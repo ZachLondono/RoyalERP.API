@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Sales.Orders.DTO;
+using RoyalERP.Contracts.Orders;
+using RoyalERP.Sales.Orders.Data;
 using System.Data;
 
 namespace RoyalERP.Sales.Orders.Domain;
@@ -48,7 +49,7 @@ public class OrderRepository : IOrderRepository {
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders WHERE id = @Id;";
         const string itemQuery = "SELECT id, orderid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
 
-        var order = await _connection.QuerySingleOrDefaultAsync<OrderSummary?>(query, transaction: _transaction, param: new { Id = id });
+        var order = await _connection.QuerySingleOrDefaultAsync<OrderData?>(query, transaction: _transaction, param: new { Id = id });
 
         if (order is null) return null;
 

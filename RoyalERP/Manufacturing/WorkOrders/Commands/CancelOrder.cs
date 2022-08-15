@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Manufacturing.WorkOrders.DTO;
+using RoyalERP.Contracts.WorkOrders;
 
 namespace RoyalERP.Manufacturing.WorkOrders.Commands;
 
@@ -43,7 +43,7 @@ public class CancelOrder {
                 ReleasedDate = order.ReleasedDate,
                 ScheduledDate = order.ScheduledDate,
                 FulfilledDate = order.FulfilledDate,
-                Status = order.Status
+                Status = order.Status.ToString()
             });
 
 

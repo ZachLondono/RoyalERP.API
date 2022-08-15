@@ -1,8 +1,6 @@
-﻿namespace RoyalERP.Sales.Orders.DTO;
+﻿namespace RoyalERP.Contracts.Orders;
 
-public class OrderedItemDTO {
-
-    public Guid Id { get; set; }
+public class NewItem {
 
     public string ProductName { get; set; } = string.Empty;
 
