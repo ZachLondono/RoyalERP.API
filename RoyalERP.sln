@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_UnitTests", "Royal
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{D2166CFE-94E2-4EEF-B5AC-76A9159337A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalERP_IntegrationTests", "RoyalERP_IntegrationTests\RoyalERP_IntegrationTests.csproj", "{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_IntegrationTests", "RoyalERP_IntegrationTests\RoyalERP_IntegrationTests.csproj", "{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System Integration Tests", "System Integration Tests", "{65316BEA-D634-4029-87F9-9F5A37DA8386}"
+	ProjectSection(SolutionItems) = preProject
+		System Integration Tests\sys_test.py = System Integration Tests\sys_test.py
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +42,7 @@ Global
 		{70398088-C02A-4E81-998F-C4C8E931F1DE} = {D2166CFE-94E2-4EEF-B5AC-76A9159337A0}
 		{25AC079A-F249-45BF-BBEB-287ECAF090D3} = {D2166CFE-94E2-4EEF-B5AC-76A9159337A0}
 		{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621} = {D2166CFE-94E2-4EEF-B5AC-76A9159337A0}
+		{65316BEA-D634-4029-87F9-9F5A37DA8386} = {D2166CFE-94E2-4EEF-B5AC-76A9159337A0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFDCA723-88BE-4C21-8577-CB93F44C06EA}
