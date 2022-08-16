@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System Integration Tests", 
 		System Integration Tests\sys_test.py = System Integration Tests\sys_test.py
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoaylERP.Contracts", "Contracts\RoaylERP.Contracts.csproj", "{83CA1AF6-208F-4E52-BBCC-77094904D0EF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.Contracts", "Contracts\RoyalERP.Contracts.csproj", "{83CA1AF6-208F-4E52-BBCC-77094904D0EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

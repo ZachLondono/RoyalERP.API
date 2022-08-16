@@ -6,7 +6,7 @@ EXPOSE 5000
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["RoyalERP/RoyalERP.csproj", "RoyalERP/"]
-COPY ["Contracts/RoaylERP.Contracts.csproj", "Contracts/"]
+COPY ["Contracts/RoyalERP.Contracts.csproj", "Contracts/"]
 RUN dotnet restore "RoyalERP/RoyalERP.csproj"
 
 COPY . .
