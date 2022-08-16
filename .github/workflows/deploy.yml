@@ -25,7 +25,7 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Test
-      run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName!~IntegrationTests
+      run: dotnet test --no-build --verbosity normal --filter FullyQualifiedName!~Tests.Integration
 
     - name: Removing old version
       uses: appleboy/ssh-action@master
@@ -54,7 +54,7 @@ jobs:
         USERNAME: ${{ secrets.USERNAME }}
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
-        script: docker build -t staging-webapi ~/staging/app/webapi/RoyalERP --rm
+        script: docker build -t staging-webapi ~/staging/app/webapi --rm
 
     - name: Running system-integration tests
       uses: appleboy/ssh-action@master

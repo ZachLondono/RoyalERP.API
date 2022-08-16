@@ -5,14 +5,14 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP", "RoyalERP\RoyalERP.csproj", "{70398088-C02A-4E81-998F-C4C8E931F1DE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_UnitTests", "RoyalERP_UnitTests\RoyalERP_UnitTests.csproj", "{25AC079A-F249-45BF-BBEB-287ECAF090D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.Tests.Unit", "RoyalERP_UnitTests\RoyalERP.Tests.Unit.csproj", "{25AC079A-F249-45BF-BBEB-287ECAF090D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{D2166CFE-94E2-4EEF-B5AC-76A9159337A0}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_IntegrationTests", "RoyalERP_IntegrationTests\RoyalERP_IntegrationTests.csproj", "{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.Tests.Integration", "RoyalERP_IntegrationTests\RoyalERP.Tests.Integration.csproj", "{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System Integration Tests", "System Integration Tests", "{65316BEA-D634-4029-87F9-9F5A37DA8386}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System Integration Tests", 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.Contracts", "Contracts\RoyalERP.Contracts.csproj", "{83CA1AF6-208F-4E52-BBCC-77094904D0EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{49D62292-8AD1-4D24-930F-C33A862DB5CD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
+		.github\workflows\test_pullrequest.yml = .github\workflows\test_pullrequest.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
