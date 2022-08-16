@@ -8,6 +8,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_UnitTests", "RoyalERP_UnitTests\RoyalERP_UnitTests.csproj", "{25AC079A-F249-45BF-BBEB-287ECAF090D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{D2166CFE-94E2-4EEF-B5AC-76A9159337A0}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP_IntegrationTests", "RoyalERP_IntegrationTests\RoyalERP_IntegrationTests.csproj", "{CFDBEA51-BF2C-4D52-A1E5-926E5B4D9621}"
 EndProject

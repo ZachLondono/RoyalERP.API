@@ -5,16 +5,16 @@ EXPOSE 5000
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["RoyalERP.csproj", "RoyalERP/"]
+COPY ["RoyalERP/RoyalERP.csproj", "RoyalERP/"]
+COPY ["Contracts/RoaylERP.Contracts.csproj", "Contracts/"]
 RUN dotnet restore "RoyalERP/RoyalERP.csproj"
 
-WORKDIR "/src/RoyalERP"
 COPY . .
 
-RUN dotnet build "RoyalERP.csproj" -c Release -o /app/build
+RUN dotnet build "RoyalERP/RoyalERP.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "RoyalERP.csproj" -c Release -o /app/publish
+RUN dotnet publish "RoyalERP/RoyalERP.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
