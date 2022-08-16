@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Contracts.Orders;
 using RoyalERP.Sales.Orders.Data;
 using System.Data;
 
