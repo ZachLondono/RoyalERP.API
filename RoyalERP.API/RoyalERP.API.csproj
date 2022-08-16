@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\RoyalERP.Contracts.csproj" />
+    <ProjectReference Include="..\RoyalERP.API.Contracts\RoyalERP.API.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

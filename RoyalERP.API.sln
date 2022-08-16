@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{49D62292-8AD1-4D24-930F-C33A862DB5CD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\deploy.yml = .github\workflows\deploy.yml
+		Dockerfile = Dockerfile
+		.github\workflows\test_pullrequest.yml = .github\workflows\test_pullrequest.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.API", "RoyalERP.API\RoyalERP.API.csproj", "{F0CC805F-D84C-40EC-AE32-354A5307970E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.API.Contracts", "RoyalERP.API.Contracts\RoyalERP.API.Contracts.csproj", "{5EAB6140-930A-4FD4-98EB-8139D45AEB28}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9B41FDFD-073F-4156-BFC6-BB3D5B584277}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.API.Tests.Unit", "Tests\RoyalERP.API.Tests.Unit\RoyalERP.API.Tests.Unit.csproj", "{4110322E-095D-4A28-BA91-D491E2FF6AE5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "System Integration Tests", "System Integration Tests", "{7338CFAF-BCB8-4834-A746-641A4CCE2B0B}"
+	ProjectSection(SolutionItems) = preProject
+		Tests\System Integration Tests\sys_test.py = Tests\System Integration Tests\sys_test.py
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoyalERP.API.Tests.Integration", "Tests\RoyalERP.API.Tests.Integration\RoyalERP.API.Tests.Integration.csproj", "{4837702C-0883-4FBF-9241-9E28100025E0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F0CC805F-D84C-40EC-AE32-354A5307970E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0CC805F-D84C-40EC-AE32-354A5307970E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0CC805F-D84C-40EC-AE32-354A5307970E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0CC805F-D84C-40EC-AE32-354A5307970E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EAB6140-930A-4FD4-98EB-8139D45AEB28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EAB6140-930A-4FD4-98EB-8139D45AEB28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EAB6140-930A-4FD4-98EB-8139D45AEB28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EAB6140-930A-4FD4-98EB-8139D45AEB28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4110322E-095D-4A28-BA91-D491E2FF6AE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4110322E-095D-4A28-BA91-D491E2FF6AE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4110322E-095D-4A28-BA91-D491E2FF6AE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4110322E-095D-4A28-BA91-D491E2FF6AE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4837702C-0883-4FBF-9241-9E28100025E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4837702C-0883-4FBF-9241-9E28100025E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4837702C-0883-4FBF-9241-9E28100025E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4837702C-0883-4FBF-9241-9E28100025E0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4110322E-095D-4A28-BA91-D491E2FF6AE5} = {9B41FDFD-073F-4156-BFC6-BB3D5B584277}
+		{7338CFAF-BCB8-4834-A746-641A4CCE2B0B} = {9B41FDFD-073F-4156-BFC6-BB3D5B584277}
+		{4837702C-0883-4FBF-9241-9E28100025E0} = {9B41FDFD-073F-4156-BFC6-BB3D5B584277}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFDCA723-88BE-4C21-8577-CB93F44C06EA}
+	EndGlobalSection
+EndGlobal
