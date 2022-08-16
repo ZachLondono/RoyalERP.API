@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Sales.Orders.DTO;
+using RoyalERP.Contracts.Orders;
 
 namespace RoyalERP.Sales.Orders.Commands;
 
@@ -43,7 +43,7 @@ public class ConfirmOrder {
                 PlacedDate = order.PlacedDate,
                 ConfirmedDate = order.ConfirmedDate,
                 CompletedDate = order.CompletedDate,
-                Status = order.Status
+                Status = order.Status.ToString()
             });
 
         }

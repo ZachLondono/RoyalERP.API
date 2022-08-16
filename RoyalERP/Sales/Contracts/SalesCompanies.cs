@@ -1,4 +1,4 @@
-﻿using RoyalERP.Sales.Companies.DTO;
+﻿using RoyalERP.Contracts.Companies;
 
 namespace RoyalERP.Sales.Contracts;
 

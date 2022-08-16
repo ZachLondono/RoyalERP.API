@@ -1,6 +1,6 @@
-﻿namespace RoyalERP.Sales.Companies.DTO;
+﻿namespace RoyalERP.Contracts.Companies;
 
-public class UpdateAddress {
+public class AddressDTO {
 
     public string Line1 { get; set; } = string.Empty;
 

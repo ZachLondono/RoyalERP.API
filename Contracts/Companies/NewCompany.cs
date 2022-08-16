@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Companies.DTO;
+﻿namespace RoyalERP.Contracts.Companies;
 
 public class NewCompany {
 

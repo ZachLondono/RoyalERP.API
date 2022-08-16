@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FluentAssertions;
 using Newtonsoft.Json;
-using RoyalERP.Sales.Companies.DTO;
+using RoyalERP.Contracts.Companies;
 using RoyalERP_IntegrationTests.Infrastructure;
 using System;
 using System.Net;

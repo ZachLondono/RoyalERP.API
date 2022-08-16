@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Manufacturing.WorkOrders.DTO;
+﻿namespace RoyalERP.Contracts.WorkOrders;
 
 public class NewWorkOrder {
 

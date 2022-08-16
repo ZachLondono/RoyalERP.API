@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Common.Data;
-using RoyalERP.Sales.Companies.DTO;
+using RoyalERP.Contracts.Companies;
 
 namespace RoyalERP.Sales.Companies.Queries;
 

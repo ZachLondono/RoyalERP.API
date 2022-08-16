@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Sales.Companies.DTO;
+using RoyalERP.Sales.Companies.Data;
 using System.Data;
 using System.Diagnostics;
 

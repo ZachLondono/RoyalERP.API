@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Orders.DTO;
+﻿namespace RoyalERP.Contracts.Orders;
 
 public class NewOrder {
 

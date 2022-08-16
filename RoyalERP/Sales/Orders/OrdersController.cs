@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Common;
 using RoyalERP.Sales.Orders.Commands;
-using RoyalERP.Sales.Orders.DTO;
+using RoyalERP.Contracts.Orders;
 using RoyalERP.Sales.Orders.Queries;
 
 namespace RoyalERP.Sales.Orders;

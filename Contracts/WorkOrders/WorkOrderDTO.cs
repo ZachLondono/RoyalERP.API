@@ -1,6 +1,4 @@
-﻿using RoyalERP.Manufacturing.WorkOrders.Domain;
-
-namespace RoyalERP.Manufacturing.WorkOrders.DTO;
+﻿namespace RoyalERP.Contracts.WorkOrders;
 
 public class WorkOrderDTO {
 
@@ -28,6 +26,6 @@ public class WorkOrderDTO {
 
     public DateTime? FulfilledDate { get; set; }
 
-    public WorkOrderStatus Status { get; set; }
+    public string Status { get; set; } = string.Empty;
 
 }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Manufacturing.WorkOrders.Commands;
 using RoyalERP.Manufacturing.WorkOrders.Queries;
-using RoyalERP.Manufacturing.WorkOrders.DTO;
+using RoyalERP.Contracts.WorkOrders;
 using RoyalERP.Common;
 
 namespace RoyalERP.Manufacturing.WorkOrders;
