@@ -1,9 +1,9 @@
 ﻿using Dapper;
 using MediatR;
 using RoyalERP.Contracts.Companies;
-using RoyalERP.Sales.Companies.Data;
+using RoyalERP.API.Sales.Companies.Data;
 
-namespace RoyalERP.Sales.Companies.Queries;
+namespace RoyalERP.API.Sales.Companies.Queries;
 
 public class GetById {
 

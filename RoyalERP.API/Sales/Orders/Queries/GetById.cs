@@ -3,7 +3,7 @@ using MediatR;
 using RoyalERP.Common.Data;
 using RoyalERP.Contracts.Orders;
 
-namespace RoyalERP.Sales.Orders.Queries;
+namespace RoyalERP.API.Sales.Orders.Queries;
 
 public class GetById {
 

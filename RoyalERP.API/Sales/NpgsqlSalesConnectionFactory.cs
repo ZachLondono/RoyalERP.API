@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 using System.Data;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public class NpgsqlSalesConnectionFactory : ISalesConnectionFactory {
 

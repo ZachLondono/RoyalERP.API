@@ -1,6 +1,6 @@
 ﻿using RoyalERP.Contracts.Companies;
 
-namespace RoyalERP.Sales.Contracts;
+namespace RoyalERP.API.Sales.Contracts;
 
 public static class SalesCompanies {
 

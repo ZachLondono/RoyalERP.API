@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Sales.Companies.Domain;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Companies.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.Contracts.Orders;
 
-namespace RoyalERP.Sales.Orders.Commands;
+namespace RoyalERP.API.Sales.Orders.Commands;
 
 public class Create {
 

@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.Contracts.Orders;
 using System;
 using Xunit;

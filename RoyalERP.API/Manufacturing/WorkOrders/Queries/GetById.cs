@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.WorkOrders;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Queries;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Queries;
 
 public class GetById {
 

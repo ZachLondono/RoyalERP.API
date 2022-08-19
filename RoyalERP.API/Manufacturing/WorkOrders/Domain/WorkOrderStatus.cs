@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Manufacturing.WorkOrders.Domain;
+﻿namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
 public enum WorkOrderStatus {
     Pending,

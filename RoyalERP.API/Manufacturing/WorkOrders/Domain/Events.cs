@@ -1,7 +1,7 @@
 ﻿using RoyalERP.Common.Domain;
 using System.Text.Json.Serialization;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Domain;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
 public static class Events {
 

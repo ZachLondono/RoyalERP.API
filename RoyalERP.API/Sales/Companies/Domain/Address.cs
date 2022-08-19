@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Companies.Domain;
+﻿namespace RoyalERP.API.Sales.Companies.Domain;
 
 public class Address {
 

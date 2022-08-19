@@ -1,6 +1,6 @@
 ﻿using RoyalERP.Common.Data;
 
-namespace RoyalERP.Manufacturing;
+namespace RoyalERP.API.Manufacturing;
 
 public interface IManufacturingConnectionFactory : IDbConnectionFactory {
 }

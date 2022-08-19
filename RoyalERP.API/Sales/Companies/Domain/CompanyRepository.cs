@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Sales.Companies.Data;
+using RoyalERP.API.Sales.Companies.Data;
 using System.Data;
 using System.Diagnostics;
 
-namespace RoyalERP.Sales.Companies.Domain;
+namespace RoyalERP.API.Sales.Companies.Domain;
 
 public class CompanyRepository : ICompanyRepository {
 

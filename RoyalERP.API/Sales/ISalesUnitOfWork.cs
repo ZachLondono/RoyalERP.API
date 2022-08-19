@@ -1,8 +1,8 @@
 ﻿using RoyalERP.Common.Domain;
-using RoyalERP.Sales.Companies.Domain;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Companies.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public interface ISalesUnitOfWork : IUnitOfWork {
     

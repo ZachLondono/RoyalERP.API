@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Manufacturing.WorkOrders;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.API.Manufacturing.WorkOrders;
+using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using System.Data;
-using static RoyalERP.Sales.Orders.Domain.Events;
+using static RoyalERP.API.Sales.Orders.Domain.Events;
 
-namespace RoyalERP.Manufacturing;
+namespace RoyalERP.API.Manufacturing;
 
 public static class ConfigureServices {
 

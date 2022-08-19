@@ -1,6 +1,6 @@
 ﻿using RoyalERP.Common.Data;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public interface ISalesConnectionFactory : IDbConnectionFactory {
 }

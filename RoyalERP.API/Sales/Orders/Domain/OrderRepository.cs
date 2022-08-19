@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using RoyalERP.Common.Data;
-using RoyalERP.Sales.Orders.Data;
+using RoyalERP.API.Sales.Orders.Data;
 using System.Data;
 
-namespace RoyalERP.Sales.Orders.Domain;
+namespace RoyalERP.API.Sales.Orders.Domain;
 
 public class OrderRepository : IOrderRepository {
 

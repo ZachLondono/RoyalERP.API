@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using RoyalERP.Contracts.WorkOrders;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Commands;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Commands;
 
 public class Create {
 

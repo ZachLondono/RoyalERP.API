@@ -1,10 +1,10 @@
 ﻿using MediatR;
 using RoyalERP.Common.Domain;
-using RoyalERP.Sales.Companies.Domain;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Companies.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
 using System.Data;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public class SalesUnitOfWork : UnitOfWork, ISalesUnitOfWork {
 

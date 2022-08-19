@@ -2,7 +2,7 @@
 using RoyalERP.Common.Data;
 using System.Data;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Domain;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
 public class WorkOrderRepository : IWorkOrderRepository {
 

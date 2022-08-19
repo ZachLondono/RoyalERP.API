@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Commands;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Commands;
 
 public class Delete {
 

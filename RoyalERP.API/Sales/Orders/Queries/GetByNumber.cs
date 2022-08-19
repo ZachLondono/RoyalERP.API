@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.Orders;
 using System.Data;
 
-namespace RoyalERP.Sales.Orders.Queries;
+namespace RoyalERP.API.Sales.Orders.Queries;
 
 public class GetByNumber {
 

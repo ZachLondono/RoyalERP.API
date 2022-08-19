@@ -2,7 +2,7 @@
 using RoyalERP.Contracts.Companies;
 using RoyalERP.Contracts.Orders;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public class SalesQueries {
 

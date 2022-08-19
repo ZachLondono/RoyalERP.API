@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using RoyalERP.Manufacturing.WorkOrders.Commands;
-using RoyalERP.Sales.Contracts;
-using static RoyalERP.Sales.Orders.Domain.Events;
+using RoyalERP.API.Manufacturing.WorkOrders.Commands;
+using RoyalERP.API.Sales.Contracts;
+using static RoyalERP.API.Sales.Orders.Domain.Events;
 
-namespace RoyalERP.Manufacturing.WorkOrders;
+namespace RoyalERP.API.Manufacturing.WorkOrders;
 
 public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
 
