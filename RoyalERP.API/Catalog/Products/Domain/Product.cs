@@ -14,6 +14,12 @@ public class Product : AggregateRoot {
         _attributeIds = attributes;
     }
 
+    private Product(string name) : this(Guid.NewGuid(), 0, name, new()) {
+        AddEvent(new Events.ProductCreated(Id, name));
+    }
+
+    public static Product Create(string name) => new(name);
+
     public void SetName(string name) {
         Name = name;
         throw new NotImplementedException();
