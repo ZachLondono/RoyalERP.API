@@ -58,7 +58,23 @@ public class ProductTests {
     }
 
     [Fact]
-    public void RemoveAttribute() {
+    public void AddAttribute_ShouldNotDoAnything_WhenAlreadyContainsAttribute() {
+
+        // Arrange
+        var attributeId = new Guid();
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", new() { attributeId });
+
+        // Act
+        sut.AddAttribute(attributeId);
+
+        // Assert
+        sut.AttributeIds.Should().ContainSingle(id => id == attributeId);
+        sut.Events.Should().BeEmpty();
+
+    }
+
+    [Fact]
+    public void RemoveAttribute_ShouldRemoveAttributeIdAndAddEvent() {
 
         // Arrange
         var attributeId = new Guid();
@@ -70,6 +86,22 @@ public class ProductTests {
         // Assert
         _sut.AttributeIds.Should().NotContain(id => id == attributeId);
         _sut.Events.Should().ContainSingle(e => e is Events.ProductAttributeRemoved && ((Events.ProductAttributeRemoved)e).AttributeId.Equals(attributeId));
+
+    }
+
+    [Fact]
+    public void RemoveAttribute_ShouldNotDoAnything_WhenDoesNotContainAttribute() {
+
+        // Arrange
+        var attributeId = new Guid();
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", new());
+
+        // Act
+        sut.RemoveAttribute(attributeId);
+
+        // Assert
+        sut.AttributeIds.Should().BeEmpty();
+        sut.Events.Should().BeEmpty();
 
     }
 
