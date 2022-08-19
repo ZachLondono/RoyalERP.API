@@ -31,9 +31,10 @@ public class Product : AggregateRoot {
         AddEvent(new Events.ProductAttributeAdded(Id, attributeId));
     }
 
-    public void RemoveAttribute(Guid attributeId) {
-        _attributeIds.Remove(attributeId);
-        AddEvent(new Events.ProductAttributeRemoved(Id, attributeId));
+    public bool RemoveAttribute(Guid attributeId) {
+        var result = _attributeIds.Remove(attributeId);
+        if (result) AddEvent(new Events.ProductAttributeRemoved(Id, attributeId));
+        return result;
     }
 
 }
