@@ -3,8 +3,8 @@ using MediatR;
 using RoyalERP.Common;
 using RoyalERP.Common.Data;
 using RoyalERP.Common.Domain;
-using RoyalERP.Manufacturing;
-using RoyalERP.Sales;
+using RoyalERP.API.Manufacturing;
+using RoyalERP.API.Sales;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);

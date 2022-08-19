@@ -3,7 +3,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.Companies;
 
-namespace RoyalERP.Sales.Companies.Queries;
+namespace RoyalERP.API.Sales.Companies.Queries;
 
 public class GetAll {
 

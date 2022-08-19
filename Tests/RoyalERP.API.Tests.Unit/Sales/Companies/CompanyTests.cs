@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using RoyalERP.Sales.Companies.Domain;
+using RoyalERP.API.Sales.Companies.Domain;
 using Xunit;
 
 namespace RoyalERP_UnitTests.Sales.Companies;

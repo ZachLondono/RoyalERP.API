@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Companies.Data;
+﻿namespace RoyalERP.API.Sales.Companies.Data;
 
 public class CompanyData {
 

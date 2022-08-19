@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using RoyalERP.Common.Domain;
-using static RoyalERP.Sales.Orders.Domain.Exceptions;
+using static RoyalERP.API.Sales.Orders.Domain.Exceptions;
 
-namespace RoyalERP.Sales.Orders.Domain;
+namespace RoyalERP.API.Sales.Orders.Domain;
 
 public class Order : AggregateRoot {
     

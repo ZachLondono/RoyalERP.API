@@ -1,7 +1,7 @@
 ﻿using RoyalERP.Common.Domain;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
-namespace RoyalERP.Manufacturing;
+namespace RoyalERP.API.Manufacturing;
 
 public interface IManufacturingUnitOfWork : IUnitOfWork {
     

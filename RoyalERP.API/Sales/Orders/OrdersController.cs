@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Common;
-using RoyalERP.Sales.Orders.Commands;
+using RoyalERP.API.Sales.Orders.Commands;
 using RoyalERP.Contracts.Orders;
-using RoyalERP.Sales.Orders.Queries;
+using RoyalERP.API.Sales.Orders.Queries;
 
-namespace RoyalERP.Sales.Orders;
+namespace RoyalERP.API.Sales.Orders;
 
 [ApiController]
 [Route("[controller]")]

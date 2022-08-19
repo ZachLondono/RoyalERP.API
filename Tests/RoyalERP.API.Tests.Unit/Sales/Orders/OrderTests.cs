@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
 using MediatR;
-using RoyalERP.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
-using static RoyalERP.Sales.Orders.Domain.Exceptions;
+using static RoyalERP.API.Sales.Orders.Domain.Exceptions;
 
 namespace RoyalERP_UnitTests.Sales.Orders;
 

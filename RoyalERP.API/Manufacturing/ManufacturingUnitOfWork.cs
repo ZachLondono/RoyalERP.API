@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using RoyalERP.Common.Domain;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using System.Data;
 
-namespace RoyalERP.Manufacturing;
+namespace RoyalERP.API.Manufacturing;
 
 public class ManufacturingUnitOfWork : UnitOfWork, IManufacturingUnitOfWork {
 

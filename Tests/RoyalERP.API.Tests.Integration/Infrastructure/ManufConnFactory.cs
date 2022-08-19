@@ -1,5 +1,5 @@
 ﻿using Npgsql;
-using RoyalERP.Manufacturing;
+using RoyalERP.API.Manufacturing;
 using System.Data;
 
 namespace RoyalERP_IntegrationTests.Infrastructure;

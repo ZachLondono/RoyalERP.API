@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.Orders;
 
-namespace RoyalERP.Sales.Orders.Queries;
+namespace RoyalERP.API.Sales.Orders.Queries;
 
 public class GetAll {
 

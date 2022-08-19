@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.Companies;
 
-namespace RoyalERP.Sales.Companies.Commands;
+namespace RoyalERP.API.Sales.Companies.Commands;
 
 public class UpdateCompanyAddress {
 

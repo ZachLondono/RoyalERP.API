@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Common.Domain;
 
-namespace RoyalERP.Sales.Orders.Domain;
+namespace RoyalERP.API.Sales.Orders.Domain;
 
 public static class Exceptions {
 

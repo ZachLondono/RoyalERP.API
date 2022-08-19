@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Sales.Orders.Domain;
+﻿namespace RoyalERP.API.Sales.Orders.Domain;
 
 public enum OrderStatus {
     Unconfirmed,

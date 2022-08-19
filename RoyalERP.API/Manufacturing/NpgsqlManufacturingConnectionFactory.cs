@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 using System.Data;
 
-namespace RoyalERP.Manufacturing;
+namespace RoyalERP.API.Manufacturing;
 
 public class NpgsqlManufacturingConnectionFactory : IManufacturingConnectionFactory {
 

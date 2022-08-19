@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Manufacturing.WorkOrders.Commands;
-using RoyalERP.Manufacturing.WorkOrders.Queries;
+using RoyalERP.API.Manufacturing.WorkOrders.Commands;
+using RoyalERP.API.Manufacturing.WorkOrders.Queries;
 using RoyalERP.Contracts.WorkOrders;
 using RoyalERP.Common;
 
-namespace RoyalERP.Manufacturing.WorkOrders;
+namespace RoyalERP.API.Manufacturing.WorkOrders;
 
 [ApiController]
 [Route("[controller]")]

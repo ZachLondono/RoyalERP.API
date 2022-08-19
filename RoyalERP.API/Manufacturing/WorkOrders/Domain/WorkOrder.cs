@@ -1,7 +1,7 @@
 ﻿using RoyalERP.Common.Domain;
-using static RoyalERP.Manufacturing.WorkOrders.Domain.Exceptions;
+using static RoyalERP.API.Manufacturing.WorkOrders.Domain.Exceptions;
 
-namespace RoyalERP.Manufacturing.WorkOrders.Domain;
+namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
 public class WorkOrder : AggregateRoot {
 

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.Contracts.Orders;
 
-namespace RoyalERP.Sales.Orders.Commands;
+namespace RoyalERP.API.Sales.Orders.Commands;
 
 public class ConfirmOrder {
 

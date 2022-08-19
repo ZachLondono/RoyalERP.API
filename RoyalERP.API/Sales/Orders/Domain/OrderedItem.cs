@@ -1,6 +1,6 @@
 ﻿using RoyalERP.Common.Domain;
 
-namespace RoyalERP.Sales.Orders.Domain;
+namespace RoyalERP.API.Sales.Orders.Domain;
 
 public class OrderedItem : Entity {
 

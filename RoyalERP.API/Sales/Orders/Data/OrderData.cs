@@ -1,6 +1,6 @@
-﻿using RoyalERP.Sales.Orders.Domain;
+﻿using RoyalERP.API.Sales.Orders.Domain;
 
-namespace RoyalERP.Sales.Orders.Data;
+namespace RoyalERP.API.Sales.Orders.Data;
 
 public class OrderData {
 

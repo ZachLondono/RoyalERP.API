@@ -1,9 +1,9 @@
 ﻿using Bogus;
 using FluentAssertions;
-using RoyalERP.Manufacturing.WorkOrders.Domain;
+using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using System;
 using Xunit;
-using static RoyalERP.Manufacturing.WorkOrders.Domain.Exceptions;
+using static RoyalERP.API.Manufacturing.WorkOrders.Domain.Exceptions;
 
 namespace RoyalERP_UnitTests.Manufacturing.WorkOrders;
 

@@ -1,10 +1,10 @@
 ﻿using RoyalERP.Common.Data;
-using RoyalERP.Sales.Companies.Domain;
-using RoyalERP.Sales.Orders.Domain;
-using RoyalERP.Sales.Contracts;
+using RoyalERP.API.Sales.Companies.Domain;
+using RoyalERP.API.Sales.Orders.Domain;
+using RoyalERP.API.Sales.Contracts;
 using System.Data;
 
-namespace RoyalERP.Sales;
+namespace RoyalERP.API.Sales;
 
 public static class ConfigureServices {
 
