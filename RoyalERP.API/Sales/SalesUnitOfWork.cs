@@ -33,8 +33,9 @@ public class SalesUnitOfWork : UnitOfWork, ISalesUnitOfWork {
         Orders = _ordersFactory(Connection, Transaction);
     }
 
-    public override Task PublishEvents() {
-        return Orders.PublishEvents(_publisher);
+    public override async Task PublishEvents() {
+        await Orders.PublishEvents(_publisher);
+        await Companies.PublishEvents(_publisher);
     }
 
 }
