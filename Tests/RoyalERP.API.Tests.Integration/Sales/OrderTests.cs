@@ -3,7 +3,7 @@ using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.Contracts.Orders;
 using System;
 using Xunit;
-using RoyalERP_IntegrationTests.Infrastructure;
+using RoyalERP.API.Tests.Integration.Infrastructure;
 using System.Net.Http.Json;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,7 +14,7 @@ using Bogus;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RoyalERP_IntegrationTests.Sales;
+namespace RoyalERP.API.Tests.Integration.Sales;
 
 public class OrderTests : DbTests {
 

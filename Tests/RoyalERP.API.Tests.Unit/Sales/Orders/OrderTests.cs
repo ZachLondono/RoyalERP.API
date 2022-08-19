@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Xunit;
 using static RoyalERP.API.Sales.Orders.Domain.Exceptions;
 
-namespace RoyalERP_UnitTests.Sales.Orders;
+namespace RoyalERP.API.Tests.Unit.Sales.Orders;
 
 public class OrderTests {
 

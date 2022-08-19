@@ -2,7 +2,7 @@
 using RoyalERP.API.Manufacturing;
 using System.Data;
 
-namespace RoyalERP_IntegrationTests.Infrastructure;
+namespace RoyalERP.API.Tests.Integration.Infrastructure;
 
 public class ManufConnFactory : IManufacturingConnectionFactory {
 

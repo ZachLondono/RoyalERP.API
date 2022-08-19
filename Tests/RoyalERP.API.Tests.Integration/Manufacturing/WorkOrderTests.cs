@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using RoyalERP.Contracts.WorkOrders;
-using RoyalERP_IntegrationTests.Infrastructure;
+using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -10,7 +10,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RoyalERP_IntegrationTests.Manufacturing;
+namespace RoyalERP.API.Tests.Integration.Manufacturing;
 
 public class WorkOrderTests : DbTests {
 

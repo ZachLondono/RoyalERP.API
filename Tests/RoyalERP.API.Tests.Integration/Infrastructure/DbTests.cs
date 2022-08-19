@@ -13,7 +13,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RoyalERP_IntegrationTests.Infrastructure;
+namespace RoyalERP.API.Tests.Integration.Infrastructure;
 
 public abstract class DbTests : WebApplicationFactory<RoyalERP.Program>, IAsyncLifetime {
 

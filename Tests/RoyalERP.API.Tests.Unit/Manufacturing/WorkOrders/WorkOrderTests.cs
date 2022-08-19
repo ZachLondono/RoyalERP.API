@@ -5,7 +5,7 @@ using System;
 using Xunit;
 using static RoyalERP.API.Manufacturing.WorkOrders.Domain.Exceptions;
 
-namespace RoyalERP_UnitTests.Manufacturing.WorkOrders;
+namespace RoyalERP.API.Tests.Unit.Manufacturing.WorkOrders;
 
 public class WorkOrderTests {
 
