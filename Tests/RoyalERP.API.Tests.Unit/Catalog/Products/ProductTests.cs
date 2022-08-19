@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using RoyalERP.API.Catalog.Products.Domain;
 using System;
+using Xunit;
 
 namespace RoyalERP.API.Tests.Unit.Catalog.Products;
 public class ProductTests {
@@ -11,6 +12,7 @@ public class ProductTests {
         _sut = new(Guid.NewGuid(), 0, "New Product", new());
     }
 
+    [Fact]
     public void Create_ShouldAddEvent() {
 
         // Arrange
@@ -21,10 +23,11 @@ public class ProductTests {
 
         // Assert
         newsut.Id.Should().NotBeEmpty();
-        _sut.Events.Should().ContainSingle(e => e is Events.ProductCreated && ((Events.ProductCreated)e).Name.Equals(name));
+        newsut.Events.Should().ContainSingle(e => e is Events.ProductCreated && ((Events.ProductCreated)e).Name.Equals(name));
 
     }
 
+    [Fact]
     public void SetName_ShouldUpdateNameAndAddEvent() {
 
         // Arrange
@@ -39,6 +42,7 @@ public class ProductTests {
 
     }
 
+    [Fact]
     public void AddAttribute_ShouldUpdateAttributeListAndAddEvent() {
 
         // Arrange
@@ -53,6 +57,7 @@ public class ProductTests {
 
     }
 
+    [Fact]
     public void RemoveAttribute() {
 
         // Arrange

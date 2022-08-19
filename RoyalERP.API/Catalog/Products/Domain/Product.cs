@@ -1,4 +1,5 @@
 ﻿using RoyalERP.Common.Domain;
+using System.Xml.Linq;
 
 namespace RoyalERP.API.Catalog.Products.Domain;
 
@@ -22,17 +23,17 @@ public class Product : AggregateRoot {
 
     public void SetName(string name) {
         Name = name;
-        throw new NotImplementedException();
+        AddEvent(new Events.ProductNameUpdated(Id, name));
     }
 
     public void AddAttribute(Guid attributeId) {
         _attributeIds.Add(attributeId);
-        throw new NotImplementedException();
+        AddEvent(new Events.ProductAttributeAdded(Id, attributeId));
     }
 
     public void RemoveAttribute(Guid attributeId) {
         _attributeIds.Remove(attributeId);
-        throw new NotImplementedException();
+        AddEvent(new Events.ProductAttributeRemoved(Id, attributeId));
     }
 
 }
