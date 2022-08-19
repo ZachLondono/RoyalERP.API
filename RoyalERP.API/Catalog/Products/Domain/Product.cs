@@ -1,5 +1,4 @@
 ﻿using RoyalERP.Common.Domain;
-using System.Xml.Linq;
 
 namespace RoyalERP.API.Catalog.Products.Domain;
 
@@ -27,6 +26,7 @@ public class Product : AggregateRoot {
     }
 
     public void AddAttribute(Guid attributeId) {
+        if (_attributeIds.Contains(attributeId)) return;
         _attributeIds.Add(attributeId);
         AddEvent(new Events.ProductAttributeAdded(Id, attributeId));
     }
