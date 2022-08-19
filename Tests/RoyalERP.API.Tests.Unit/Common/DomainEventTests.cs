@@ -6,7 +6,7 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RoyalERP_UnitTests.Common;
+namespace RoyalERP.API.Tests.Unit.Common;
 
 public class DomainEventTests {
 

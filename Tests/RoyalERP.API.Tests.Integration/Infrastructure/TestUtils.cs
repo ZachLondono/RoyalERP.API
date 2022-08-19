@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RoyalERP_IntegrationTests.Infrastructure;
+namespace RoyalERP.API.Tests.Integration.Infrastructure;
 
 public static class TestUtils {
 

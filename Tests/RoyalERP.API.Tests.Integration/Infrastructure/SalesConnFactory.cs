@@ -2,7 +2,7 @@
 using RoyalERP.API.Sales;
 using System.Data;
 
-namespace RoyalERP_IntegrationTests.Infrastructure;
+namespace RoyalERP.API.Tests.Integration.Infrastructure;
 
 public class SalesConnFactory : ISalesConnectionFactory {
 

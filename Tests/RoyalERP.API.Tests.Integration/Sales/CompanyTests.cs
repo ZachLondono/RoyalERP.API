@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using RoyalERP.Contracts.Companies;
-using RoyalERP_IntegrationTests.Infrastructure;
+using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace RoyalERP_IntegrationTests.Sales;
+namespace RoyalERP.API.Tests.Integration.Sales;
 
 public class CompanyTests : DbTests {
 

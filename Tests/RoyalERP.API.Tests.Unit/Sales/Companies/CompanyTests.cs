@@ -2,7 +2,7 @@
 using RoyalERP.API.Sales.Companies.Domain;
 using Xunit;
 
-namespace RoyalERP_UnitTests.Sales.Companies;
+namespace RoyalERP.API.Tests.Unit.Sales.Companies;
 
 public class CompanyTests {
 
