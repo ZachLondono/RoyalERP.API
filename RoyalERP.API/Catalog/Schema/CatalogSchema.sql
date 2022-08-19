@@ -22,7 +22,7 @@ CREATE TABLE catalog.productattributes (
 
 CREATE TABLE catalog.product_productattribute (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 ),
-    productid uuid NOT NULL,
-    attributeid uuid NOT NULL,
+    productid uuid NOT NULL REFERENCES catalog.products(id) ON DELETE CASCADE,
+    attributeid uuid NOT NULL REFERENCES catalog.productattributes(id) ON DELETE CASCADE,,
     CONSTRAINT product_productattribute_pkey PRIMARY KEY (id)
 );
