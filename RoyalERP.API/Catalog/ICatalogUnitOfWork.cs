@@ -1,7 +1,7 @@
 ﻿using RoyalERP.API.Catalog.ProductAttributes.Domain;
 using RoyalERP.API.Catalog.ProductClasses.Domain;
 using RoyalERP.API.Catalog.Products.Domain;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common.Domain;
 
 namespace RoyalERP.API.Catalog;
 

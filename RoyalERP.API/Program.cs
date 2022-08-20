@@ -1,8 +1,8 @@
 using Dapper;
 using MediatR;
-using RoyalERP.Common;
-using RoyalERP.Common.Data;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common;
+using RoyalERP.API.Common.Data;
+using RoyalERP.API.Common.Domain;
 using RoyalERP.API.Manufacturing;
 using RoyalERP.API.Sales;
 using System.Text.Json.Serialization;

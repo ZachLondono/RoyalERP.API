@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Domain;
+﻿using RoyalERP.API.Common.Domain;
 
 namespace RoyalERP.API.Catalog.ProductClasses.Domain;
 

@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Data;
+﻿using RoyalERP.API.Common.Data;
 
 namespace RoyalERP.API.Catalog;
 

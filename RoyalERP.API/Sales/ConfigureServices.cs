@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Data;
+﻿using RoyalERP.API.Common.Data;
 using RoyalERP.API.Sales.Companies.Domain;
 using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.API.Sales.Contracts;

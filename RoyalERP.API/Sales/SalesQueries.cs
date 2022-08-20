@@ -1,6 +1,6 @@
 ﻿using MediatR;
-using RoyalERP.Contracts.Companies;
-using RoyalERP.Contracts.Orders;
+using RoyalERP.API.Contracts.Companies;
+using RoyalERP.API.Contracts.Orders;
 
 namespace RoyalERP.API.Sales;
 

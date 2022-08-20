@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using RoyalERP.API.Manufacturing.WorkOrders;
 using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 using System.Data;

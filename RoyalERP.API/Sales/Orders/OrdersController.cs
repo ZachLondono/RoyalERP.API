@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Common;
+using RoyalERP.API.Common;
 using RoyalERP.API.Sales.Orders.Commands;
-using RoyalERP.Contracts.Orders;
+using RoyalERP.API.Contracts.Orders;
 using RoyalERP.API.Sales.Orders.Queries;
 
 namespace RoyalERP.API.Sales.Orders;

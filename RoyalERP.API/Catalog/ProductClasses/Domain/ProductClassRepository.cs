@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.API.Catalog.Products.Domain;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using System.Data;
 
 namespace RoyalERP.API.Catalog.ProductClasses.Domain;

@@ -2,7 +2,7 @@
 using RoyalERP.API.Catalog.ProductClasses.Domain;
 using RoyalERP.API.Contracts.ProductAttributes;
 using RoyalERP.API.Contracts.ProductClasses;
-using RoyalERP.Common;
+using RoyalERP.API.Common;
 
 namespace RoyalERP.API.Catalog.ProductClasses;
 

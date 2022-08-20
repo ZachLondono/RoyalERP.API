@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Domain;
+﻿using RoyalERP.API.Common.Domain;
 using static RoyalERP.API.Manufacturing.WorkOrders.Domain.Exceptions;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;

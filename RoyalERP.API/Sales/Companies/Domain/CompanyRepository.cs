@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using RoyalERP.API.Sales.Companies.Data;
 using System.Data;
 using System.Diagnostics;

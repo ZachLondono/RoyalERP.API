@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Domain;
+﻿using RoyalERP.API.Common.Domain;
 using RoyalERP.API.Manufacturing.WorkOrders.Domain;
 
 namespace RoyalERP.API.Manufacturing;

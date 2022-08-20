@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Newtonsoft.Json;
 using RoyalERP.API.Manufacturing.WorkOrders.Domain;
-using RoyalERP.Contracts.WorkOrders;
+using RoyalERP.API.Contracts.WorkOrders;
 using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Net;

@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.Contracts.WorkOrders;
+using RoyalERP.API.Contracts.WorkOrders;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders.Queries;
 

@@ -4,7 +4,7 @@ using RoyalERP.API.Catalog.ProductClasses.Domain;
 using RoyalERP.API.Catalog.Products.Commands;
 using RoyalERP.API.Catalog.Products.Queries;
 using RoyalERP.API.Contracts.Products;
-using RoyalERP.Common;
+using RoyalERP.API.Common;
 
 namespace RoyalERP.API.Catalog.Products;
 

@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Data;
+﻿using RoyalERP.API.Common.Data;
 using System.Data;
 
 namespace RoyalERP.API.Common.Domain;

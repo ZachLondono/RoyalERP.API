@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Catalog.ProductAttributes.Domain;
 using RoyalERP.API.Contracts.ProductAttributes;
-using RoyalERP.Common;
+using RoyalERP.API.Common;
 
 namespace RoyalERP.API.Catalog.ProductAttributes;
 
