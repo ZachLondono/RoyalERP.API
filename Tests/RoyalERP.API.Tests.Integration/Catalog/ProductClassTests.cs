@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using RoyalERP.API.Contracts.ProductAttributes;
+using RoyalERP.API.Contracts.ProductClasses;
 using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Net;
@@ -13,26 +14,26 @@ using Xunit;
 
 namespace RoyalERP.API.Tests.Integration.Catalog;
 
-public class ProductAttributeTests : DbTests {
+public class ProductClassTests : DbTests {
 
     [Fact]
     public async Task Create_ShouldReturn201() {
 
         // Arrange
-        var faker = new Faker<NewProductAttribute>().RuleFor(c => c.Name, f => f.Commerce.ProductName());
+        var faker = new Faker<NewProductClass>().RuleFor(c => c.Name, f => f.Commerce.ProductName());
         var expected = faker.Generate();
         var json = JsonConvert.SerializeObject(expected);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var client = CreateClientWithAuth();
 
         // Act
-        var response = await client.PostAsync("/attributes", content);
+        var response = await client.PostAsync("/productclasses", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         var result = await response.Content.ReadAsStringAsync();
-        var actual = JsonConvert.DeserializeObject<ProductAttributeDTO>(result);
+        var actual = JsonConvert.DeserializeObject<ProductClassDTO>(result);
 
         actual.Should().NotBeNull();
         actual!.Name.Should().Be(expected.Name);
@@ -46,7 +47,7 @@ public class ProductAttributeTests : DbTests {
         var client = CreateClientWithAuth();
 
         // Act
-        var response = await client.DeleteAsync($"/attributes/{Guid.NewGuid()}");
+        var response = await client.DeleteAsync($"/productclasses/{Guid.NewGuid()}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -55,13 +56,13 @@ public class ProductAttributeTests : DbTests {
 
     [Fact]
     public async Task Delete_ShouldReturn204_WhenEntityDoesExist() {
-        
+
         // Arrange
         var client = CreateClientWithAuth();
         var created = await CreateEntity(client);
 
         // Act
-        var response = await client.DeleteAsync($"/attributes/{created.Id}");
+        var response = await client.DeleteAsync($"/productclasses/{created.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -75,7 +76,7 @@ public class ProductAttributeTests : DbTests {
         var client = CreateClientWithAuth();
 
         // Act
-        var response = await client.GetAsync($"/attributes/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/productclasses/{Guid.NewGuid()}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -90,7 +91,7 @@ public class ProductAttributeTests : DbTests {
         var created = await CreateEntity(client);
 
         // Act
-        var response = await client.GetAsync($"/attributes/{created.Id}");
+        var response = await client.GetAsync($"/productclasses/{created.Id}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -104,7 +105,7 @@ public class ProductAttributeTests : DbTests {
         var client = CreateClientWithAuth();
 
         // Act
-        var response = await client.GetAsync("/attributes");
+        var response = await client.GetAsync("/productclasses");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -126,7 +127,7 @@ public class ProductAttributeTests : DbTests {
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await client.PutAsync($"/attributes/{Guid.NewGuid()}/", content);
+        var response = await client.PutAsync($"/productclasses/{Guid.NewGuid()}/", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
@@ -147,7 +148,7 @@ public class ProductAttributeTests : DbTests {
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Act
-        var response = await client.PutAsync($"/attributes/{created.Id}/", content);
+        var response = await client.PutAsync($"/productclasses/{created.Id}/", content);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -163,7 +164,7 @@ public class ProductAttributeTests : DbTests {
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Send request
-        var createResponse = await client.PostAsync("/attributes", content);
+        var createResponse = await client.PostAsync("/productclasses", content);
         createResponse.EnsureSuccessStatusCode();
 
         // Get result from response
@@ -173,4 +174,5 @@ public class ProductAttributeTests : DbTests {
         return created;
 
     }
+
 }

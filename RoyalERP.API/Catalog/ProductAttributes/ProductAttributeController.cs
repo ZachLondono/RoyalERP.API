@@ -18,15 +18,15 @@ public class AttributesController : ControllerBase {
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductAttributeDTO))]
-    public async Task<IActionResult> Create(NewProductAttribute newClass) {
+    public async Task<IActionResult> Create(NewProductAttribute newAttribute) {
 
-        var createdClass = ProductAttribute.Create(newClass.Name);
-        await _uow.ProductAttributes.AddAsync(createdClass);
+        var createdAttribute = ProductAttribute.Create(newAttribute.Name);
+        await _uow.ProductAttributes.AddAsync(createdAttribute);
         await _uow.CommitAsync();
 
-        return Created($"/attributes/{createdClass.Id}", new ProductAttributeDTO {
-            Id = createdClass.Id,
-            Name = createdClass.Name
+        return Created($"/attributes/{createdAttribute.Id}", new ProductAttributeDTO {
+            Id = createdAttribute.Id,
+            Name = createdAttribute.Name
         });
 
     }
@@ -39,13 +39,13 @@ public class AttributesController : ControllerBase {
 
         // TODO: custom query here so there is no need to map to dto
 
-        var prodClass = await _uow.ProductClasses.GetAsync(attributeId);
+        var prodAttribute = await _uow.ProductAttributes.GetAsync(attributeId);
 
-        if (prodClass is null) return NotFound();
+        if (prodAttribute is null) return NotFound();
 
         return Ok(new ProductAttributeDTO {
-            Id = prodClass.Id,
-            Name = prodClass.Name
+            Id = prodAttribute.Id,
+            Name = prodAttribute.Name
         });
 
     }
@@ -56,14 +56,14 @@ public class AttributesController : ControllerBase {
 
         // TODO: custom query here so there is no need to map to dto
 
-        var prodClasses = await _uow.ProductClasses.GetAllAsync();
+        var prodAttributes = await _uow.ProductAttributes.GetAllAsync();
 
         List<ProductAttributeDTO> dtos = new();
 
-        foreach (var prodClass in prodClasses) {
+        foreach (var prodAttribute in prodAttributes) {
             dtos.Add(new ProductAttributeDTO {
-                Id = prodClass.Id,
-                Name = prodClass.Name
+                Id = prodAttribute.Id,
+                Name = prodAttribute.Name
             });
         }
 
@@ -76,17 +76,17 @@ public class AttributesController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid attributeId, ProductAttributeUpdate update) {
 
-        var prodClass = await _uow.ProductClasses.GetAsync(attributeId);
+        var prodAttribute = await _uow.ProductAttributes.GetAsync(attributeId);
 
-        if (prodClass is null) return NotFound();
+        if (prodAttribute is null) return NotFound();
 
-        prodClass.SetName(update.Name);
-        await _uow.ProductClasses.UpdateAsync(prodClass);
+        prodAttribute.SetName(update.Name);
+        await _uow.ProductAttributes.UpdateAsync(prodAttribute);
         await _uow.CommitAsync();
 
         return Ok(new ProductAttributeDTO {
-            Id = prodClass.Id,
-            Name = prodClass.Name
+            Id = prodAttribute.Id,
+            Name = prodAttribute.Name
         });
 
     }
@@ -97,11 +97,11 @@ public class AttributesController : ControllerBase {
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid attributeId) {
 
-        var prodClass = await _uow.ProductClasses.GetAsync(attributeId);
+        var prodAttribute = await _uow.ProductAttributes.GetAsync(attributeId);
 
-        if (prodClass is null) return NotFound();
+        if (prodAttribute is null) return NotFound();
 
-        await _uow.ProductClasses.RemoveAsync(prodClass);
+        await _uow.ProductAttributes.RemoveAsync(prodAttribute);
         await _uow.CommitAsync();
 
         return NoContent();

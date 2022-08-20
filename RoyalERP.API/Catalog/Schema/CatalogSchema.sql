@@ -10,7 +10,6 @@ CREATE TABLE catalog.productclasses (
 CREATE TABLE catalog.productattributes (
     id uuid NOT NULL,
     version integer NOT NULL DEFAULT 0,
-    productid uuid NOT NULL,
     name character varying(255) NOT NULL,
     CONSTRAINT productattributes_pkey PRIMARY KEY (id)
 );
