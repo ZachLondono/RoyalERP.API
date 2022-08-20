@@ -46,8 +46,8 @@ public class ProductClassRepository : IProductClassRepository {
     }
 
     public Task UpdateAsync(ProductClass entity) {
-        const string command = "DELETE FROM catalog.productclasses WHERE id = @Id;";
-        return _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new { Id = entity.Id });
+        const string command = "UPDATE catalog.productclasses SET name = @Name WHERE id = @Id;";
+        return _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new { entity.Id, entity.Name });
     }
 
     public async Task PublishEvents(IPublisher publisher) {
