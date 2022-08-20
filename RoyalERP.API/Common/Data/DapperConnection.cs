@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using System.Data;
 
-namespace RoyalERP.Common.Data;
+namespace RoyalERP.API.Common.Data;
 
 public class DapperConnection : IDapperConnection {
 

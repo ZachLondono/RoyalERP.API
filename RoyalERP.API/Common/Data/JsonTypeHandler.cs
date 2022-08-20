@@ -2,7 +2,7 @@
 using System.Text.Json;
 using static Dapper.SqlMapper;
 
-namespace RoyalERP.Common.Data;
+namespace RoyalERP.API.Common.Data;
 
 public class JsonTypeHandler<T> : TypeHandler<Json<T>> {
 

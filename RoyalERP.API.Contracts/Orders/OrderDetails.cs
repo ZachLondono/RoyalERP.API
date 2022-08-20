@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Contracts.Orders;
+﻿namespace RoyalERP.API.Contracts.Orders;
 
 public class OrderDetails {
 

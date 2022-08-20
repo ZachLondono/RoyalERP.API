@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RoyalERP.Common;
+namespace RoyalERP.API.Common;
 
 public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse> {
 

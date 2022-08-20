@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Contracts.WorkOrders;
+﻿namespace RoyalERP.API.Contracts.WorkOrders;
 
 public class WorkOrderNote {
 

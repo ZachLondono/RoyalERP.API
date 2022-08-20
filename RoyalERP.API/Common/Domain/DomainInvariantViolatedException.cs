@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 public abstract class DomainInvariantViolatedException : InvalidOperationException {
 

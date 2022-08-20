@@ -1,7 +1,7 @@
 ﻿using RoyalERP.Common.Data;
 using System.Data;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 public abstract class UnitOfWork : IUnitOfWork, IDisposable {
 

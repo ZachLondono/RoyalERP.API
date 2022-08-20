@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 /// <summary>
 /// An aggregate root is an entity which is the root of it's aggregate. All other entities in the aggregate are referenced through the root.

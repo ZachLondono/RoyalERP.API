@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace RoyalERP.Common;
+namespace RoyalERP.API.Common;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ApiKeyAuthenticationAttribute : Attribute, IAsyncActionFilter {

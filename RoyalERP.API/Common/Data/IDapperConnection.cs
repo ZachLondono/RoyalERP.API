@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace RoyalERP.Common.Data;
+namespace RoyalERP.API.Common.Data;
 
 public interface IDapperConnection {
     Task<int> ExecuteAsync(string sql, object? param = null, IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null);
