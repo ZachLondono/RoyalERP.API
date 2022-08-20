@@ -40,10 +40,10 @@ public class CatalogUnitOfWork : UnitOfWork, ICatalogUnitOfWork {
         ProductClasses = _productClassesFactory(Connection, Transaction);
     }
 
-    public override Task PublishEvents() {
-        return Products.PublishEvents(_publisher);
-        return ProductAttributes.PublishEvents(_publisher);
-        return ProductClasses.PublishEvents(_publisher);
+    public override async Task PublishEvents() {
+        await Products.PublishEvents(_publisher);
+        await ProductAttributes.PublishEvents(_publisher);
+        await ProductClasses.PublishEvents(_publisher);
     }
 
 }
