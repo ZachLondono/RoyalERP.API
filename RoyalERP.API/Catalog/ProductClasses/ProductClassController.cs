@@ -17,7 +17,7 @@ public class ProductClassController : ControllerBase {
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductClass))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductClassDTO))]
     public void Create(NewProductClass newClass) {
         throw new NotImplementedException();
     }

@@ -1,6 +1,6 @@
 ﻿namespace RoyalERP.API.Contracts.ProductClasses;
 
-public class ProductClass {
+public class ProductClassDTO {
 
     public Guid Id { get; set; }
 
