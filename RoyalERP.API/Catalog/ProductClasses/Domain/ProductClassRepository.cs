@@ -42,7 +42,6 @@ public class ProductClassRepository : IProductClassRepository {
     }
 
     public Task RemoveAsync(ProductClass entity) {
-        _activeEntities.Remove(entity);
         const string command = "DELETE FROM catalog.productclasses WHERE id = @Id;";
         return _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new { Id = entity.Id });
     }

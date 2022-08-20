@@ -61,8 +61,6 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task RemoveAsync(WorkOrder entity) {
 
-        _activeEntities.Remove(entity);
-
         const string query = "DELETE FROM manufacturing.workorders WHERE id = @Id;";
 
         return _connection.ExecuteAsync(query, transaction: _transaction, param: new { entity.Id });

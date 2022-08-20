@@ -79,8 +79,6 @@ public class CompanyRepository : ICompanyRepository {
 
     public async Task RemoveAsync(Company entity) {
 
-        _activeEntities.Remove(entity);
-
         const string query = "DELETE FROM sales.companies WHERE id = @Id;";
 
         var rows = await _connection.ExecuteAsync(query, transaction: _transaction, param: new { entity.Id });
