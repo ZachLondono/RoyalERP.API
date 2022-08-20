@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Catalog.ProductClasses.Domain;
+using RoyalERP.API.Contracts.ProductAttributes;
 using RoyalERP.API.Contracts.ProductClasses;
 using RoyalERP.Common;
 
@@ -33,6 +34,8 @@ public class ProductClassesController : ControllerBase {
 
     [Route("{classId}")]
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductAttributeDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Read(Guid classId) {
 
         // TODO: custom query here so there is no need to map to dto
@@ -49,6 +52,7 @@ public class ProductClassesController : ControllerBase {
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductClassDTO>))]
     public async Task<IActionResult> ReadAll() {
 
         // TODO: custom query here so there is no need to map to dto
@@ -70,6 +74,8 @@ public class ProductClassesController : ControllerBase {
 
     [Route("{classId}")]
     [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductClassDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(Guid classId, ProductClassUpdate update) {
         
         var prodClass = await _uow.ProductClasses.GetAsync(classId);
@@ -89,6 +95,8 @@ public class ProductClassesController : ControllerBase {
 
     [Route("{classId}")]
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid classId) {
 
         var prodClass = await _uow.ProductClasses.GetAsync(classId);
