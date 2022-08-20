@@ -23,6 +23,8 @@ public class ProductRepository : IProductRepository {
 
     public async Task AddAsync(Product entity) {
 
+        _activeEntities.Add(entity);
+
         const string command = "INSERT INTO catalog.products (id, number) VALUES (@Id, @Name);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {

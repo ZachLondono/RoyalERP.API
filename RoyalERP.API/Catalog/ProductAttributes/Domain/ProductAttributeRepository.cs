@@ -18,6 +18,8 @@ public class ProductAttributeRepository : IProductAttributeRepository {
 
     public Task AddAsync(ProductAttribute entity) {
 
+        _activeEntities.Add(entity);
+
         const string command = "INSERT INTO catalog.productattributes (id, version, name) VALUES (@Id, @Version, @Name);";
 
         return _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {

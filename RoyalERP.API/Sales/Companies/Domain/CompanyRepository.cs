@@ -20,6 +20,8 @@ public class CompanyRepository : ICompanyRepository {
 
     public async Task AddAsync(Company entity) {
 
+        _activeEntities.Add(entity);
+
         const string command = @"INSERT INTO sales.companies (id, name, contact, email) values (@Id, @Name, @Contact, @Email);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
