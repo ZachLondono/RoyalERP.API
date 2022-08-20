@@ -5,6 +5,7 @@ using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.Common.Data;
 using System.Data;
 using RoyalERP.API.Catalog.Products.Data;
+using RoyalERP.Common.Domain;
 
 namespace RoyalERP.API.Catalog.Products.Domain;
 
@@ -69,19 +70,63 @@ public class ProductRepository : IProductRepository {
 
     }
 
+    public async Task RemoveAsync(Product entity) {
+
+        const string command = "DELETE FROM catalog.products WHERE id = @Id;";
+
+        var result = await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new { entity.Id });
+
+        if (result == 0) {
+            // nothing was deleted
+        }
+
+    }
+
+    public async Task UpdateAsync(Product entity) {
+
+        foreach (var domainEvent in entity.Events) {
+
+            if (domainEvent is Events.ProductAttributeAdded attributeAdded) {
+
+                const string command = "UPDATE catalog.products SET attributeids = array_add(attributeids, @AttributeId) WHERE id = @Id;";
+
+                await _connection.ExecuteAsync(command, transaction: _transaction, param: new {
+                    Id = attributeAdded.AggregateId,
+                    attributeAdded.AttributeId
+                });
+
+            } else if (domainEvent is Events.ProductAttributeRemoved attributeRemoved) {
+
+                const string command = "UPDATE catalog.products SET attributeids = array_remove(attributeids, @AttributeId) WHERE id = @Id;";
+
+                await _connection.ExecuteAsync(command, transaction: _transaction, param: new {
+                    Id = attributeRemoved.AggregateId,
+                    attributeRemoved.AttributeId
+                });
+
+            } else if (domainEvent is Events.ProductNameUpdated nameUpdated) {
+
+                const string command = "UPDATE catalog.products SET name = @Name WHERE id = @Id;";
+
+                await _connection.ExecuteAsync(command, transaction: _transaction, param: new {
+                    Id = nameUpdated.AggregateId,
+                    nameUpdated.Name
+                });
+
+            }
+
+        }
+
+        var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
+        if (existing is not null) _activeEntities.Remove(existing);
+        _activeEntities.Add(entity);
+
+    }
+
     public async Task PublishEvents(IPublisher publisher) {
         foreach (var entity in _activeEntities) {
             await entity.PublishEvents(publisher);
         }
-    }
-
-    public Task RemoveAsync(Product entity) {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAsync(Product entity) {
-        _activeEntities.Add(entity);
-        throw new NotImplementedException();
     }
 
 }
