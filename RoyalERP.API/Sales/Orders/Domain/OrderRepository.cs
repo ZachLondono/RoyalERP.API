@@ -62,6 +62,8 @@ public class OrderRepository : IOrderRepository {
 
     public Task RemoveAsync(Order entity) {
 
+        _activeEntities.Remove(entity);
+
         const string query = "DELETE FROM sales.orders WHERE id = @Id;";
 
         return _connection.ExecuteAsync(query, transaction: _transaction, param: new { entity.Id });

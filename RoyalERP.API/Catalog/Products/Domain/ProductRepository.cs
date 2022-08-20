@@ -72,6 +72,8 @@ public class ProductRepository : IProductRepository {
 
     public async Task RemoveAsync(Product entity) {
 
+        _activeEntities.Remove(entity);
+
         const string command = "DELETE FROM catalog.products WHERE id = @Id;";
 
         var result = await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new { entity.Id });
