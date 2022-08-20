@@ -4,7 +4,7 @@ using System.Data;
 using System.Text.Json;
 using static Dapper.SqlMapper;
 
-namespace RoyalERP.Common.Data;
+namespace RoyalERP.API.Common.Data;
 
 /// <summary>
 /// Dapper sql map for string to a Npgsql Json parameter

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Sales.Companies.Domain;
 using RoyalERP.API.Sales.Orders.Domain;
-using RoyalERP.Contracts.Orders;
+using RoyalERP.API.Contracts.Orders;
 
 namespace RoyalERP.API.Sales.Orders.Commands;
 

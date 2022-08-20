@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Text.Json.Serialization;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 /// <summary>
 /// An entity is a uniquely identifiable domain concept

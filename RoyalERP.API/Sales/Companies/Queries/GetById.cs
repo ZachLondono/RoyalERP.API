@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using MediatR;
-using RoyalERP.Contracts.Companies;
+using RoyalERP.API.Contracts.Companies;
 using RoyalERP.API.Sales.Companies.Data;
 
 namespace RoyalERP.API.Sales.Companies.Queries;

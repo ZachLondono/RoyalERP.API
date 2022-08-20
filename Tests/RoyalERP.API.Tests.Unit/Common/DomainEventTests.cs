@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using MediatR;
 using Moq;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common.Domain;
 using System;
 using System.Threading.Tasks;
 using Xunit;

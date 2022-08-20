@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using RoyalERP.API.Sales.Companies.Data;
 using System.Data;
 using System.Diagnostics;
@@ -19,6 +19,8 @@ public class CompanyRepository : ICompanyRepository {
     }
 
     public async Task AddAsync(Company entity) {
+
+        _activeEntities.Add(entity);
 
         const string command = @"INSERT INTO sales.companies (id, name, contact, email) values (@Id, @Name, @Contact, @Email);";
 

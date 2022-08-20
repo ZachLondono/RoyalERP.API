@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using RoyalERP.API.Sales.Orders.Data;
 using System.Data;
 
@@ -18,6 +18,8 @@ public class OrderRepository : IOrderRepository {
     }
 
     public async Task AddAsync(Order entity) {
+        
+        _activeEntities.Add(entity);
 
         const string command = "INSERT INTO sales.orders (id, number, name, status, customerid, vendorid, placeddate) values (@Id, @Number, @Name, @Status, @CustomerId, @VendorId, @PlacedDate);";
         

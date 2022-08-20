@@ -16,6 +16,7 @@ public static class TestUtils {
 
         var salesSchemaPath = Path.Combine(directory.FullName, "RoyalERP.API", "Sales", "Schema", "SalesSchema.sql");
         var manufSchemaPath = Path.Combine(directory.FullName, "RoyalERP.API", "Manufacturing", "Schema", "ManufacturingSchema.sql");
+        var catalogSchemaPath = Path.Combine(directory.FullName, "RoyalERP.API", "Catalog", "Schema", "CatalogSchema.sql");
 
         using var connection = new NpgsqlConnection(connectionString);
 
@@ -23,6 +24,7 @@ public static class TestUtils {
 
         await ExecuteScript(connection, salesSchemaPath);
         await ExecuteScript(connection, manufSchemaPath);
+        await ExecuteScript(connection, catalogSchemaPath);
 
         connection.Close();
 

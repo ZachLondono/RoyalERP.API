@@ -52,6 +52,9 @@ tester = Tester()
 tester.getrequest('orders/', 200)
 tester.getrequest('workorders/', 200)
 tester.getrequest('companies/', 200)
+tester.getrequest('products/', 200)
+tester.getrequest('attributes/', 200)
+tester.getrequest('productclasses/', 200)
 tester.getrequest('does_not_exist/', 404)
 
 new_order = {
@@ -77,6 +80,21 @@ new_company = {
         "Name" : "Abc123"
 }
 tester.postrequest('companies/', new_company, 201)
+
+new_product = {
+    "Name" : "New Product"
+}
+tester.postrequest('products/', new_product, 201)
+
+new_attribute = {
+    "Name" : "New Attribute"
+}
+tester.postrequest('attributes/', new_attribute, 201)
+
+new_productclass = {
+    "Name" : "New Product Class"
+}
+tester.postrequest('productclasses/', new_productclass, 201)
 
 print(tabulate(tester.data, headers=tester.headers))
 

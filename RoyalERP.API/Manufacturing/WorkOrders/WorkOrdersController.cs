@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Manufacturing.WorkOrders.Commands;
 using RoyalERP.API.Manufacturing.WorkOrders.Queries;
-using RoyalERP.Contracts.WorkOrders;
-using RoyalERP.Common;
+using RoyalERP.API.Contracts.WorkOrders;
+using RoyalERP.API.Common;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders;
 

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Data;
+using RoyalERP.API.Common.Data;
 using System.Data;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;
@@ -17,6 +17,8 @@ public class WorkOrderRepository : IWorkOrderRepository {
     }
 
     public async Task AddAsync(WorkOrder entity) {
+
+        _activeEntities.Add(entity);
 
         const string command = @"INSERT INTO manufacturing.workorders
                                 (id, salesorderid, number, name, note, customername, vendorname, productname, quantity, status)

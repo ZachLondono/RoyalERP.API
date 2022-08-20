@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Contracts.Companies;
+﻿namespace RoyalERP.API.Contracts.Companies;
 
 public class UpdateAddress {
 

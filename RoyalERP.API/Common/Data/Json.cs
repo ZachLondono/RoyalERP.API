@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Common.Data;
+﻿namespace RoyalERP.API.Common.Data;
 
 /// <summary>
 /// A wrapper for a type which will be read from a json colum

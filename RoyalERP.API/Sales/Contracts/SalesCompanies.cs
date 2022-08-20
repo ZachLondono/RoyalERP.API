@@ -1,4 +1,4 @@
-﻿using RoyalERP.Contracts.Companies;
+﻿using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Contracts;
 

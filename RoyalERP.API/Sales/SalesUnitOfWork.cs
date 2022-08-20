@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common.Domain;
 using RoyalERP.API.Sales.Companies.Domain;
 using RoyalERP.API.Sales.Orders.Domain;
 using System.Data;
@@ -33,8 +33,9 @@ public class SalesUnitOfWork : UnitOfWork, ISalesUnitOfWork {
         Orders = _ordersFactory(Connection, Transaction);
     }
 
-    public override Task PublishEvents() {
-        return Orders.PublishEvents(_publisher);
+    public override async Task PublishEvents() {
+        await Orders.PublishEvents(_publisher);
+        await Companies.PublishEvents(_publisher);
     }
 
 }

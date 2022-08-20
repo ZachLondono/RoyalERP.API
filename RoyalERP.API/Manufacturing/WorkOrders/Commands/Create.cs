@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.API.Manufacturing.WorkOrders.Domain;
-using RoyalERP.Contracts.WorkOrders;
+using RoyalERP.API.Contracts.WorkOrders;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders.Commands;
 

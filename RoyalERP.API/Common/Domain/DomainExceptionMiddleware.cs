@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 public class DomainExceptionMiddleware {
 

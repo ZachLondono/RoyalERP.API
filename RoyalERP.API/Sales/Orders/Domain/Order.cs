@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common.Domain;
 using static RoyalERP.API.Sales.Orders.Domain.Exceptions;
 
 namespace RoyalERP.API.Sales.Orders.Domain;

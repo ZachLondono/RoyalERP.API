@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 public interface IRepository<T> where T : Entity {
 

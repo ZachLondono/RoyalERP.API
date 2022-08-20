@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.Common.Domain;
+﻿namespace RoyalERP.API.Common.Domain;
 
 public interface IUnitOfWork {
 

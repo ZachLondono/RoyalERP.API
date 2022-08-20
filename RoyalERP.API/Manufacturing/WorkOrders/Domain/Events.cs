@@ -1,4 +1,4 @@
-﻿using RoyalERP.Common.Domain;
+﻿using RoyalERP.API.Common.Domain;
 using System.Text.Json.Serialization;
 
 namespace RoyalERP.API.Manufacturing.WorkOrders.Domain;

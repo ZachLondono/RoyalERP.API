@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using System.Text.Json.Serialization;
 
-namespace RoyalERP.Common.Domain;
+namespace RoyalERP.API.Common.Domain;
 
 /// <summary>
 /// A domain event is some action which occurred that affects the domain

@@ -1,11 +1,12 @@
 using Dapper;
 using MediatR;
-using RoyalERP.Common;
-using RoyalERP.Common.Data;
-using RoyalERP.Common.Domain;
+using RoyalERP.API.Common;
+using RoyalERP.API.Common.Data;
+using RoyalERP.API.Common.Domain;
 using RoyalERP.API.Manufacturing;
 using RoyalERP.API.Sales;
 using System.Text.Json.Serialization;
+using RoyalERP.API.Catalog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +19,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-builder.Services.AddManufacturing();
-builder.Services.AddSales();
+
+builder.Services.AddManufacturing()
+                .AddSales()
+                .AddCatalog();
 
 SqlMapper.AddTypeHandler(new JsonTypeHandler<Dictionary<string,string>>());
 
