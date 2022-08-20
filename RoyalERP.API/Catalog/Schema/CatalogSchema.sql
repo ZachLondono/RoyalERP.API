@@ -1,4 +1,4 @@
-﻿CREATE SCHEMA catalog;
+CREATE SCHEMA catalog;
 
 CREATE TABLE catalog.productclasses (
     id uuid NOT NULL,
