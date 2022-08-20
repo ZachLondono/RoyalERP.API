@@ -18,9 +18,4 @@
     <ProjectReference Include="..\RoyalERP.API.Contracts\RoyalERP.API.Contracts.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Catalog\Products\Commands\" />
-    <Folder Include="Catalog\Products\Queries\" />
-  </ItemGroup>
-
 </Project>
