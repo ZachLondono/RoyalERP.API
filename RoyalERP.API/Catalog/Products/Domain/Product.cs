@@ -6,15 +6,18 @@ public class Product : AggregateRoot {
 
     public string Name { get; private set; }
 
+    public Guid? ClassId { get; private set; }
+
     private readonly List<Guid> _attributeIds;
     public IReadOnlyCollection<Guid> AttributeIds => _attributeIds.AsReadOnly();
 
-    public Product(Guid id, int version, string name, List<Guid> attributes) : base(id, version) {
+    public Product(Guid id, int version, string name, Guid? classId, List<Guid> attributes) : base(id, version) {
         Name = name;
+        ClassId = classId;
         _attributeIds = attributes;
     }
 
-    private Product(string name) : this(Guid.NewGuid(), 0, name, new()) {
+    private Product(string name) : this(Guid.NewGuid(), 0, name, null, new()) {
         AddEvent(new Events.ProductCreated(Id, name));
     }
 
@@ -35,6 +38,17 @@ public class Product : AggregateRoot {
         var result = _attributeIds.Remove(attributeId);
         if (result) AddEvent(new Events.ProductAttributeRemoved(Id, attributeId));
         return result;
+    }
+
+    public void RemoveFromProductClass() {
+        if (ClassId is null) return;
+        ClassId = null;
+        AddEvent(new Events.ProductRemovedFromClass(Id));
+    }
+
+    public void SetProductClass(Guid classId) {
+        ClassId = classId;
+        AddEvent(new Events.ProductAddedToClass(Id, classId));
     }
 
 }

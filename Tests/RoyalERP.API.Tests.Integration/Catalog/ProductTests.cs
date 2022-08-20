@@ -222,6 +222,64 @@ public class ProductTests : DbTests {
 
     }
 
+    [Fact]
+    public async Task RemoveClass_ShouldReturn404_WhenEntityDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.DeleteAsync($"/products/{Guid.NewGuid()}/class");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task RemoveClass_ShouldReturn200_WhenEntityDoesExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var created = await CreateEntity(client);
+
+        // Act
+        var response = await client.DeleteAsync($"/products/{created.Id}/class");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+    }
+
+    [Fact]
+    public async Task SetClass_ShouldReturn404_WhenEntityDoesNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.PutAsync($"/products/{Guid.NewGuid()}/class/{Guid.NewGuid()}", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task SetClass_ShouldReturn200_WhenEntityDoesExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var created = await CreateEntity(client);
+
+        // Act
+        var response = await client.PutAsync($"/products/{created.Id}/class/{Guid.NewGuid()}", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+    }
+
     private static async Task<ProductDTO> CreateEntity(HttpClient client) {
         
         // Create request body

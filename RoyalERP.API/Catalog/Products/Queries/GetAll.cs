@@ -21,7 +21,7 @@ public class GetAll {
 
             var connection = _factory.CreateConnection();
 
-            const string query = "SELECT id, version, name, attributeids FROM catalog.products";
+            const string query = "SELECT id, version, name, classid, attributeids FROM catalog.products";
 
             var products = await connection.QueryAsync<ProductDTO>(sql: query);
 

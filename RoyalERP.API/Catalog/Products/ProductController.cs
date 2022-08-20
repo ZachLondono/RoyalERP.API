@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RoyalERP.API.Catalog.ProductClasses.Domain;
 using RoyalERP.API.Catalog.Products.Commands;
 using RoyalERP.API.Catalog.Products.Queries;
 using RoyalERP.API.Contracts.Products;
@@ -58,5 +59,17 @@ public class ProductsController : ControllerBase {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ProductDTO>))]
     public Task<IActionResult> GetAll() => _sender.Send(new GetAll.Query());
+
+    [Route("{productId}/class/{productClassId}")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> SetClass(Guid productId, Guid productClassId) => _sender.Send(new SetClass.Command(productId, productClassId));
+
+    [Route("{productId}/class")]
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ProductDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> RemoveFromClass(Guid productId) => _sender.Send(new RemoveFromClass.Command(productId));
 
 }

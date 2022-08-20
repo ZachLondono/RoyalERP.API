@@ -16,4 +16,8 @@ public static class Events {
 
     public record ProductDeleted(Guid ProductId) : ProductEvent(ProductId);
 
+    public record ProductAddedToClass(Guid ProductId, Guid ProductClassId) : ProductEvent(ProductId);
+
+    public record ProductRemovedFromClass(Guid ProductId) : ProductEvent(ProductId);
+
 }

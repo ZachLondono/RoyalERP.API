@@ -6,6 +6,8 @@ public class ProductDTO {
 
     public string Name { get; set; } = string.Empty;
 
+    public Guid? ClassId { get; set; }
+
     public IEnumerable<Guid> Attributes { get; set; } = Enumerable.Empty<Guid>();
 
 }

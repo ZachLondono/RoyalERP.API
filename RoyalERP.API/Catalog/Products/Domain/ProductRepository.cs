@@ -1,11 +1,7 @@
 ﻿using MediatR;
-using System.Data.Common;
-using Dapper;
-using RoyalERP.API.Sales.Orders.Domain;
 using RoyalERP.Common.Data;
 using System.Data;
 using RoyalERP.API.Catalog.Products.Data;
-using RoyalERP.Common.Domain;
 
 namespace RoyalERP.API.Catalog.Products.Domain;
 
@@ -37,14 +33,14 @@ public class ProductRepository : IProductRepository {
 
     public async Task<IEnumerable<Product>> GetAllAsync() {
         
-        const string query = "SELECT id, version, name, attributeids FROM catalog.products";
+        const string query = "SELECT id, version, name, classid, attributeids FROM catalog.products";
 
         var productsData = await _connection.QueryAsync<ProductData>(sql: query, transaction: _transaction);
 
         var products = new List<Product>();
 
         foreach (var productData in productsData) { 
-            products.Add(new Product(productData.Id, productData.Version, productData.Name, new(productData.AttributeIds)));
+            products.Add(new Product(productData.Id, productData.Version, productData.Name, productData.ClassId, new(productData.AttributeIds)));
         }
 
         return products;
@@ -52,13 +48,13 @@ public class ProductRepository : IProductRepository {
 
     public async Task<Product?> GetAsync(Guid id) {
 
-        const string query = "SELECT id, version, name, attributeids FROM catalog.products WHERE id = @Id;";
+        const string query = "SELECT id, version, name, classid, attributeids FROM catalog.products WHERE id = @Id;";
 
         var productData = await _connection.QuerySingleOrDefaultAsync<ProductData>(sql: query, transaction: _transaction, param: new { Id = id });
 
         if (productData is null) return null;
 
-        return new Product(productData.Id, productData.Version, productData.Name, new(productData.AttributeIds));
+        return new Product(productData.Id, productData.Version, productData.Name, productData.ClassId, new(productData.AttributeIds));
 
     }
 

@@ -8,6 +8,8 @@ public class ProductData {
 
     public string Name { get; set; } = string.Empty;
 
+    public Guid? ClassId { get; set; }
+
     public Guid[] AttributeIds { get; set; } = Array.Empty<Guid>();
 
 }

@@ -30,6 +30,7 @@ public class AddAttribute {
             return new OkObjectResult(new ProductDTO() {
                 Id = product.Id,
                 Name = product.Name,
+                ClassId = product.ClassId,
                 Attributes = product.AttributeIds
             });
 

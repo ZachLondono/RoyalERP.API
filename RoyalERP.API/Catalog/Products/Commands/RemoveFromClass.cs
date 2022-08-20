@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.API.Catalog.Products.Domain;
 using RoyalERP.API.Contracts.Products;
 
 namespace RoyalERP.API.Catalog.Products.Commands;
 
-public class Create {
+public class RemoveFromClass {
 
-    public record Command(NewProduct NewProduct) : IRequest<IActionResult>;
+    public record Command(Guid ProductId) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -19,15 +18,20 @@ public class Create {
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
 
-            var product = Product.Create(request.NewProduct.Name);
-            await _work.Products.AddAsync(product);
+            var product = await _work.Products.GetAsync(request.ProductId);
+
+            if (product is null) return new NotFoundResult();
+
+            product.RemoveFromProductClass();
+
+            await _work.Products.UpdateAsync(product);
             await _work.CommitAsync();
 
-            return new CreatedResult($"/products/{product.Id}", new ProductDTO() {
+            return new OkObjectResult(new ProductDTO() {
                 Id = product.Id,
                 Name = product.Name,
                 ClassId = product.ClassId,
-                Attributes = Enumerable.Empty<Guid>()
+                Attributes = product.AttributeIds
             });
 
         }

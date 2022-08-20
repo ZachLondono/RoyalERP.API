@@ -9,7 +9,7 @@ public class ProductTests {
     private readonly Product _sut;
 
     public ProductTests() {
-        _sut = new(Guid.NewGuid(), 0, "New Product", new());
+        _sut = new(Guid.NewGuid(), 0, "New Product", null, new());
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class ProductTests {
 
         // Arrange
         var attributeId = new Guid();
-        var sut = new Product(Guid.NewGuid(), 0, "New Product", new() { attributeId });
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", null, new() { attributeId });
 
         // Act
         sut.AddAttribute(attributeId);
@@ -94,7 +94,7 @@ public class ProductTests {
 
         // Arrange
         var attributeId = new Guid();
-        var sut = new Product(Guid.NewGuid(), 0, "New Product", new());
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", null, new());
 
         // Act
         sut.RemoveAttribute(attributeId);
@@ -102,6 +102,68 @@ public class ProductTests {
         // Assert
         sut.AttributeIds.Should().BeEmpty();
         sut.Events.Should().BeEmpty();
+
+    }
+
+    [Fact]
+    public void RemoveClass_ShouldNotDoAnything_WhenNotInClass() {
+
+        // Arrange
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", null, new());
+
+        // Act
+        sut.RemoveFromProductClass();
+
+        // Assert
+        sut.ClassId.Should().BeNull();
+        sut.Events.Should().BeEmpty();
+
+    }
+
+    [Fact]
+    public void RemoveClass_ShouldSetClassIdToNull_WhenWasInClass() {
+
+        // Arrange
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", Guid.NewGuid(), new());
+
+        // Act
+        sut.RemoveFromProductClass();
+
+        // Assert
+        sut.ClassId.Should().BeNull();
+        sut.Events.Should().ContainSingle(e => e is Events.ProductRemovedFromClass);
+
+    }
+
+    [Fact]
+    public void SetClass_ShouldSetNewClass_WhenNotInClass() {
+
+        // Arrange
+        Guid newClassId = Guid.NewGuid();
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", null, new());
+
+        // Act
+        sut.SetProductClass(newClassId);
+
+        // Assert
+        sut.ClassId.Should().NotBeNull();
+        sut.Events.Should().ContainSingle(e => e is Events.ProductAddedToClass && ((Events.ProductAddedToClass)e).ProductClassId.Equals(newClassId));
+
+    }
+
+    [Fact]
+    public void SetClass_ShouldOverwriteClass_WhenWasInClass() {
+
+        // Arrange
+        Guid newClassId = Guid.NewGuid();
+        var sut = new Product(Guid.NewGuid(), 0, "New Product", Guid.NewGuid(), new());
+
+        // Act
+        sut.SetProductClass(newClassId);
+
+        // Assert
+        sut.ClassId.Should().NotBeNull();
+        sut.Events.Should().ContainSingle(e => e is Events.ProductAddedToClass && ((Events.ProductAddedToClass)e).ProductClassId.Equals(newClassId));
 
     }
 

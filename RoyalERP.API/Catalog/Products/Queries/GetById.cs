@@ -21,7 +21,7 @@ public class GetById {
 
             var connection = _factory.CreateConnection();
 
-            const string query = "SELECT id, version, name, attributeids FROM catalog.products WHERE id = @Id;";
+            const string query = "SELECT id, version, name, classid, attributeids FROM catalog.products WHERE id = @Id;";
 
             var product = await connection.QuerySingleOrDefaultAsync<ProductDTO>(sql: query, param: new {
                 Id = request.ProductId,
