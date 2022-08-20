@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Catalog.Products.Commands;
 using RoyalERP.API.Catalog.Products.Queries;
-using RoyalERP.API.Contracts.Product;
+using RoyalERP.API.Contracts.Products;
 using RoyalERP.Common;
 
 namespace RoyalERP.API.Catalog.Products;
@@ -20,7 +20,7 @@ public class ProductsController : ControllerBase {
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductDTO))]
-    public void Create([FromBody] NewProduct newProduct) => _sender.Send(new Create.Command(newProduct));
+    public Task<IActionResult> Create([FromBody] NewProduct newProduct) => _sender.Send(new Create.Command(newProduct));
 
     [Route("{productId}")]
     [HttpPut]

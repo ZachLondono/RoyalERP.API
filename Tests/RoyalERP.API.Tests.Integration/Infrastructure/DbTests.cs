@@ -12,6 +12,7 @@ using RoyalERP.API.Sales;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using RoyalERP.API.Catalog;
 
 namespace RoyalERP.API.Tests.Integration.Infrastructure;
 
@@ -30,8 +31,10 @@ public abstract class DbTests : WebApplicationFactory<RoyalERP.Program>, IAsyncL
             services.RemoveAll(typeof(IDbConnectionFactory));
             services.RemoveAll(typeof(IManufacturingConnectionFactory));
             services.RemoveAll(typeof(ISalesConnectionFactory));
+            services.RemoveAll(typeof(ICatalogConnectionFactory));
             services.AddSingleton<IManufacturingConnectionFactory>(_ => new ManufConnFactory(dbcontainer.ConnectionString));
             services.AddSingleton<ISalesConnectionFactory>(_ => new SalesConnFactory(dbcontainer.ConnectionString));
+            services.AddSingleton<ICatalogConnectionFactory>(_ => new CatalogConnFactory(dbcontainer.ConnectionString));
         });
     }
 

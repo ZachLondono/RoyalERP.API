@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.API.Contracts.Product;
+using RoyalERP.API.Contracts.Products;
 
 namespace RoyalERP.API.Catalog.Products.Commands;
 

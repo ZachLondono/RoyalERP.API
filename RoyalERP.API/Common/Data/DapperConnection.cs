@@ -24,8 +24,8 @@ public class DapperConnection : IDapperConnection {
         return _connection.QueryAsync<T1, T2, T3>(sql, map, param, transaction, buffered, splitOn, commandTimeout, commandType);
     }
 
-    public Task<T> QuerySingleOrDefaultAsync<T>(string sql, object? param = null, IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null) {
-        return _connection.QuerySingleOrDefaultAsync<T>(sql, param, transaction, commandTimeout, commandType);
+    public Task<T?> QuerySingleOrDefaultAsync<T>(string sql, object? param = null, IDbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null) {
+        return _connection.QuerySingleOrDefaultAsync<T?>(sql, param, transaction, commandTimeout, commandType);
     }
 
 }

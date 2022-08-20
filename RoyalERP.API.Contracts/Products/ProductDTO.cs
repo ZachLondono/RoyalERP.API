@@ -1,4 +1,4 @@
-﻿namespace RoyalERP.API.Contracts.Product;
+﻿namespace RoyalERP.API.Contracts.Products;
 
 public class ProductDTO {
 

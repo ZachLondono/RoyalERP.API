@@ -19,7 +19,7 @@ public class CatalogUnitOfWork : UnitOfWork, ICatalogUnitOfWork {
     public IProductAttributeRepository ProductAttributes { get; private set; }
     public IProductClassRepository ProductClasses { get; private set; }
 
-    public CatalogUnitOfWork(IDbConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
+    public CatalogUnitOfWork(ICatalogConnectionFactory factory, ILogger<UnitOfWork> logger, IPublisher publisher,
                             Func<IDbConnection, IDbTransaction, IProductRepository> productsFactory,
                             Func<IDbConnection, IDbTransaction, IProductAttributeRepository> productAttributesFactory,
                             Func<IDbConnection, IDbTransaction, IProductClassRepository> productClassesFactory) : base(factory, logger) {

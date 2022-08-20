@@ -18,7 +18,6 @@ public static class ConfigureServices {
 
         services.AddTransient<ICatalogUnitOfWork, CatalogUnitOfWork>();
 
-
         return services;
 
     }

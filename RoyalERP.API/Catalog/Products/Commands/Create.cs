@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Catalog.Products.Domain;
-using RoyalERP.API.Contracts.Product;
+using RoyalERP.API.Contracts.Products;
 
 namespace RoyalERP.API.Catalog.Products.Commands;
 
@@ -23,7 +23,7 @@ public class Create {
             await _work.Products.AddAsync(product);
             await _work.CommitAsync();
 
-            return new OkObjectResult(new ProductDTO() {
+            return new CreatedResult($"/products/{product.Id}", new ProductDTO() {
                 Id = product.Id,
                 Name = product.Name,
                 Attributes = Enumerable.Empty<Guid>()

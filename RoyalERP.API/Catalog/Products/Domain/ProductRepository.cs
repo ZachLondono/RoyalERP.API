@@ -25,23 +25,13 @@ public class ProductRepository : IProductRepository {
 
         _activeEntities.Add(entity);
 
-        const string command = "INSERT INTO catalog.products (id, number) VALUES (@Id, @Name);";
+        const string command = "INSERT INTO catalog.products (id, name, attributeids) VALUES (@Id, @Name, @AttributeIds);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
             entity.Id,
-            entity.Name
+            entity.Name,
+            entity.AttributeIds
         });
-
-        const string attributesCommand = "INSERT INTO catalog.product_attribute (productid, attributeid) VALUES (@ProductId, @AttributeId);";
-
-        foreach (var attributeid in entity.AttributeIds) {
-
-            await _connection.ExecuteAsync(sql: attributesCommand, transaction: _transaction, param: new {
-                ProductId = entity.Id,
-                AttributeId = attributeid
-            });
-
-        }
 
     }
 
@@ -90,7 +80,7 @@ public class ProductRepository : IProductRepository {
 
             if (domainEvent is Events.ProductAttributeAdded attributeAdded) {
 
-                const string command = "UPDATE catalog.products SET attributeids = array_add(attributeids, @AttributeId) WHERE id = @Id;";
+                const string command = "UPDATE catalog.products SET attributeids = array_append(attributeids, @AttributeId) WHERE id = @Id;";
 
                 await _connection.ExecuteAsync(command, transaction: _transaction, param: new {
                     Id = attributeAdded.AggregateId,
