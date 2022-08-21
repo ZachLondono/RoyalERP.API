@@ -25,7 +25,7 @@ public class UpdateCompanyAddress {
             if (company is null) return new NotFoundResult();
 
             company.SetAddress(request.Update.Line1, request.Update.Line2, request.Update.Line3, request.Update.City, request.Update.State, request.Update.Zip);
-
+            await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
 
             _logger.LogTrace("Updated company: {CompanyId}", company.Id);

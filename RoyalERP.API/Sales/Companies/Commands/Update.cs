@@ -25,7 +25,7 @@ public class Update {
             if (company is null) return new NotFoundResult();
 
             company.Update(request.Update.Name ?? company.Name, request.Update.Contact ?? company.Contact, request.Update.Email ?? company.Email);
-
+            await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
 
             _logger.LogTrace("Updated company: {CompanyId}", company.Id);
