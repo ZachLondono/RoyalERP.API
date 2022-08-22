@@ -25,26 +25,12 @@ public class Update {
             if (company is null) return new NotFoundResult();
 
             company.Update(request.Update.Name ?? company.Name, request.Update.Contact ?? company.Contact, request.Update.Email ?? company.Email);
-
+            await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
 
             _logger.LogTrace("Updated company: {CompanyId}", company.Id);
 
-            return new OkObjectResult(new CompanyDTO() {
-                Id = company.Id,
-                Version = company.Version,
-                Name = company.Name,
-                Contact = company.Contact,
-                Email = company.Email,
-                Address = new() {
-                    Line1 = company.Address.Line1,
-                    Line2 = company.Address.Line2,
-                    Line3 = company.Address.Line3,
-                    City = company.Address.City,
-                    State = company.Address.State,
-                    Zip = company.Address.Zip,
-                }
-            });
+            return new OkObjectResult(company.AsDTO());
 
         }
 

@@ -29,10 +29,7 @@ public class Create {
 
             _logger.LogTrace("Created new company with id: {CompanyId}", newCompany.Id);
 
-            return new CreatedResult($"/companies/{newCompany.Id}", new CompanyDTO() {
-                Id = newCompany.Id,
-                Name = newCompany.Name
-            });
+            return new CreatedResult($"/companies/{newCompany.Id}", newCompany.AsDTO());
 
         }
 

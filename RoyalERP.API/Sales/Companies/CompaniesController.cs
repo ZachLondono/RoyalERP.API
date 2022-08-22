@@ -64,4 +64,23 @@ public class CompaniesController : ControllerBase {
         return _sender.Send(new Delete.Command(companyId));
     }
 
+    [Route("{companyId}/defaults")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> SetDefault(Guid companyId, [FromBody] SetDefaultValue defaultValue) {
+        return _sender.Send(new SetDefault.Command(companyId, defaultValue));
+    }
+
+    [Route("{companyId}/defaults/{productId}/{attributeId}")]
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> RemoveDefault(Guid companyId, Guid productId, Guid attributeId) {
+        return _sender.Send(new RemoveDefault.Command(companyId, new RemoveDefaultValue() {
+            ProductId = productId,
+            AttributeId = attributeId
+        }));
+    }
+
 }
