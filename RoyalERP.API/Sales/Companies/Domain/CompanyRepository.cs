@@ -41,17 +41,38 @@ public class CompanyRepository : ICompanyRepository {
 
     }
 
-    public Task<IEnumerable<Company>> GetAllAsync() {
+    public async Task<IEnumerable<Company>> GetAllAsync() {
 
         const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
                                 FROM sales.companies
                                 LEFT JOIN sales.addresses
                                 ON sales.companies.id = sales.addresses.companyid;";
 
-        // TODO: 
-        return _connection.QueryAsync<Company, Address, Company>(query, transaction: _transaction, map: (c, a) => {
-            return new Company(c.Id, c.Version, c.Name, c.Contact, c.Email, a);
-        });
+        var companiesData =  await _connection.QueryAsync<CompanyData>(query, transaction: _transaction);
+
+        var companies = new List<Company>();
+        foreach (var data in companiesData) {
+
+            const string defaultsQuery = @"SELECT id, companyid, productid, attributeid, value FROM sales.companydefaults WHERE companyid = @CompanyId;";
+
+            var defaultsData = await _connection.QueryAsync<DefaultConfigurationData>(defaultsQuery, transaction: _transaction, param: new { CompanyId = data });
+            var defaults = new List<DefaultConfiguration>();
+            foreach (var defaultData in defaultsData) {
+                defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
+            }
+
+            companies.Add(new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
+                Line1 = data.Line1,
+                Line2 = data.Line2,
+                Line3 = data.Line3,
+                City = data.City,
+                State = data.State,
+                Zip = data.Zip,
+            }, defaults));
+
+        }
+
+        return companies;
 
     }
 
@@ -66,6 +87,14 @@ public class CompanyRepository : ICompanyRepository {
         var data = await _connection.QuerySingleOrDefaultAsync<CompanyData?>(query, transaction: _transaction, param: new { Id = id });
         if (data is null) return null;
 
+        const string defaultsQuery = @"SELECT id, companyid, productid, attributeid, value FROM sales.companydefaults WHERE companyid = @CompanyId;";
+
+        var defaultsData = await _connection.QueryAsync<DefaultConfigurationData>(defaultsQuery, transaction: _transaction, param: new { CompanyId = id });
+        var defaults = new List<DefaultConfiguration>();
+        foreach (var defaultData in defaultsData) {
+            defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
+        }
+
         return new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
             Line1 = data.Line1,
             Line2 = data.Line2,
@@ -73,7 +102,7 @@ public class CompanyRepository : ICompanyRepository {
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        });
+        }, defaults);
 
     }
 
@@ -108,7 +137,7 @@ public class CompanyRepository : ICompanyRepository {
 
             } else if (domainEvent is Events.CompanyAddressUpdatedEvent addressUpdate) {
 
-                const string command = "UPDATE sales.addresses SET line1 = @Line1, line2 = @Line2, line3 = @Line3, city = @City, state = @state, zip = @Zip, WHERE companyid = @Id;";
+                const string command = "UPDATE sales.addresses SET line1 = @Line1, line2 = @Line2, line3 = @Line3, city = @City, state = @state, zip = @Zip WHERE companyid = @CompanyId;";
 
                 await _connection.ExecuteAsync(command, param: new {
                     addressUpdate.CompanyId,

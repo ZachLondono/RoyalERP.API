@@ -1,4 +1,5 @@
 ﻿using RoyalERP.API.Common.Domain;
+using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Domain;
 
@@ -12,14 +13,18 @@ public class Company : AggregateRoot {
 
     public Address Address { get; private set; }
 
-    public Company(Guid id, int version, string name, string contact, string email, Address address) : base(id, version) {
+    private readonly List<DefaultConfiguration> _defaultConfigurations;
+    public IReadOnlyCollection<DefaultConfiguration> DefaultConfigurations => _defaultConfigurations.AsReadOnly();
+
+    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations) : base(id, version) {
         Name = name;
         Contact = contact;
         Email = email;
         Address = address;
+        _defaultConfigurations = defaultConfigurations;
     }
 
-    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new()) {
+    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new()) {
         AddEvent(new Events.CompanyCreatedEvent(Id, name));
     }
 
@@ -40,6 +45,55 @@ public class Company : AggregateRoot {
         Address.State = state;
         Address.Zip = zip;
         AddEvent(new Events.CompanyAddressUpdatedEvent(Id, line1, line2, line3, city, state, zip));
+    }
+
+    public DefaultConfiguration SetDefault(Guid productId, Guid attributeId, string value) {
+        var config = _defaultConfigurations.Where(c => c.ProductId.Equals(productId) && c.AttributeId.Equals(attributeId))
+                                            .FirstOrDefault();
+        if (config is null) {
+            config = DefaultConfiguration.Create(Id, productId, attributeId, value);
+            _defaultConfigurations.Add(config);
+        } else config.SetValue(value);
+
+        return config;
+    }
+
+    public bool RemoveDefault(DefaultConfiguration config) {
+        var result = _defaultConfigurations.Remove(config);
+        if (result) AddEvent(new Events.CompanyDefaultRemovedEvent(Id, config.Id));
+        return result;
+    }
+
+    public CompanyDTO AsDTO() {
+
+        List<DefaultConfigurationDTO> defaults = new();
+
+        foreach (var config in _defaultConfigurations) {
+
+            defaults.Add(new() {
+                ProductId = config.ProductId,
+                AttributeId = config.AttributeId,
+                Value = config.Value
+            });
+
+        }
+
+        return new() {
+            Id = Id,
+            Name = Name,
+            Contact = Contact,
+            Email = Email,
+            Defaults = defaults,
+            Address = new() {
+                Line1 = Address.Line1,
+                Line2 = Address.Line2,
+                Line3 = Address.Line3,
+                City = Address.City,
+                State = Address.State,
+                Zip = Address.Zip,
+            }
+        };
+
     }
 
 }

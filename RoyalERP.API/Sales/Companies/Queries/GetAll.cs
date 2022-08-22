@@ -2,6 +2,7 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Contracts.Companies;
+using RoyalERP.API.Sales.Companies.Data;
 
 namespace RoyalERP.API.Sales.Companies.Queries;
 
@@ -28,12 +29,30 @@ public class GetAll {
 
             var companies =  await connection.QueryAsync<CompanyDTO, AddressDTO, CompanyDTO>(query, map: (c, a) => new() {
                 Id = c.Id,
-                Version = c.Version,
                 Name = c.Name,
                 Contact = c.Contact,
                 Email = c.Email,
                 Address = a
             }, splitOn: "addressid");
+
+            foreach (var company in companies) {
+
+                const string defaultsQuery = @"SELECT id, companyid, productid, attributeid, value FROM sales.companydefaults WHERE companyid = @CompanyId;";
+
+                var defaultsData = await connection.QueryAsync<DefaultConfigurationData>(defaultsQuery, param: new { CompanyId = company.Id });
+
+                var defaults = new List<DefaultConfigurationDTO>();
+                foreach (var defaultData in defaultsData) {
+                    defaults.Add(new() {
+                        ProductId = defaultData.ProductId,
+                        AttributeId = defaultData.AttributeId,
+                        Value = defaultData.Value
+                    });
+                }
+
+                company.Defaults = defaults;
+
+            }
 
             return new OkObjectResult(companies);
 
