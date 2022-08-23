@@ -135,11 +135,12 @@ public class OrderRepository : IOrderRepository {
             switch (domainEvent) {
                 case Events.OrderedItemCreated created:
 
-                    const string command = "INSERT INTO sales.ordereditems (id, orderid, productname, quantity, properties)  VALUES (@Id, @OrderId, @ProductName, @Quantity, @Properties);";
+                    const string command = "INSERT INTO sales.ordereditems (id, orderid, productid, productname, quantity, properties)  VALUES (@Id, @OrderId, @ProductId, @ProductName, @Quantity, @Properties);";
 
                     int rows = await _connection.ExecuteAsync(command, param: new {
                         Id = created.OrderedItemId,
                         created.OrderId,
+                        created.ProductId,
                         created.ProductName,
                         created.Quantity,
                         Properties = new JsonParameter(created.Properties)
