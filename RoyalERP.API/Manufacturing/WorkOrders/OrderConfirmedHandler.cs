@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using RoyalERP.API.Catalog.Contracts;
 using RoyalERP.API.Manufacturing.WorkOrders.Commands;
 using RoyalERP.API.Sales.Contracts;
 using static RoyalERP.API.Sales.Orders.Domain.Events;
@@ -10,12 +11,15 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
     private readonly ISender _sender;
     private readonly SalesOrders.GetOrderById _getOrderById;
     private readonly SalesCompanies.GetCompanyById _getCompanyById;
+    private readonly ProductCatalog.GetProductClassByProductId _getProductClass;
     private readonly ILogger<OrderConfirmedHandler> _logger;
 
-    public OrderConfirmedHandler(ISender sender, ILogger<OrderConfirmedHandler> logger, SalesOrders.GetOrderById getOrderById, SalesCompanies.GetCompanyById getCompanyById) {
+    public OrderConfirmedHandler(ISender sender, ILogger<OrderConfirmedHandler> logger,
+                                SalesOrders.GetOrderById getOrderById, SalesCompanies.GetCompanyById getCompanyById, ProductCatalog.GetProductClassByProductId getProductClass) {
         _sender = sender;
         _getOrderById = getOrderById;
         _getCompanyById = getCompanyById;
+        _getProductClass = getProductClass;
         _logger = logger;
     }
 
@@ -46,8 +50,21 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
             vendorName = vendor.Name;
         }
 
+        var productIds = salesorder.Items
+                                    .Select(i => i.ProductId)
+                                    .Distinct();
+
+        Dictionary<Guid, Guid> productToClass = new();
+
+        foreach (var id in productIds) {
+
+            Guid? classId = await _getProductClass(id);
+            productToClass[id] = classId ?? Guid.Empty;
+
+        }
+
         var productQtyByType = salesorder.Items
-                                        .GroupBy(i => i.ProductName)
+                                        .GroupBy(i => productToClass[i.ProductId])
                                         .ToDictionary(g => g.Key,
                                                       g => g.Sum(i => i.Quantity));
 
@@ -57,7 +74,7 @@ public class OrderConfirmedHandler : INotificationHandler<OrderConfirmedEvent> {
 
             var newOrder = await _sender.Send(new Create.Command(new() {
                 SalesOrderId = salesorder.Id,
-                ProductName = product.Key,
+                ProductClass = product.Key,
                 Quantity = product.Value,
                 Number = salesorder.Number,
                 Name = salesorder.Name,

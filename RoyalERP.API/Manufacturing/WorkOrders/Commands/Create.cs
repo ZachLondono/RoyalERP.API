@@ -20,7 +20,7 @@ public class Create {
 
         public async Task<WorkOrderDTO> Handle(Command request, CancellationToken cancellationToken) {
 
-            var newOrder = WorkOrder.Create(request.NewWorkOrder.SalesOrderId, request.NewWorkOrder.Number, request.NewWorkOrder.Name, request.NewWorkOrder.ProductName, request.NewWorkOrder.Quantity, request.NewWorkOrder.CustomerName, request.NewWorkOrder.VendorName);
+            var newOrder = WorkOrder.Create(request.NewWorkOrder.SalesOrderId, request.NewWorkOrder.Number, request.NewWorkOrder.Name, request.NewWorkOrder.ProductClass, request.NewWorkOrder.Quantity, request.NewWorkOrder.CustomerName, request.NewWorkOrder.VendorName);
 
             await _work.WorkOrders.AddAsync(newOrder);
 
@@ -33,7 +33,7 @@ public class Create {
                 SalesOrderId = newOrder.SalesOrderId,
                 Number = newOrder.Number,
                 Name = newOrder.Name,
-                ProductName = newOrder.ProductName,
+                ProductClass = newOrder.ProductClass,
                 Quantity = newOrder.Quantity,
                 CustomerName = newOrder.CustomerName,
                 VendorName = newOrder.VendorName,

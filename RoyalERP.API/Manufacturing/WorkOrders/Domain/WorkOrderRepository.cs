@@ -33,7 +33,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
             entity.Note,
             entity.CustomerName, 
             entity.VendorName,
-            entity.ProductName,
+            entity.ProductClass,
             entity.Quantity,
             Status = entity.Status.ToString()
         });
