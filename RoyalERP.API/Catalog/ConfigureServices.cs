@@ -2,6 +2,7 @@
 using RoyalERP.API.Catalog.ProductClasses.Domain;
 using RoyalERP.API.Catalog.Products.Domain;
 using RoyalERP.API.Common.Data;
+using RoyalERP.API.Catalog.Contracts;
 using System.Data;
 
 namespace RoyalERP.API.Catalog;
@@ -17,6 +18,9 @@ public static class ConfigureServices {
         services.AddSingleton<Func<IDbConnection, IDbTransaction, IProductAttributeRepository>>(s => (c, t) => new ProductAttributeRepository(new DapperConnection(c), t));
 
         services.AddTransient<ICatalogUnitOfWork, CatalogUnitOfWork>();
+
+        services.AddTransient<CatalogQueries>();
+        services.AddTransient<ProductCatalog.GetProductClassByProductId>(s => s.GetRequiredService<CatalogQueries>().GetProductClassFromProductId);
 
         return services;
 
