@@ -20,7 +20,7 @@ public class GetById {
         public async Task<OrderDetails?> Handle(Query request, CancellationToken cancellationToken) {
 
             const string query = "SELECT id, version, number, name, customerid, vendorid, placeddate, confirmeddate, completeddate, status FROM sales.orders WHERE id = @Id;";
-            const string itemQuery = "SELECT id, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
+            const string itemQuery = "SELECT id, productid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
 
             var connection = _factory.CreateConnection();
 
@@ -28,9 +28,10 @@ public class GetById {
 
             if (order is null) return null;
 
-            var itemsData = await connection.QueryAsync<(Guid Id, string ProductName, int Quantity, Json<Dictionary<string,string>> Properties)>(itemQuery, new { request.OrderId });
+            var itemsData = await connection.QueryAsync<(Guid Id, Guid ProductId, string ProductName, int Quantity, Json<Dictionary<string,string>> Properties)>(itemQuery, new { request.OrderId });
             var items = itemsData.Select(i => new OrderedItemDTO() {
                 Id = i.Id,
+                ProductId = i.ProductId,
                 ProductName = i.ProductName,
                 Quantity = i.Quantity,
                 Properties = i.Properties.Value ?? new()

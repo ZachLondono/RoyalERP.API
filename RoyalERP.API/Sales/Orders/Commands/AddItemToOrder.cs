@@ -27,7 +27,7 @@ public class AddItemToOrder {
                 return new NotFoundResult();
             }
 
-            var newitem = order.AddItem(request.NewItem.ProductName, request.NewItem.Quantity, request.NewItem.Properties);
+            var newitem = order.AddItem(request.NewItem.ProductId, request.NewItem.ProductName, request.NewItem.Quantity, request.NewItem.Properties);
             await _work.Orders.UpdateAsync(order);
 
             await _work.CommitAsync();

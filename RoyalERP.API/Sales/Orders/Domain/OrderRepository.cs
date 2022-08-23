@@ -48,15 +48,15 @@ public class OrderRepository : IOrderRepository {
     public async Task<Order?> GetAsync(Guid id) {
 
         const string query = "SELECT id, version, number, name, status, customerid, vendorid, placeddate, confirmeddate, completeddate FROM sales.orders WHERE id = @Id;";
-        const string itemQuery = "SELECT id, orderid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
+        const string itemQuery = "SELECT id, orderid, productid, productname, quantity, properties FROM sales.ordereditems WHERE orderid = @OrderId;";
 
         var order = await _connection.QuerySingleOrDefaultAsync<OrderData?>(query, transaction: _transaction, param: new { Id = id });
 
         if (order is null) return null;
 
-        var itemsData = await _connection.QueryAsync<(Guid Id, Guid OrderId, string Productname, int Quantity, Json<Dictionary<string,string>> Properties)>(itemQuery, transaction: _transaction, param: new { OrderId = order.Id });
+        var itemsData = await _connection.QueryAsync<(Guid Id, Guid OrderId, Guid ProductId, string ProductName, int Quantity, Json<Dictionary<string,string>> Properties)>(itemQuery, transaction: _transaction, param: new { OrderId = order.Id });
 
-        var items = itemsData.Select(i => new OrderedItem(i.Id, i.OrderId, i.Productname, i.Quantity, i.Properties.Value ?? new()));
+        var items = itemsData.Select(i => new OrderedItem(i.Id, i.OrderId, i.ProductId, i.ProductName, i.Quantity, i.Properties.Value ?? new()));
 
         return new Order(order.Id, 0, order.Number, order.Name, order.Status, order.CustomerId, order.VendorId, new(items), order.PlacedDate, order.ConfirmedDate, order.CompletedDate);
 
