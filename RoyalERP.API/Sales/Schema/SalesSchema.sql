@@ -9,6 +9,15 @@ CREATE TABLE sales.companies (
     CONSTRAINT companies_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE sales.companydefaults (
+    id uuid NOT NULL,
+    companyid uuid NOT NULL,
+    productid uuid NOT NULL,
+    attributeid uuid NOT NULL,
+    value varchar(255) NOT NULL, 
+    CONSTRAINT companydefaults_pkey PRIMARY KEY (id)
+);
+
 CREATE TABLE sales.addresses (
     id uuid NOT NULL,
     companyid uuid NOT NULL REFERENCES sales.companies(id) ON DELETE CASCADE,

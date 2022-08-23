@@ -4,9 +4,9 @@ using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
-public class UpdateCompanyAddress {
+public class RemoveDefault {
 
-    public record Command(Guid CompanyId, UpdateAddress Update) : IRequest<IActionResult>;
+    public record Command(Guid CompanyId, RemoveDefaultValue Update) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -24,11 +24,17 @@ public class UpdateCompanyAddress {
 
             if (company is null) return new NotFoundResult();
 
-            company.SetAddress(request.Update.Line1, request.Update.Line2, request.Update.Line3, request.Update.City, request.Update.State, request.Update.Zip);
-            await _work.Companies.UpdateAsync(company);
-            await _work.CommitAsync();
+            var config = company.DefaultConfigurations
+                                .Where(c => c.ProductId.Equals(request.Update.ProductId) && c.AttributeId.Equals(request.Update.AttributeId))
+                                .FirstOrDefault();
 
-            _logger.LogTrace("Updated company: {CompanyId}", company.Id);
+            if (config is not null) {
+                company.RemoveDefault(config);
+                await _work.Companies.UpdateAsync(company);
+                await _work.CommitAsync();
+
+                _logger.LogTrace("Set company default: {CompanyId} {DefaultConfiguration}", company.Id, request.Update);
+            }
 
             return new OkObjectResult(company.AsDTO());
 

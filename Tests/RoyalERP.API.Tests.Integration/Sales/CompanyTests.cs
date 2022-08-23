@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Newtonsoft.Json;
 using RoyalERP.API.Contracts.Companies;
+using RoyalERP.API.Contracts.Orders;
 using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Net;
@@ -241,6 +242,145 @@ public class CompanyTests : DbTests {
 
         var check = await client.GetAsync($"/companies/{actual.Id}");
         check.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task SetDefault_ShouldCreateDefault() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        var defaultValue = new SetDefaultValue() {
+            ProductId = Guid.NewGuid(),
+            AttributeId = Guid.NewGuid(),
+            Value = "Default Value"
+        };
+        var update = JsonContent.Create(defaultValue);
+
+        // Act
+        var response = await client.PutAsync($"/companies/{newOrder!.Id}/defaults", update);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Defaults.Should().ContainEquivalentOf(defaultValue);
+        updatedCompany!.Defaults.Should().HaveCount(1);
+
+    }
+
+    [Fact]
+    public async Task SetDefault_ShouldOverwriteDefault() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        var defaultValue = new SetDefaultValue() {
+            ProductId = Guid.NewGuid(),
+            AttributeId = Guid.NewGuid(),
+            Value = "Default Value"
+        };
+        var update1 = JsonContent.Create(defaultValue);
+        await client.PutAsync($"/companies/{newOrder!.Id}/defaults", update1);
+        
+        defaultValue = new SetDefaultValue() {
+            ProductId = Guid.NewGuid(),
+            AttributeId = Guid.NewGuid(),
+            Value = "New Default Value"
+        };
+        var update2 = JsonContent.Create(defaultValue);
+
+        // Act
+        var response = await client.PutAsync($"/companies/{newOrder!.Id}/defaults", update2);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Defaults.Should().ContainEquivalentOf(defaultValue);
+        updatedCompany!.Defaults.Should().HaveCount(1);
+
+    }
+
+    [Fact]
+    public async Task SetDefault_ShouldReturn404WhenEntityNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+        var defaultValue = new SetDefaultValue() {
+            ProductId = Guid.NewGuid(),
+            AttributeId = Guid.NewGuid(),
+            Value = "Default Value"
+        };
+        var update = JsonContent.Create(defaultValue);
+
+        // Act
+        var response = await client.PutAsync($"/companies/{Guid.NewGuid()}/defaults", update);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task RemoveDefault_ShouldRemoveDefault() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        var defaultValue = new SetDefaultValue() {
+            ProductId = Guid.NewGuid(),
+            AttributeId = Guid.NewGuid(),
+            Value = "Default Value"
+        };
+        var update1 = JsonContent.Create(defaultValue);
+        await client.PutAsync($"/companies/{newOrder!.Id}/defaults", update1);
+
+
+        // Act
+        var response = await client.DeleteAsync($"/companies/{newOrder!.Id}/defaults/{defaultValue.ProductId}/{defaultValue.AttributeId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Defaults.Should().HaveCount(0);
+
+    }
+
+    [Fact]
+    public async Task RemoveDefault_ShouldReturn404WhenEntityNotExist() {
+
+        // Arrange
+        var client = CreateClientWithAuth();
+
+        // Act
+        var response = await client.DeleteAsync($"/companies/{Guid.NewGuid()}/defaults/{Guid.NewGuid()}/{Guid.NewGuid()}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 
     }
 

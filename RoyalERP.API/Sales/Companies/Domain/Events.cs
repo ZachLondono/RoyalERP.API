@@ -13,4 +13,10 @@ public static class Events {
 
     public record CompanyAddressUpdatedEvent(Guid CompanyId, string Line1, string Line2, string Line3, string City, string State, string Zip) : CompanyEvent(CompanyId);
 
+    public record CompanyDefaultAddedEvent(Guid CompanyId, Guid DefaultId, Guid ProductId, Guid AttributeId, string Value) : CompanyEvent(CompanyId);
+
+    public record CompanyDefaultRemovedEvent(Guid CompanyId, Guid DefaultId) : CompanyEvent(CompanyId);
+
+    public record CompanyDefaultUpdatedEvent(Guid CompanyId, Guid DefaultId, string Value) : CompanyEvent(CompanyId);
+
 }
