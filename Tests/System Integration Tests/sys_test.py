@@ -71,7 +71,7 @@ new_workorder = {
         "Name" : "Order Name",
         "CustomerName" : "Customer Abc",
         "VendorName" : "Company A",
-        "ProductName" : "Company B",
+        "ProductClass" : "d49bf0cb-3aa9-419d-8cbb-01539a9c68a7",
         "Quantity" : "5"
 }
 tester.postrequest('workorders/', new_workorder, 201)
