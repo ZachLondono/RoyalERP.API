@@ -21,9 +21,9 @@ public class WorkOrderRepository : IWorkOrderRepository {
         _activeEntities.Add(entity);
 
         const string command = @"INSERT INTO manufacturing.workorders
-                                (id, salesorderid, number, name, note, customername, vendorname, productname, quantity, status)
+                                (id, salesorderid, number, name, note, customername, vendorname, productclass, quantity, status)
                                 VALUES
-                                (@Id, @SalesOrderId, @Number, @Name, @Note, @CustomerName, @VendorName, @ProductName, @Quantity, @Status);";
+                                (@Id, @SalesOrderId, @Number, @Name, @Note, @CustomerName, @VendorName, @ProductClass, @Quantity, @Status);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: new {
             entity.Id,
@@ -42,7 +42,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<IEnumerable<WorkOrder>> GetAllAsync() {
 
-        const string query = @"SELECT id, version, salesorderid, number, name, note, productName, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
+        const string query = @"SELECT id, version, salesorderid, number, name, note, productclass, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
                                 FROM manufacturing.workorders;";
 
         return _connection.QueryAsync<WorkOrder>(query, transaction: _transaction);
@@ -51,7 +51,7 @@ public class WorkOrderRepository : IWorkOrderRepository {
 
     public Task<WorkOrder?> GetAsync(Guid id) {
 
-        const string query = @"SELECT id, version, salesorderid, number, name, note, productName, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
+        const string query = @"SELECT id, version, salesorderid, number, name, note, productclass, quantity, customername, vendorname, status, releaseddate, scheduleddate, fulfilleddate
                                 FROM manufacturing.workorders
                                 WHERE id = @Id;";
 

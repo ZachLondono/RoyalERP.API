@@ -185,6 +185,7 @@ public class OrderTests {
         string name = "Company Name";
         var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
+        var productId = Guid.NewGuid();
         var productName = "product name";
         var quantity = 5;
         var properties = new Dictionary<string, string>() {
@@ -192,7 +193,7 @@ public class OrderTests {
         };
 
         // Act
-        var newItem = order.AddItem(productName, quantity, properties);
+        var newItem = order.AddItem(productId, productName, quantity, properties);
 
         // Assert
         order.Items.Should().ContainEquivalentOf(newItem);
@@ -212,7 +213,7 @@ public class OrderTests {
         var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
-        var doAction = () => order.AddItem("", 0, new());
+        var doAction = () => order.AddItem(Guid.NewGuid(),"", 0, new());
 
         // Assert
         doAction.Should().Throw<CantAddToConfirmedOrderException>();
@@ -227,7 +228,7 @@ public class OrderTests {
         var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
         // Act
-        var doAction = () => order.AddItem("", 0, new());
+        var doAction = () => order.AddItem(Guid.NewGuid(), "", 0, new());
 
         // Assert
         doAction.Should().Throw<CantUpdateCancelledOrderException>();
@@ -242,13 +243,14 @@ public class OrderTests {
         string name = "Company Name";
         var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
+        var productId = Guid.NewGuid();
         var productName = "product name";
         var quantity = 5;
         var properties = new Dictionary<string, string>() {
             { "A", "B" }
         };
 
-        var newItem = order.AddItem(productName, quantity, properties);
+        var newItem = order.AddItem(productId, productName, quantity, properties);
 
         // Act
         var result = order.RemoveItem(newItem);
@@ -268,13 +270,14 @@ public class OrderTests {
         string name = "Company Name";
         var order = new Order(Guid.NewGuid(), 0, number, name, OrderStatus.Unconfirmed, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
 
+        var productId = Guid.NewGuid();
         var productName = "product name";
         var quantity = 5;
         var properties = new Dictionary<string, string>() {
             { "A", "B" }
         };
 
-        var newItem = OrderedItem.Create(Guid.NewGuid(), productName, quantity, properties);
+        var newItem = OrderedItem.Create(productId, Guid.NewGuid(), productName, quantity, properties);
 
         // Act
         var result = order.RemoveItem(newItem);
@@ -294,7 +297,7 @@ public class OrderTests {
         // Arrange
         var status = OrderStatus.Unconfirmed;
         var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
-        var item = order.AddItem("", 0, new());
+        var item = order.AddItem(Guid.NewGuid(), "", 0, new());
         order.Complete();
 
         // Act
@@ -311,7 +314,7 @@ public class OrderTests {
         // Arrange
         var status = OrderStatus.Unconfirmed;
         var order = new Order(Guid.NewGuid(), 0, "", "", status, Guid.NewGuid(), Guid.NewGuid(), new(), DateTime.Today);
-        var item = order.AddItem("", 0, new());
+        var item = order.AddItem(Guid.NewGuid(), "", 0, new());
         order.Cancel();
 
         // Act
@@ -330,7 +333,7 @@ public class OrderTests {
         var order = Order.Create("", "", Guid.NewGuid(), Guid.NewGuid());
         FakePublisher fakePublisher = new FakePublisher();
 
-        var item = order.AddItem("", 0, new());
+        var item = order.AddItem(Guid.NewGuid(), "", 0, new());
 
         // Act
         order.PublishEvents(fakePublisher).Wait();
