@@ -155,7 +155,7 @@ public class CompanyRepository : ICompanyRepository {
                     addressUpdate.Zip,
                 }, _transaction);
 
-            } else if (domainEvent is Events.CompanyInfoFieldSet infoSet) {
+            } else if (domainEvent is Events.CompanyInfoFieldSetEvent infoSet) {
 
                 var info = await GetInfoColumn(infoSet.CompanyId);
                 if (info is null) {
@@ -166,7 +166,7 @@ public class CompanyRepository : ICompanyRepository {
 
                 result = await SetInfoColumn(infoSet.CompanyId, info);
 
-            } else if (domainEvent is Events.CompanyInfoFieldRemoved infoRemoved) {
+            } else if (domainEvent is Events.CompanyInfoFieldRemovedEvent infoRemoved) {
 
                 var info = await GetInfoColumn(infoRemoved.CompanyId);
                 if (info is null) {

@@ -70,12 +70,12 @@ public class Company : AggregateRoot {
 
     public void SetInfo(string field, string value) {
         _info[field] = value;
-        AddEvent(new Events.CompanyInfoFieldSet(Id, field, value));
+        AddEvent(new Events.CompanyInfoFieldSetEvent(Id, field, value));
     }
 
     public bool RemoveInfo(string field) {
         var result = _info.Remove(field);
-        if (result) AddEvent(new Events.CompanyInfoFieldRemoved(Id, field));
+        if (result) AddEvent(new Events.CompanyInfoFieldRemovedEvent(Id, field));
         return result;
     }
 
