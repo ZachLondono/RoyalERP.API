@@ -83,7 +83,7 @@ public class CompaniesController : ControllerBase {
         }));
     }
 
-    [Route("{copmanyId}/info/{field}/{value}")]
+    [Route("{companyId}/info/{field}/{value}")]
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -91,7 +91,7 @@ public class CompaniesController : ControllerBase {
         return _sender.Send(new SetInfoField.Command(companyId, field, value));
     }
 
-    [Route("{copmanyId}/info/{field}")]
+    [Route("{companyId}/info/{field}")]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

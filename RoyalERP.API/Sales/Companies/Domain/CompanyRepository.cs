@@ -203,7 +203,7 @@ public class CompanyRepository : ICompanyRepository {
 
     private Task<int> SetInfoColumn(Guid companyId, Dictionary<string,string> info) {
         const string command = "UPDATE sales.companies SET info = @Info WHERE id = @CompanyId";
-        var infoJS = new Json<Dictionary<string, string>>(info);
+        var infoJS = new JsonParameter(info);
         return _connection.ExecuteAsync(command, param: new { CompanyId = companyId, Info = infoJS}, _transaction);
     }
 

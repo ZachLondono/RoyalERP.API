@@ -5,6 +5,7 @@ using RoyalERP.API.Contracts.Companies;
 using RoyalERP.API.Contracts.Orders;
 using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -381,6 +382,61 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+
+    }
+
+    [Fact]
+    public async Task SetInfo_ShouldSetInfo() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        string field = "Key1";
+        string value = "Value1";
+
+        // Act
+        var response = await client.PutAsync($"/companies/{newOrder!.Id}/info/{field}/{value}", null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Info.Should().Contain(new KeyValuePair<string, string>(field, value));
+
+    }
+
+    [Fact]
+    public async Task RemoveInfo_ShouldRemoveInfo() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        string field = "Key1";
+        string value = "Value1";
+        await client.PutAsync($"/companies/{newOrder!.Id}/info/{field}/{value}", null);
+
+        // Act
+        var response = await client.DeleteAsync($"/companies/{newOrder!.Id}/info/{field}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany.Should().NotBeNull();
+        updatedCompany!.Info.Should().BeEmpty();
 
     }
 
