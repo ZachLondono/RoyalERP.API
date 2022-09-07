@@ -22,7 +22,7 @@ public class CompanyRepository : ICompanyRepository {
 
         _activeEntities.Add(entity);
 
-        const string command = @"INSERT INTO sales.companies (id, name, contact, email) values (@Id, @Name, @Contact, @Email);";
+        const string command = @"INSERT INTO sales.companies (id, name, contact, email, info) values (@Id, @Name, @Contact, @Email, @Info);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
 
@@ -68,7 +68,7 @@ public class CompanyRepository : ICompanyRepository {
                 City = data.City,
                 State = data.State,
                 Zip = data.Zip,
-            }, defaults));
+            }, defaults, new()));
 
         }
 
@@ -102,7 +102,7 @@ public class CompanyRepository : ICompanyRepository {
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        }, defaults);
+        }, defaults, new());
 
     }
 
@@ -124,11 +124,13 @@ public class CompanyRepository : ICompanyRepository {
 
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
+            int result = 0;
+
             if (domainEvent is Events.CompanyUpdatedEvent update) {
 
                 const string command = "UPDATE sales.companies SET name = @Name, email = @Email, contact = @Contact WHERE id = @CompanyId;";
 
-                await _connection.ExecuteAsync(command, param: new {
+                result = await _connection.ExecuteAsync(command, param: new {
                     update.CompanyId,
                     update.Name,
                     update.Email,
@@ -139,7 +141,7 @@ public class CompanyRepository : ICompanyRepository {
 
                 const string command = "UPDATE sales.addresses SET line1 = @Line1, line2 = @Line2, line3 = @Line3, city = @City, state = @state, zip = @Zip WHERE companyid = @CompanyId;";
 
-                await _connection.ExecuteAsync(command, param: new {
+                result = await _connection.ExecuteAsync(command, param: new {
                     addressUpdate.CompanyId,
                     addressUpdate.Line1,
                     addressUpdate.Line2,
@@ -149,6 +151,32 @@ public class CompanyRepository : ICompanyRepository {
                     addressUpdate.Zip,
                 }, _transaction);
 
+            } else if (domainEvent is Events.CompanyInfoFieldSet infoSet) {
+
+                var info = await GetInfoColumn(infoSet.CompanyId);
+                if (info is null) {
+                    // TODO: log attempt to update value that does not exist and/or create new value in column
+                    continue;
+                }
+                info[infoSet.Field] = infoSet.Value;
+
+                result = await SetInfoColumn(infoSet.CompanyId, info);
+
+            } else if (domainEvent is Events.CompanyInfoFieldRemoved infoRemoved) {
+
+                var info = await GetInfoColumn(infoRemoved.CompanyId);
+                if (info is null) {
+                    // TODO: log attempt to update value that does not exist
+                    continue;
+                }
+                info.Remove(infoRemoved.Field);
+
+                result = await SetInfoColumn(infoRemoved.CompanyId, info);
+
+            }
+
+            if (result < 1) {
+                // TODO: log no update was preformed
             }
 
         }
@@ -159,6 +187,22 @@ public class CompanyRepository : ICompanyRepository {
 
     }
     
+    private async Task<Dictionary<string,string>?> GetInfoColumn(Guid companyId) {
+        const string query = "SELECT info FROM sales.companies WHERE companyid = @CompanyId";
+        var infoJS = await _connection.QuerySingleOrDefaultAsync<Json<Dictionary<string, string>>>(query, param: new {
+            CompanyId = companyId
+        }, _transaction);
+
+        if (infoJS is null) return null;
+        return infoJS.Value;
+    }
+
+    private Task<int> SetInfoColumn(Guid companyId, Dictionary<string,string> info) {
+        const string command = "UPDATE sales.companies SET info = @Info WHERE companyid = @CompanyId";
+        var infoJS = new Json<Dictionary<string, string>>(info);
+        return _connection.ExecuteAsync(command, param: new { CompanyId = companyId, Info = infoJS}, _transaction);
+    }
+
     public async Task PublishEvents(IPublisher publisher) {
         foreach (var entity in _activeEntities) {
             await entity.PublishEvents(publisher);

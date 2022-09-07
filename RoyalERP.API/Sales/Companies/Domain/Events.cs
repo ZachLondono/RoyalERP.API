@@ -19,4 +19,8 @@ public static class Events {
 
     public record CompanyDefaultUpdatedEvent(Guid CompanyId, Guid DefaultId, string Value) : CompanyEvent(CompanyId);
 
+    public record CompanyInfoFieldSet(Guid CompanyId, string Field, string Value) : CompanyEvent(CompanyId);
+
+    public record CompanyInfoFieldRemoved(Guid CompanyId, string Field) : CompanyEvent(CompanyId);
+
 }

@@ -16,15 +16,19 @@ public class Company : AggregateRoot {
     private readonly List<DefaultConfiguration> _defaultConfigurations;
     public IReadOnlyCollection<DefaultConfiguration> DefaultConfigurations => _defaultConfigurations.AsReadOnly();
 
-    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations) : base(id, version) {
+    private readonly Dictionary<string, string> _info;
+    public IReadOnlyDictionary<string, string> Info => _info;
+
+    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations, Dictionary<string, string> info) : base(id, version) {
         Name = name;
         Contact = contact;
         Email = email;
         Address = address;
         _defaultConfigurations = defaultConfigurations;
+        _info = info;
     }
 
-    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new()) {
+    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new(), new()) {
         AddEvent(new Events.CompanyCreatedEvent(Id, name));
     }
 
@@ -61,6 +65,17 @@ public class Company : AggregateRoot {
     public bool RemoveDefault(DefaultConfiguration config) {
         var result = _defaultConfigurations.Remove(config);
         if (result) AddEvent(new Events.CompanyDefaultRemovedEvent(Id, config.Id));
+        return result;
+    }
+
+    public void SetInfo(string field, string value) {
+        _info[field] = value;
+        AddEvent(new Events.CompanyInfoFieldSet(Id, field, value));
+    }
+
+    public bool RemoveInfo(string field) {
+        var result = _info.Remove(field);
+        if (result) AddEvent(new Events.CompanyInfoFieldRemoved(Id, field));
         return result;
     }
 
