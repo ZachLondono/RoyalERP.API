@@ -16,15 +16,19 @@ public class Company : AggregateRoot {
     private readonly List<DefaultConfiguration> _defaultConfigurations;
     public IReadOnlyCollection<DefaultConfiguration> DefaultConfigurations => _defaultConfigurations.AsReadOnly();
 
-    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations) : base(id, version) {
+    private readonly Dictionary<string, string> _info;
+    public IReadOnlyDictionary<string, string> Info => _info;
+
+    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations, Dictionary<string, string> info) : base(id, version) {
         Name = name;
         Contact = contact;
         Email = email;
         Address = address;
         _defaultConfigurations = defaultConfigurations;
+        _info = info;
     }
 
-    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new()) {
+    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new(), new()) {
         AddEvent(new Events.CompanyCreatedEvent(Id, name));
     }
 
@@ -64,6 +68,17 @@ public class Company : AggregateRoot {
         return result;
     }
 
+    public void SetInfo(string field, string value) {
+        _info[field] = value;
+        AddEvent(new Events.CompanyInfoFieldSetEvent(Id, field, value));
+    }
+
+    public bool RemoveInfo(string field) {
+        var result = _info.Remove(field);
+        if (result) AddEvent(new Events.CompanyInfoFieldRemovedEvent(Id, field));
+        return result;
+    }
+
     public CompanyDTO AsDTO() {
 
         List<DefaultConfigurationDTO> defaults = new();
@@ -84,6 +99,7 @@ public class Company : AggregateRoot {
             Contact = Contact,
             Email = Email,
             Defaults = defaults,
+            Info = _info,
             Address = new() {
                 Line1 = Address.Line1,
                 Line2 = Address.Line2,

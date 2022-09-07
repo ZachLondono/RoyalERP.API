@@ -49,6 +49,7 @@ public class GetById {
                 Contact = data.Contact,
                 Email = data.Email,
                 Defaults = defaults,
+                Info = data.Info?.Value ?? new(),
                 Address = new() {
                     Line1 = data.Line1,
                     Line2 = data.Line2,

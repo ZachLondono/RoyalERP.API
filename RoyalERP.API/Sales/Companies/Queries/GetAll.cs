@@ -3,6 +3,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using RoyalERP.API.Contracts.Companies;
 using RoyalERP.API.Sales.Companies.Data;
+using RoyalERP.API.Common.Data;
 
 namespace RoyalERP.API.Sales.Companies.Queries;
 
@@ -51,6 +52,10 @@ public class GetAll {
                 }
 
                 company.Defaults = defaults;
+
+                const string infoQuery = "SELECT info FROM sales.companies WHERE id = @CompanyId;";
+                var info = await connection.QuerySingleOrDefaultAsync<Json<Dictionary<string, string>>>(infoQuery, param: new { CompanyId = company.Id});
+                company.Info = info?.Value ?? new();
 
             }
 

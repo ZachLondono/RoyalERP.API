@@ -116,7 +116,7 @@ public class CompanyTests {
         var attributeId = Guid.NewGuid();
         var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new() {
             new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), productId, attributeId, "")
-        });
+        }, new());
         var value = "New value";
 
         // Act
@@ -138,7 +138,7 @@ public class CompanyTests {
         var config = new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), productId, attributeId, "");
         var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new() {
             config
-        });
+        }, new());
 
         // Act
         var result = company.RemoveDefault(config);
@@ -154,7 +154,7 @@ public class CompanyTests {
     public void RemoveDefault_ShouldReturnFalseAndNotAddEvent_WhenConfigDoesNotExist() {
 
         // Arrange
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new());
+        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new());
         var config = new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "");
 
         // Act
@@ -163,6 +163,63 @@ public class CompanyTests {
         // Assert
         result.Should().BeFalse();
         company.DefaultConfigurations.Should().HaveCount(0);
+        company.Events.Should().BeEmpty();
+
+    }
+
+    [Fact]
+    public void SetInfo_ShouldAddInfo() {
+
+        // Arrange
+        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new());
+        string field = "Key1";
+        string value = "Value1";
+
+        // Act
+        company.SetInfo(field, value);
+
+        // Assert
+        company.Info.Should().Contain(new KeyValuePair<string, string>(field, value));
+        company.Events.Should().Contain(e => e is Events.CompanyInfoFieldSetEvent);
+
+    }
+
+    [Fact]
+    public void RemoveInfo_ShouldRemoveInfo() {
+
+        // Arrange
+        string field = "Key1";
+        string value = "Value1";
+        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new() {
+            { field, value}
+        });
+
+        // Act
+        var result = company.RemoveInfo(field);
+
+        // Assert
+        result.Should().Be(true);
+        company.Info.Should().NotContain(new KeyValuePair<string, string>(field, value));
+        company.Events.Should().Contain(e => e is Events.CompanyInfoFieldRemovedEvent);
+
+    }
+
+    [Fact]
+    public void RemoveInfo_ShouldNotRemoveInfo_WhenFieldDoesNotExist() {
+
+        // Arrange
+        string field = "Key1";
+        string value = "Value1";
+        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new() {
+            { field, value}
+        });
+
+        // Act
+        var result = company.RemoveInfo("Key2");
+
+        // Assert
+        result.Should().Be(false);
+        company.Info.Should().Contain(new KeyValuePair<string, string>(field, value));
         company.Events.Should().BeEmpty();
 
     }
@@ -183,7 +240,11 @@ public class CompanyTests {
             config
         };
 
-        var company = new Company(Guid.NewGuid(), 123, "Company", "Contact", "email@domain", address, configs);
+        var info = new Dictionary<string, string>() {
+            { "key1", "value1"}
+        };
+
+        var company = new Company(Guid.NewGuid(), 123, "Company", "Contact", "email@domain", address, configs, info);
 
         var dto = company.AsDTO();
         dto.Id.Should().Be(company.Id);
@@ -194,6 +255,8 @@ public class CompanyTests {
         dto.Defaults.Should().ContainSingle(d => d.AttributeId.Equals(config.AttributeId)
                                                     && d.ProductId.Equals(config.ProductId)
                                                     && d.Value.Equals(config.Value));
+
+        dto.Info.Should().Contain(new KeyValuePair<string, string>("key1", "value1"));
 
     }
 

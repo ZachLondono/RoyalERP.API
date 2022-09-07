@@ -61,6 +61,8 @@ public class CompanyRepository : ICompanyRepository {
                 defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
             }
 
+            var info = data.Info?.Value ?? new();
+
             companies.Add(new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
                 Line1 = data.Line1,
                 Line2 = data.Line2,
@@ -68,7 +70,7 @@ public class CompanyRepository : ICompanyRepository {
                 City = data.City,
                 State = data.State,
                 Zip = data.Zip,
-            }, defaults));
+            }, defaults, info));
 
         }
 
@@ -95,6 +97,8 @@ public class CompanyRepository : ICompanyRepository {
             defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
         }
 
+        var info = data.Info?.Value ?? new();
+
         return new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
             Line1 = data.Line1,
             Line2 = data.Line2,
@@ -102,7 +106,7 @@ public class CompanyRepository : ICompanyRepository {
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        }, defaults);
+        }, defaults, info);
 
     }
 
@@ -124,11 +128,13 @@ public class CompanyRepository : ICompanyRepository {
 
         foreach (var domainEvent in entity.Events.Where(e => !e.IsPublished)) {
 
+            int result = 0;
+
             if (domainEvent is Events.CompanyUpdatedEvent update) {
 
                 const string command = "UPDATE sales.companies SET name = @Name, email = @Email, contact = @Contact WHERE id = @CompanyId;";
 
-                await _connection.ExecuteAsync(command, param: new {
+                result = await _connection.ExecuteAsync(command, param: new {
                     update.CompanyId,
                     update.Name,
                     update.Email,
@@ -139,7 +145,7 @@ public class CompanyRepository : ICompanyRepository {
 
                 const string command = "UPDATE sales.addresses SET line1 = @Line1, line2 = @Line2, line3 = @Line3, city = @City, state = @state, zip = @Zip WHERE companyid = @CompanyId;";
 
-                await _connection.ExecuteAsync(command, param: new {
+                result = await _connection.ExecuteAsync(command, param: new {
                     addressUpdate.CompanyId,
                     addressUpdate.Line1,
                     addressUpdate.Line2,
@@ -149,6 +155,32 @@ public class CompanyRepository : ICompanyRepository {
                     addressUpdate.Zip,
                 }, _transaction);
 
+            } else if (domainEvent is Events.CompanyInfoFieldSetEvent infoSet) {
+
+                var info = await GetInfoColumn(infoSet.CompanyId);
+                if (info is null) {
+                    // TODO: log attempt to update value that does not exist and/or create new value in column
+                    continue;
+                }
+                info[infoSet.Field] = infoSet.Value;
+
+                result = await SetInfoColumn(infoSet.CompanyId, info);
+
+            } else if (domainEvent is Events.CompanyInfoFieldRemovedEvent infoRemoved) {
+
+                var info = await GetInfoColumn(infoRemoved.CompanyId);
+                if (info is null) {
+                    // TODO: log attempt to update value that does not exist
+                    continue;
+                }
+                info.Remove(infoRemoved.Field);
+
+                result = await SetInfoColumn(infoRemoved.CompanyId, info);
+
+            }
+
+            if (result < 1) {
+                // TODO: log no update was preformed
             }
 
         }
@@ -159,6 +191,22 @@ public class CompanyRepository : ICompanyRepository {
 
     }
     
+    private async Task<Dictionary<string,string>?> GetInfoColumn(Guid companyId) {
+        const string query = "SELECT info FROM sales.companies WHERE id = @CompanyId";
+        var infoJS = await _connection.QuerySingleOrDefaultAsync<Json<Dictionary<string, string>>>(query, param: new {
+            CompanyId = companyId
+        }, _transaction);
+
+        if (infoJS is null) return null;
+        return infoJS.Value;
+    }
+
+    private Task<int> SetInfoColumn(Guid companyId, Dictionary<string,string> info) {
+        const string command = "UPDATE sales.companies SET info = @Info WHERE id = @CompanyId";
+        var infoJS = new JsonParameter(info);
+        return _connection.ExecuteAsync(command, param: new { CompanyId = companyId, Info = infoJS}, _transaction);
+    }
+
     public async Task PublishEvents(IPublisher publisher) {
         foreach (var entity in _activeEntities) {
             await entity.PublishEvents(publisher);

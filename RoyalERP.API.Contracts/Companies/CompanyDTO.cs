@@ -14,4 +14,6 @@ public class CompanyDTO {
 
     public IEnumerable<DefaultConfigurationDTO> Defaults { get; set; } = Enumerable.Empty<DefaultConfigurationDTO>();
 
+    public Dictionary<string, string> Info { get; set; } = new();
+ 
 }
