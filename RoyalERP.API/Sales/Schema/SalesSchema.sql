@@ -6,7 +6,7 @@ CREATE TABLE sales.companies (
     name character varying(255) NOT NULL,
     contact character varying(255) NOT NULL,
     email character varying(255) NOT NULL,
-    info jsonb,
+    info jsonb NOT NULL DEFAULT '{}'::jsonb,
     CONSTRAINT companies_pkey PRIMARY KEY (id)
 );
 
