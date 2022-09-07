@@ -1,4 +1,6 @@
-﻿namespace RoyalERP.API.Sales.Companies.Data;
+﻿using RoyalERP.API.Common.Data;
+
+namespace RoyalERP.API.Sales.Companies.Data;
 
 public class CompanyData {
 
@@ -11,6 +13,8 @@ public class CompanyData {
     public string Contact { get; set; } = string.Empty;
 
     public string Email { get; set; } = string.Empty;
+
+    public Json<Dictionary<string, string>>? Info { get; set; }
 
     public Guid AddressId { get; set; }
 

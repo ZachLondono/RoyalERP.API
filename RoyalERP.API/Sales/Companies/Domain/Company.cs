@@ -99,6 +99,7 @@ public class Company : AggregateRoot {
             Contact = Contact,
             Email = Email,
             Defaults = defaults,
+            Info = _info,
             Address = new() {
                 Line1 = Address.Line1,
                 Line2 = Address.Line2,
