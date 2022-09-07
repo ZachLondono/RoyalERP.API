@@ -22,7 +22,7 @@ public class CompanyRepository : ICompanyRepository {
 
         _activeEntities.Add(entity);
 
-        const string command = @"INSERT INTO sales.companies (id, name, contact, email, info) values (@Id, @Name, @Contact, @Email, @Info);";
+        const string command = @"INSERT INTO sales.companies (id, name, contact, email) values (@Id, @Name, @Contact, @Email);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
 
@@ -61,6 +61,8 @@ public class CompanyRepository : ICompanyRepository {
                 defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
             }
 
+            var info = data.Info?.Value ?? new();
+
             companies.Add(new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
                 Line1 = data.Line1,
                 Line2 = data.Line2,
@@ -68,7 +70,7 @@ public class CompanyRepository : ICompanyRepository {
                 City = data.City,
                 State = data.State,
                 Zip = data.Zip,
-            }, defaults, new()));
+            }, defaults, info));
 
         }
 
@@ -95,6 +97,8 @@ public class CompanyRepository : ICompanyRepository {
             defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
         }
 
+        var info = data.Info?.Value ?? new();
+
         return new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
             Line1 = data.Line1,
             Line2 = data.Line2,
@@ -102,7 +106,7 @@ public class CompanyRepository : ICompanyRepository {
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        }, defaults, new());
+        }, defaults, info);
 
     }
 
@@ -188,7 +192,7 @@ public class CompanyRepository : ICompanyRepository {
     }
     
     private async Task<Dictionary<string,string>?> GetInfoColumn(Guid companyId) {
-        const string query = "SELECT info FROM sales.companies WHERE companyid = @CompanyId";
+        const string query = "SELECT info FROM sales.companies WHERE id = @CompanyId";
         var infoJS = await _connection.QuerySingleOrDefaultAsync<Json<Dictionary<string, string>>>(query, param: new {
             CompanyId = companyId
         }, _transaction);
@@ -198,7 +202,7 @@ public class CompanyRepository : ICompanyRepository {
     }
 
     private Task<int> SetInfoColumn(Guid companyId, Dictionary<string,string> info) {
-        const string command = "UPDATE sales.companies SET info = @Info WHERE companyid = @CompanyId";
+        const string command = "UPDATE sales.companies SET info = @Info WHERE id = @CompanyId";
         var infoJS = new Json<Dictionary<string, string>>(info);
         return _connection.ExecuteAsync(command, param: new { CompanyId = companyId, Info = infoJS}, _transaction);
     }
