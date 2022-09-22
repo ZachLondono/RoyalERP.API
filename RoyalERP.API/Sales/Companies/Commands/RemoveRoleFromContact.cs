@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
 public class RemoveRoleFromContact {
 
-    public record Command(Guid CompanyId, Guid ContactId, ContactRole ExistingRole) : IRequest<IActionResult>;
+    public record Command(Guid CompanyId, Guid ContactId, string ExistingRole) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -28,7 +27,7 @@ public class RemoveRoleFromContact {
 
             if (contact is null) return new NotFoundResult();
 
-            contact.RemoveRole(request.ExistingRole.Role);
+            contact.RemoveRole(request.ExistingRole);
 
             await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();

@@ -131,12 +131,12 @@ public class CompaniesController : ControllerBase {
         return _sender.Send(new AddRoleToContact.Command(companyId, contactId, update));
     }
 
-    [Route("{companyId}/contacts/{contactId}/roles")]
+    [Route("{companyId}/contacts/{contactId}/roles/{role}")]
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public Task<IActionResult> RemoveRoleFromContact(Guid companyId, Guid contactId, ContactRole update) {
-        return _sender.Send(new RemoveRoleFromContact.Command(companyId, contactId, update));
+    public Task<IActionResult> RemoveRoleFromContact(Guid companyId, Guid contactId, string role) {
+        return _sender.Send(new RemoveRoleFromContact.Command(companyId, contactId, role));
     }
 
 }
