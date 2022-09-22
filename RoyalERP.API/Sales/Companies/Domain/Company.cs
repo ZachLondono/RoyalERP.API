@@ -100,11 +100,23 @@ public class Company : AggregateRoot {
 
         }
 
+        var contacts = new List<ContactDTO>();
+        foreach (var contact in _contacts) {
+            contacts.Add(new() {
+                Id = contact.Id,
+                Name = contact.Name,
+                Email = contact.Email,
+                Phone = contact.Phone,
+            });
+        }
+
+
         return new() {
             Id = Id,
             Name = Name,
             Defaults = defaults,
             Info = _info,
+            Contacts = contacts,
             Address = new() {
                 Line1 = Address.Line1,
                 Line2 = Address.Line2,
