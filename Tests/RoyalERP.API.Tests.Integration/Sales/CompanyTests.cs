@@ -1,15 +1,18 @@
 ﻿using Bogus;
 using FluentAssertions;
+using Moq;
 using Newtonsoft.Json;
 using RoyalERP.API.Contracts.Companies;
 using RoyalERP.API.Contracts.Orders;
 using RoyalERP.API.Tests.Integration.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -156,8 +159,6 @@ public class CompanyTests : DbTests {
         var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
         updatedCompany.Should().NotBeNull();
         updatedCompany!.Name.Should().Be(newName);
-        updatedCompany.Contact.Should().Be(newContact);
-        updatedCompany.Email.Should().Be(newEmail);
 
     }
 
@@ -437,6 +438,143 @@ public class CompanyTests : DbTests {
         var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
         updatedCompany.Should().NotBeNull();
         updatedCompany!.Info.Should().BeEmpty();
+
+    }
+
+    [Fact]
+    public async Task AddContact_ShouldAddContact() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+
+        var newContact = new NewContact() {
+            Name = "Name",
+            Email = "Email",
+            Phone = "Phone",
+            Roles = new[] { "Roles" }
+        };
+
+        var update = JsonContent.Create(newContact);
+
+        // Act
+        var response = await client.PostAsync($"/companies/{newOrder!.Id}/contacts/", update);
+
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany!.Contacts.Should().ContainSingle(c => c.Name == newContact.Name && c.Email == newContact.Email && c.Phone == newContact.Phone && c.Roles.Contains(newContact.Roles[0]));
+
+    }
+
+    [Fact]
+    public async Task RemoveContact_ShouldRemoveContact() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+        var newContact = new NewContact() {
+            Name = "Name",
+            Email = "Email",
+            Phone = "Phone",
+            Roles = new[] { "Roles" }
+        };
+        var update = JsonContent.Create(newContact);
+        var createContactResponse = await client.PostAsync($"/companies/{newOrder!.Id}/contacts/", update);
+        var updatedCompany = await createContactResponse.Content.ReadFromJsonAsync<CompanyDTO>();
+        var contact = updatedCompany!.Contacts.First();
+
+        // Act
+        var response = await client.DeleteAsync($"/companies/{newOrder!.Id}/contacts/{contact.Id}");
+
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updatedCompany!.Contacts.Should().HaveCount(0);
+
+    }
+
+    [Fact]
+    public async Task AddRoleToContact_ShouldAddRole() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+        var newContact = new NewContact() {
+            Name = "Name",
+            Email = "Email",
+            Phone = "Phone",
+            Roles = new[] { "Roles" }
+        };
+        var update = JsonContent.Create(newContact);
+        var createContactResponse = await client.PostAsync($"/companies/{newOrder!.Id}/contacts/", update);
+        var updatedCompany = await createContactResponse.Content.ReadFromJsonAsync<CompanyDTO>();
+        var contact = updatedCompany!.Contacts.First();
+
+        var role = new ContactRole() {
+            Role = "owner"
+        };
+        var roleAdd = JsonContent.Create(role);
+
+        // Act
+        var response = await client.PostAsync($"/companies/{newOrder!.Id}/contacts/{contact.Id}/roles", roleAdd);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updatedCompany!.Contacts.Should().HaveCount(2);
+        var updatedContact = updatedCompany!.Contacts.First();
+        updatedContact.Roles.Should().ContainSingle(r => r.Equals(role.Role));
+
+    }
+
+    [Fact]
+    public async Task RemoveRoleToContact_ShouldRemoveExistingRole() {
+
+        // Arrange
+        var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
+        var expected = faker.Generate();
+        var json = JsonConvert.SerializeObject(expected);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var client = CreateClientWithAuth();
+        var createResponse = await client.PostAsync("/companies", content);
+        var createdResult = await createResponse.Content.ReadAsStringAsync();
+        var newOrder = JsonConvert.DeserializeObject<CompanyDTO>(createdResult);
+        var newContact = new NewContact() {
+            Name = "Name",
+            Email = "Email",
+            Phone = "Phone",
+            Roles = new[] { "existing" }
+        };
+        var update = JsonContent.Create(newContact);
+        var createContactResponse = await client.PostAsync($"/companies/{newOrder!.Id}/contacts/", update);
+        var updatedCompany = await createContactResponse.Content.ReadFromJsonAsync<CompanyDTO>();
+        var contact = updatedCompany!.Contacts.First();
+
+        // Act
+        var response = await client.DeleteAsync($"/companies/{newOrder!.Id}/contacts/{contact.Id}/roles/existing");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updatedCompany!.Contacts.Should().HaveCount(0);
 
     }
 
