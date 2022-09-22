@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
 public class AddComanyContact {
 
-    public record Command(Guid CompanyId, string Name, string Email, string Phone) : IRequest<IActionResult>;
+    public record Command(Guid CompanyId, NewContact NewContact) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
         
@@ -23,7 +24,7 @@ public class AddComanyContact {
 
             if (company is null) return new NotFoundResult();
 
-            company.AddContact(request.Name, request.Email, request.Phone);
+            company.AddContact(request.NewContact.Name, request.NewContact.Email, request.NewContact.Phone, new(request.NewContact.Roles));
             await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
 
