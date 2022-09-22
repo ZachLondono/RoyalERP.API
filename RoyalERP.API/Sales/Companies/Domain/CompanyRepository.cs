@@ -217,6 +217,14 @@ public class CompanyRepository : ICompanyRepository {
 
                 throw new NotImplementedException();
 
+            } else if (domainEvent is Events.CompanyContactRoleAdded) {
+
+                throw new NotImplementedException();
+
+            } else if (domainEvent is Events.CompanyContactRoleRemoved) {
+
+                throw new NotImplementedException();
+
             }
 
         }
