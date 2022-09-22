@@ -219,6 +219,123 @@ public class CompanyTests {
     }
 
     [Fact]
+    public void AddContact_ShouldAddToContactsCollection() {
+
+        // Arrange
+        var company = new Company(Guid.NewGuid(), 123, "Company", new(), new(), new(), new());
+        string contactName = "Name";
+        string contactEmail = "Email";
+        string contactPhone = "Phone";
+        List<string> contactRoles = new() {
+            "owner"
+        };
+
+        // Act 
+        var contact = company.AddContact(contactName, contactEmail, contactPhone, contactRoles);
+
+        // Assert
+        company.Contacts.Should().HaveCount(1);
+        contact.Name.Should().Be(contactName);
+        contact.Email.Should().Be(contactEmail);
+        contact.Phone.Should().Be(contactPhone);
+        contact.Roles.Should().ContainSingle("owner");
+        company.Contacts.Should().ContainSingle(c => c.Name == contactName && c.Email == contactEmail && c.Phone == contactPhone && c.Roles.Contains("owner"));
+
+    }
+
+    [Fact]
+    public void RemoveContact_ShouldRemoveFromContactsCollection() {
+
+        // Arrange
+        var company = new Company(Guid.NewGuid(), 123, "Company", new(), new(), new(), new());
+        string contactName = "Name";
+        string contactEmail = "Email";
+        string contactPhone = "Phone";
+        List<string> contactRoles = new() {
+            "owner"
+        };
+
+        // Act
+        var contact = company.AddContact(contactName, contactEmail, contactPhone, contactRoles);
+        var result = company.RemoveContact(contact);
+
+        // Assert
+        company.Contacts.Should().HaveCount(0);
+        result.Should().BeTrue();
+
+    }
+
+    [Fact]
+    public void AddRole_ShouldAddToRoleCollection() {
+
+        // Arrange
+        var contact = new Contact(Guid.NewGuid(), Guid.NewGuid(), "name", "email", "phone", new());
+        var roleA = "owner";
+        var roleB = "billing";
+
+        // Act
+        contact.AddRole(roleA);
+        contact.AddRole(roleB);
+
+        // Assert
+        contact.Roles.Should().HaveCount(2);
+        contact.Roles.Should().Contain(roleA);
+        contact.Roles.Should().Contain(roleB);
+
+    }
+
+    [Fact]
+    public void AddRole_ShouldNotAddDuplicatesToRoleCollection() {
+
+        // Arrange
+        var role = "owner";
+        var contact = new Contact(Guid.NewGuid(), Guid.NewGuid(), "name", "email", "phone", new() { role });
+
+        // Act
+        contact.AddRole(role);
+
+        // Assert
+        contact.Roles.Should().HaveCount(1);
+        contact.Roles.Should().ContainSingle(role);
+
+    }
+
+    [Fact]
+    public void RemoveRole_ShouldRemoveFromRoleCollection() {
+
+        // Arrange
+        var role = "owner";
+        var contact = new Contact(Guid.NewGuid(), Guid.NewGuid(), "name", "email", "phone", new() { role });
+
+        // Act
+        var result = contact.RemoveRole(role);
+
+        // Assert
+        contact.Roles.Should().HaveCount(0);
+        result.Should().BeTrue();
+
+    }
+
+
+    [Fact]
+    public void RemoveRole_ShouldReturnFalseWhenRoleDoesNotExist() {
+
+        // Arrange
+        var role = "owner";
+        var doesNotExist = "abc123";
+        var contact = new Contact(Guid.NewGuid(), Guid.NewGuid(), "name", "email", "phone", new() { role });
+
+        // Act
+        var result = contact.RemoveRole(doesNotExist);
+
+        // Assert
+        contact.Roles.Should().ContainSingle(role);
+        contact.Roles.Should().HaveCount(1);
+        result.Should().BeFalse();
+
+    }
+
+    [Fact]
     public void AsDTO_ShouldCreateCorrectDTO() {
 
         var address = new Address() {
@@ -238,7 +355,12 @@ public class CompanyTests {
             { "key1", "value1"}
         };
 
-        var company = new Company(Guid.NewGuid(), 123, "Company", address, configs, info, new());
+        var contact = new Contact(Guid.NewGuid(), Guid.NewGuid(), "name", "email", "phone", new());
+        var contacts = new List<Contact>() {
+            contact
+        };
+
+        var company = new Company(Guid.NewGuid(), 123, "Company", address, configs, info, contacts);
 
         var dto = company.AsDTO();
         dto.Id.Should().Be(company.Id);
@@ -247,8 +369,8 @@ public class CompanyTests {
         dto.Defaults.Should().ContainSingle(d => d.AttributeId.Equals(config.AttributeId)
                                                     && d.ProductId.Equals(config.ProductId)
                                                     && d.Value.Equals(config.Value));
-
         dto.Info.Should().Contain(new KeyValuePair<string, string>("key1", "value1"));
+        dto.Contacts.Should().ContainSingle(c => c.Id == contact.Id && c.Name == contact.Name && c.Email == contact.Email && c.Phone == contact.Phone);
 
     }
 
