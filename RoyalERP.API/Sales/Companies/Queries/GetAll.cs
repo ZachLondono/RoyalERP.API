@@ -31,8 +31,6 @@ public class GetAll {
             var companies =  await connection.QueryAsync<CompanyDTO, AddressDTO, CompanyDTO>(query, map: (c, a) => new() {
                 Id = c.Id,
                 Name = c.Name,
-                Contact = c.Contact,
-                Email = c.Email,
                 Address = a
             }, splitOn: "addressid");
 

@@ -50,8 +50,6 @@ public class GetById {
             return new CompanyDTO() {
                 Id = data.Id,
                 Name = data.Name,
-                Contact = data.Contact,
-                Email = data.Email,
                 Defaults = defaults,
                 Info = data.Info?.Value ?? new(),
                 Contacts = contacts,
