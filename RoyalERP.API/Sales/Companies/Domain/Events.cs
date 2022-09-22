@@ -29,7 +29,7 @@ public static class Events {
 
     // Contacts
 
-    public record CompanyContactCreated(Guid CompanyId, Guid ContactId, string Name, string Email, string Phone) : CompanyEvent(CompanyId);
+    public record CompanyContactCreated(Guid CompanyId, Guid ContactId, string Name, string Email, string Phone, IEnumerable<string> Roles) : CompanyEvent(CompanyId);
 
     public record CompanyContactNameUpdated(Guid CompanyId, Guid ContactId, string Name) : CompanyEvent(CompanyId);
 

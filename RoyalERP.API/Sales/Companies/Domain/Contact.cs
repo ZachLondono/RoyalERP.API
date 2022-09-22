@@ -26,7 +26,7 @@ public class Contact : Entity {
     }
 
     private Contact(Guid companyId, string name, string email, string phone, List<string> roles) : this(Guid.NewGuid(), companyId, name, email, phone, roles) {
-        AddEvent(new CompanyContactCreated(companyId, Id, name, email, phone));
+        AddEvent(new CompanyContactCreated(companyId, Id, name, email, phone, roles));
     }
 
     public static Contact Create(Guid companyId, string name, string email, string phone, List<string> roles) => new(companyId, name, email, phone, roles);
