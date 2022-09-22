@@ -1,12 +1,11 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
-public class Update {
+public class RemoveComanyContact {
 
-    public record Command(Guid CompanyId, UpdateCompany Update) : IRequest<IActionResult>;
+    public record Command(Guid CompanyId, Guid ContactId) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
 
@@ -24,15 +23,18 @@ public class Update {
 
             if (company is null) return new NotFoundResult();
 
-            company.Update(request.Update.Name ?? company.Name);
+            var contact = company.Contacts.FirstOrDefault(c => c.Id.Equals(request.ContactId));
+
+            if (contact is null) return new NotFoundResult();
+
+            company.RemoveContact(contact);
             await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
-
-            _logger.LogTrace("Updated company: {CompanyId}", company.Id);
 
             return new OkObjectResult(company.AsDTO());
 
         }
 
     }
+
 }

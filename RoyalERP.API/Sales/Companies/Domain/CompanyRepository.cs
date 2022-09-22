@@ -22,7 +22,7 @@ public class CompanyRepository : ICompanyRepository {
 
         _activeEntities.Add(entity);
 
-        const string command = @"INSERT INTO sales.companies (id, name, contact, email) values (@Id, @Name, @Contact, @Email);";
+        const string command = @"INSERT INTO sales.companies (id, name) values (@Id, @Name);";
 
         await _connection.ExecuteAsync(sql: command, transaction: _transaction, param: entity);
 
@@ -43,7 +43,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public async Task<IEnumerable<Company>> GetAllAsync() {
 
-        const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
+        const string query = @"SELECT sales.companies.id as id, version, name, sales.addresses.id as addressid, line1, line2, city, state, zip
                                 FROM sales.companies
                                 LEFT JOIN sales.addresses
                                 ON sales.companies.id = sales.addresses.companyid;";
@@ -63,14 +63,14 @@ public class CompanyRepository : ICompanyRepository {
 
             var info = data.Info?.Value ?? new();
 
-            companies.Add(new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
+            companies.Add(new Company(data.Id, data.Version, data.Name, new() {
                 Line1 = data.Line1,
                 Line2 = data.Line2,
                 Line3 = data.Line3,
                 City = data.City,
                 State = data.State,
                 Zip = data.Zip,
-            }, defaults, info));
+            }, defaults, info, new()));
 
         }
 
@@ -80,7 +80,7 @@ public class CompanyRepository : ICompanyRepository {
 
     public async Task<Company?> GetAsync(Guid id) {
 
-        const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
+        const string query = @"SELECT sales.companies.id as id, version, name, sales.addresses.id as addressid, line1, line2, city, state, zip
                                 FROM sales.companies
                                 LEFT JOIN sales.addresses
                                 ON sales.companies.id = sales.addresses.companyid
@@ -99,14 +99,14 @@ public class CompanyRepository : ICompanyRepository {
 
         var info = data.Info?.Value ?? new();
 
-        return new Company(data.Id, data.Version, data.Name, data.Contact, data.Email, new() {
+        return new Company(data.Id, data.Version, data.Name, new() {
             Line1 = data.Line1,
             Line2 = data.Line2,
             Line3 = data.Line3,
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        }, defaults, info);
+        }, defaults, info, new());
 
     }
 
@@ -130,15 +130,13 @@ public class CompanyRepository : ICompanyRepository {
 
             int result = 0;
 
-            if (domainEvent is Events.CompanyUpdatedEvent update) {
+            if (domainEvent is Events.CompanyNameUpdatedEvent update) {
 
-                const string command = "UPDATE sales.companies SET name = @Name, email = @Email, contact = @Contact WHERE id = @CompanyId;";
+                const string command = "UPDATE sales.companies SET name = @Name WHERE id = @CompanyId;";
 
                 result = await _connection.ExecuteAsync(command, param: new {
                     update.CompanyId,
                     update.Name,
-                    update.Email,
-                    update.Contact
                 }, _transaction);
 
             } else if (domainEvent is Events.CompanyAddressUpdatedEvent addressUpdate) {
@@ -177,6 +175,10 @@ public class CompanyRepository : ICompanyRepository {
 
                 result = await SetInfoColumn(infoRemoved.CompanyId, info);
 
+            } else if (domainEvent is Events.CompanyContactRemoved contactRemoved) {
+
+                throw new NotImplementedException();
+
             }
 
             if (result < 1) {
@@ -185,9 +187,41 @@ public class CompanyRepository : ICompanyRepository {
 
         }
 
+        foreach (var contact in entity.Contacts) {
+            await UpdateContactAsync(contact);
+        }
+
         var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
         if (existing is not null) _activeEntities.Remove(existing);
         _activeEntities.Add(entity);
+
+    }
+
+    private static Task UpdateContactAsync(Contact contact) {
+
+        foreach (var domainEvent in contact.Events) {
+
+            if (domainEvent is Events.CompanyContactCreated) {
+
+                throw new NotImplementedException();
+
+            } else if (domainEvent is Events.CompanyContactEmailUpdated) {
+
+                throw new NotImplementedException();
+
+            } else if (domainEvent is Events.CompanyContactPhoneUpdated) {
+
+                throw new NotImplementedException();
+
+            } else if (domainEvent is Events.CompanyContactNameUpdated) {
+
+                throw new NotImplementedException();
+
+            }
+
+        }
+
+        return Task.CompletedTask;
 
     }
     

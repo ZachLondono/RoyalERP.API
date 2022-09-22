@@ -32,23 +32,17 @@ public class CompanyTests {
         var company = Company.Create("Example Company");
 
         string newName = "New Name";
-        string newContact = "New Contact";
-        string newEmail = "New Email";
 
         // Act
-        company.Update(newName, newContact, newEmail);
+        company.Update(newName);
 
         // Assert
         company.Name.Should().Be(newName);
-        company.Contact.Should().Be(newContact);
-        company.Email.Should().Be(newEmail);
         company.Events.Should().HaveCount(2);
         company.Events.Should().ContainSingle(x =>
-            x is Events.CompanyUpdatedEvent
-            && ((Events.CompanyUpdatedEvent)x).CompanyId == company.Id 
-            && ((Events.CompanyUpdatedEvent)x).Name == company.Name
-            && ((Events.CompanyUpdatedEvent)x).Contact == company.Contact
-            && ((Events.CompanyUpdatedEvent)x).Email == company.Email
+            x is Events.CompanyNameUpdatedEvent
+            && ((Events.CompanyNameUpdatedEvent)x).CompanyId == company.Id 
+            && ((Events.CompanyNameUpdatedEvent)x).Name == company.Name
         );
 
     }
@@ -114,9 +108,9 @@ public class CompanyTests {
         // Arrange
         var productId = Guid.NewGuid();
         var attributeId = Guid.NewGuid();
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new() {
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new() {
             new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), productId, attributeId, "")
-        }, new());
+        }, new(), new());
         var value = "New value";
 
         // Act
@@ -136,9 +130,9 @@ public class CompanyTests {
         var productId = Guid.NewGuid();
         var attributeId = Guid.NewGuid();
         var config = new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), productId, attributeId, "");
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new() {
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new() {
             config
-        }, new());
+        }, new(), new());
 
         // Act
         var result = company.RemoveDefault(config);
@@ -154,7 +148,7 @@ public class CompanyTests {
     public void RemoveDefault_ShouldReturnFalseAndNotAddEvent_WhenConfigDoesNotExist() {
 
         // Arrange
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new());
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new(), new(), new());
         var config = new DefaultConfiguration(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "");
 
         // Act
@@ -171,7 +165,7 @@ public class CompanyTests {
     public void SetInfo_ShouldAddInfo() {
 
         // Arrange
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new());
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new(), new(), new());
         string field = "Key1";
         string value = "Value1";
 
@@ -190,9 +184,9 @@ public class CompanyTests {
         // Arrange
         string field = "Key1";
         string value = "Value1";
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new() {
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new(), new() {
             { field, value}
-        });
+        }, new());
 
         // Act
         var result = company.RemoveInfo(field);
@@ -210,9 +204,9 @@ public class CompanyTests {
         // Arrange
         string field = "Key1";
         string value = "Value1";
-        var company = new Company(Guid.NewGuid(), 0, "", "", "", new(), new(), new() {
+        var company = new Company(Guid.NewGuid(), 0, "", new(), new(), new() {
             { field, value}
-        });
+        }, new());
 
         // Act
         var result = company.RemoveInfo("Key2");
@@ -244,13 +238,11 @@ public class CompanyTests {
             { "key1", "value1"}
         };
 
-        var company = new Company(Guid.NewGuid(), 123, "Company", "Contact", "email@domain", address, configs, info);
+        var company = new Company(Guid.NewGuid(), 123, "Company", address, configs, info, new());
 
         var dto = company.AsDTO();
         dto.Id.Should().Be(company.Id);
         dto.Name.Should().Be(company.Name);
-        dto.Email.Should().Be(company.Email);
-        dto.Contact.Should().Be(company.Contact);
         dto.Address.Should().BeEquivalentTo(company.Address);
         dto.Defaults.Should().ContainSingle(d => d.AttributeId.Equals(config.AttributeId)
                                                     && d.ProductId.Equals(config.ProductId)

@@ -9,9 +9,11 @@ public static class Events {
 
     public record CompanyCreatedEvent(Guid CompanyId, string Name) : CompanyEvent(CompanyId);
 
-    public record CompanyUpdatedEvent(Guid CompanyId, string Name, string Contact, string Email) : CompanyEvent(CompanyId);
+    public record CompanyNameUpdatedEvent(Guid CompanyId, string Name) : CompanyEvent(CompanyId);
 
     public record CompanyAddressUpdatedEvent(Guid CompanyId, string Line1, string Line2, string Line3, string City, string State, string Zip) : CompanyEvent(CompanyId);
+
+    // Defaults
 
     public record CompanyDefaultAddedEvent(Guid CompanyId, Guid DefaultId, Guid ProductId, Guid AttributeId, string Value) : CompanyEvent(CompanyId);
 
@@ -19,8 +21,22 @@ public static class Events {
 
     public record CompanyDefaultUpdatedEvent(Guid CompanyId, Guid DefaultId, string Value) : CompanyEvent(CompanyId);
 
+    // Info Fields
+
     public record CompanyInfoFieldSetEvent(Guid CompanyId, string Field, string Value) : CompanyEvent(CompanyId);
 
     public record CompanyInfoFieldRemovedEvent(Guid CompanyId, string Field) : CompanyEvent(CompanyId);
+
+    // Contacts
+
+    public record CompanyContactCreated(Guid CompanyId, Guid ContactId, string Name, string Email, string Phone) : CompanyEvent(CompanyId);
+
+    public record CompanyContactNameUpdated(Guid CompanyId, Guid ContactId, string Name) : CompanyEvent(CompanyId);
+
+    public record CompanyContactEmailUpdated(Guid CompanyId, Guid ContactId, string Email) : CompanyEvent(CompanyId);
+
+    public record CompanyContactPhoneUpdated(Guid CompanyId, Guid ContactId, string Phone) : CompanyEvent(CompanyId);
+
+    public record CompanyContactRemoved(Guid CompanyId, Guid ContactId) : CompanyEvent(CompanyId);
 
 }

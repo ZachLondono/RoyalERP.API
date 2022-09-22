@@ -7,10 +7,6 @@ public class Company : AggregateRoot {
 
     public string Name { get; private set; }
 
-    public string Contact { get; private set; }
-
-    public string Email { get; private set; }
-
     public Address Address { get; private set; }
 
     private readonly List<DefaultConfiguration> _defaultConfigurations;
@@ -19,26 +15,26 @@ public class Company : AggregateRoot {
     private readonly Dictionary<string, string> _info;
     public IReadOnlyDictionary<string, string> Info => _info;
 
-    public Company(Guid id, int version, string name, string contact, string email, Address address, List<DefaultConfiguration> defaultConfigurations, Dictionary<string, string> info) : base(id, version) {
+    private readonly List<Contact> _contacts;
+    public IReadOnlyCollection<Contact> Contacts => _contacts.AsReadOnly();
+
+    public Company(Guid id, int version, string name, Address address, List<DefaultConfiguration> defaultConfigurations, Dictionary<string, string> info, List<Contact> contacts) : base(id, version) {
         Name = name;
-        Contact = contact;
-        Email = email;
         Address = address;
         _defaultConfigurations = defaultConfigurations;
         _info = info;
+        _contacts = contacts;
     }
 
-    private Company(string name) : this(Guid.NewGuid(), 0, name, "", "", new(), new(), new()) {
+    private Company(string name) : this(Guid.NewGuid(), 0, name, new(), new(), new(), new()) {
         AddEvent(new Events.CompanyCreatedEvent(Id, name));
     }
 
     public static Company Create(string name) => new(name);
 
-    public void Update(string name, string contact, string email) {
+    public void Update(string name) {
         Name = name;
-        Contact = contact;
-        Email = email;
-        AddEvent(new Events.CompanyUpdatedEvent(Id, name, contact, email));
+        AddEvent(new Events.CompanyNameUpdatedEvent(Id, name));
     }
 
     public void SetAddress(string line1, string line2, string line3, string city, string state, string zip) {
@@ -79,6 +75,17 @@ public class Company : AggregateRoot {
         return result;
     }
 
+    public void AddContact(string name, string email, string phone) {
+        var contact = Contact.Create(Id, name, email, phone);
+        _contacts.Add(contact);
+    }
+
+    public bool RemoveContact(Contact contact) {
+        var result = _contacts.Remove(contact);
+        if (result) AddEvent(new Events.CompanyContactRemoved(Id, contact.Id));
+        return result;
+    }
+
     public CompanyDTO AsDTO() {
 
         List<DefaultConfigurationDTO> defaults = new();
@@ -96,8 +103,6 @@ public class Company : AggregateRoot {
         return new() {
             Id = Id,
             Name = Name,
-            Contact = Contact,
-            Email = Email,
             Defaults = defaults,
             Info = _info,
             Address = new() {
