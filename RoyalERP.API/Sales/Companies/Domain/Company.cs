@@ -75,9 +75,10 @@ public class Company : AggregateRoot {
         return result;
     }
 
-    public void AddContact(string name, string email, string phone, List<string> roles) {
+    public Contact AddContact(string name, string email, string phone, List<string> roles) {
         var contact = Contact.Create(Id, name, email, phone, roles);
         _contacts.Add(contact);
+        return contact;
     }
 
     public bool RemoveContact(Contact contact) {
