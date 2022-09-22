@@ -99,4 +99,44 @@ public class CompaniesController : ControllerBase {
         return _sender.Send(new RemoveInfoField.Command(companyId, field));
     }
 
+    [Route("{companyId}/contacts/")]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> AddContact(Guid companyId, NewContact newContact) {
+        return _sender.Send(new AddCompanyContact.Command(companyId, newContact));
+    }
+
+    [Route("{companyId}/contacts/{contactId}")]
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> RemoveContact(Guid companyId, Guid contactId) {
+        return _sender.Send(new RemoveCompanyContact.Command(companyId, contactId));
+    }
+
+    [Route("{companyId}/contacts/{contactId}")]
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> UpdateContact(Guid companyId, Guid contactId, UpdateContact update) {
+        return _sender.Send(new UpdateCompanyContact.Command(companyId, contactId, update));
+    }
+
+    [Route("{companyId}/contacts/{contactId}/roles")]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> AddRoleToContact(Guid companyId, Guid contactId, ContactRole update) {
+        return _sender.Send(new AddRoleToContact.Command(companyId, contactId, update));
+    }
+
+    [Route("{companyId}/contacts/{contactId}/roles")]
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CompanyDTO))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public Task<IActionResult> RemoveRoleFromContact(Guid companyId, Guid contactId, ContactRole update) {
+        return _sender.Send(new RemoveRoleFromContact.Command(companyId, contactId, update));
+    }
+
 }
