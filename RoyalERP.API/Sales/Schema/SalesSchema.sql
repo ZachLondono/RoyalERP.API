@@ -4,8 +4,6 @@ CREATE TABLE sales.companies (
     id uuid NOT NULL,
     version integer NOT NULL DEFAULT 0,
     name character varying(255) NOT NULL,
-    contact character varying(255) NOT NULL,
-    email character varying(255) NOT NULL,
     info jsonb NOT NULL DEFAULT '{}'::jsonb,
     CONSTRAINT companies_pkey PRIMARY KEY (id)
 );
@@ -17,6 +15,16 @@ CREATE TABLE sales.companydefaults (
     attributeid uuid NOT NULL,
     value varchar(255) NOT NULL, 
     CONSTRAINT companydefaults_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE sales.companycontacts (
+    id uuid NOT NULL,
+    companyid uuid NOT NULL,
+    name varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
+    phone varchar(255) NOT NULL,
+    roles varchar(255)[] NOT NULL,
+    CONSTRAINT companycontacts_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE sales.addresses (
