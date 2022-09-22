@@ -39,4 +39,8 @@ public static class Events {
 
     public record CompanyContactRemoved(Guid CompanyId, Guid ContactId) : CompanyEvent(CompanyId);
 
+    public record CompanyContactRoleAdded(Guid CompanyId, Guid ContactId, string Role) : CompanyEvent(CompanyId);
+
+    public record CompanyContactRoleRemoved(Guid CompanyId, Guid ContactId, string Role) : CompanyEvent(CompanyId);
+
 }
