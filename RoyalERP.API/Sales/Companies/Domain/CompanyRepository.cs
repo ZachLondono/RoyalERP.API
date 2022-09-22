@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using RoyalERP.API.Common.Data;
+using RoyalERP.API.Contracts.Companies;
 using RoyalERP.API.Sales.Companies.Data;
 using System.Data;
 using System.Diagnostics;
@@ -55,13 +56,20 @@ public class CompanyRepository : ICompanyRepository {
 
             const string defaultsQuery = @"SELECT id, companyid, productid, attributeid, value FROM sales.companydefaults WHERE companyid = @CompanyId;";
 
-            var defaultsData = await _connection.QueryAsync<DefaultConfigurationData>(defaultsQuery, transaction: _transaction, param: new { CompanyId = data });
+            var defaultsData = await _connection.QueryAsync<DefaultConfigurationData>(defaultsQuery, transaction: _transaction, param: new { CompanyId = data.Id });
             var defaults = new List<DefaultConfiguration>();
             foreach (var defaultData in defaultsData) {
                 defaults.Add(new(defaultData.Id, defaultData.CompanyId, defaultData.ProductId, defaultData.AttributeId, defaultData.Value));
             }
 
             var info = data.Info?.Value ?? new();
+
+            const string contactsQuery = @"SELECT id, name, email, phone, roles FROM sales.companycontacts WHERE companyid = @CompanyId;";
+            var contactsData = await _connection.QueryAsync<ContactDTO>(contactsQuery, param: new { CompanyId = data.Id });
+            var contacts = new List<Contact>();
+            foreach (var contactData in contactsData) {
+                contacts.Add(new(contactData.Id, data.Id, contactData.Name, contactData.Email, contactData.Phone, new(contactData.Roles)));
+            }
 
             companies.Add(new Company(data.Id, data.Version, data.Name, new() {
                 Line1 = data.Line1,
@@ -70,7 +78,7 @@ public class CompanyRepository : ICompanyRepository {
                 City = data.City,
                 State = data.State,
                 Zip = data.Zip,
-            }, defaults, info, new()));
+            }, defaults, info, contacts));
 
         }
 
@@ -99,6 +107,13 @@ public class CompanyRepository : ICompanyRepository {
 
         var info = data.Info?.Value ?? new();
 
+        const string contactsQuery = @"SELECT id, name, email, phone, roles FROM sales.companycontacts WHERE companyid = @CompanyId;";
+        var contactsData = await _connection.QueryAsync<ContactDTO>(contactsQuery, param: new { CompanyId = id });
+        var contacts = new List<Contact>();
+        foreach (var contactData in contactsData) {
+            contacts.Add(new(contactData.Id, id, contactData.Name, contactData.Email, contactData.Phone, new(contactData.Roles)));
+        }
+
         return new Company(data.Id, data.Version, data.Name, new() {
             Line1 = data.Line1,
             Line2 = data.Line2,
@@ -106,7 +121,7 @@ public class CompanyRepository : ICompanyRepository {
             City = data.City,
             State = data.State,
             Zip = data.Zip,
-        }, defaults, info, new());
+        }, defaults, info, contacts);
 
     }
 
@@ -188,7 +203,7 @@ public class CompanyRepository : ICompanyRepository {
         }
 
         foreach (var contact in entity.Contacts) {
-            await UpdateContactAsync(contact);
+            await UpdateContactAsync(contact, _connection, _transaction);
         }
 
         var existing = _activeEntities.FirstOrDefault(o => o.Id == entity.Id);
@@ -197,39 +212,71 @@ public class CompanyRepository : ICompanyRepository {
 
     }
 
-    private static Task UpdateContactAsync(Contact contact) {
+    private static async Task UpdateContactAsync(Contact contact, IDapperConnection connection, IDbTransaction transaction) {
 
         foreach (var domainEvent in contact.Events) {
 
-            if (domainEvent is Events.CompanyContactCreated) {
+            if (domainEvent is Events.CompanyContactCreated newcontact) {
 
-                throw new NotImplementedException();
+                const string command = @"INSERT INTO sales.companycontacts (id, companyid, name, email, phone, roles) VALUES (@ContactId, @CompanyId, @Name, @Email, @Phone, @Roles);";
 
-            } else if (domainEvent is Events.CompanyContactEmailUpdated) {
+                int rows = await connection.ExecuteAsync(command, new {
+                    newcontact.ContactId,
+                    newcontact.CompanyId,
+                    newcontact.Name,
+                    newcontact.Email,
+                    newcontact.Phone,
+                    newcontact.Roles
+                }, transaction);
 
-                throw new NotImplementedException();
+            } else if (domainEvent is Events.CompanyContactEmailUpdated emailUpdate) {
 
-            } else if (domainEvent is Events.CompanyContactPhoneUpdated) {
+                const string command = @"UPDATE sales.companycontacts SET (email = @Email) WHERE id = @ContactId;";
 
-                throw new NotImplementedException();
+                int rows = await connection.ExecuteAsync(command, new {
+                    emailUpdate.ContactId,
+                    emailUpdate.Email
+                }, transaction);
 
-            } else if (domainEvent is Events.CompanyContactNameUpdated) {
+            } else if (domainEvent is Events.CompanyContactPhoneUpdated phoneUpdate) {
 
-                throw new NotImplementedException();
+                const string command = @"UPDATE sales.companycontacts SET (phone = @Phone) WHERE id = @ContactId;";
 
-            } else if (domainEvent is Events.CompanyContactRoleAdded) {
+                int rows = await connection.ExecuteAsync(command, new {
+                    phoneUpdate.ContactId,
+                    phoneUpdate.Phone
+                }, transaction);
 
-                throw new NotImplementedException();
+            } else if (domainEvent is Events.CompanyContactNameUpdated nameUpdate) {
 
-            } else if (domainEvent is Events.CompanyContactRoleRemoved) {
+                const string command = @"UPDATE sales.companycontacts SET (name = @Name) WHERE id = @ContactId;";
 
-                throw new NotImplementedException();
+                int rows = await connection.ExecuteAsync(command, new {
+                    nameUpdate.ContactId,
+                    nameUpdate.Name
+                }, transaction);
+
+            } else if (domainEvent is Events.CompanyContactRoleAdded roleAdded) {
+
+                const string command = "UPDATE sales.companycontacts SET roles = array_append(roles, @Role) WHERE id = @ContactId;";
+
+                int rows = await connection.ExecuteAsync(command, new {
+                    roleAdded.ContactId,
+                    roleAdded.Role
+                }, transaction);
+
+            } else if (domainEvent is Events.CompanyContactRoleRemoved roleRemoved) {
+
+                const string command = "UPDATE sales.companycontacts SET roles = array_remove(roles, @Role) WHERE id = @ContactId;";
+
+                int rows = await connection.ExecuteAsync(command, new {
+                    roleRemoved.ContactId,
+                    roleRemoved.Role
+                }, transaction);
 
             }
 
         }
-
-        return Task.CompletedTask;
 
     }
     

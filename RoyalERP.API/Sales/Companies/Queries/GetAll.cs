@@ -57,6 +57,10 @@ public class GetAll {
                 var info = await connection.QuerySingleOrDefaultAsync<Json<Dictionary<string, string>>>(infoQuery, param: new { CompanyId = company.Id});
                 company.Info = info?.Value ?? new();
 
+                const string contactsQuery = @"SELECT id, name, email, phone, roles FROM sales.companycontacts WHERE companyid = @CompanyId;";
+                var contacts = await connection.QueryAsync<ContactDTO>(contactsQuery, param: new { CompanyId = company.Id });
+                company.Contacts = contacts;
+
             }
 
             return new OkObjectResult(companies);

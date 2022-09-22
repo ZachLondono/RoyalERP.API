@@ -43,6 +43,10 @@ public class GetById {
                 });
             }
 
+            const string contactsQuery = @"SELECT id, name, email, phone, roles FROM sales.companycontacts WHERE companyid = @CompanyId;";
+
+            var contacts = await connection.QueryAsync<ContactDTO>(contactsQuery, param: new { request.CompanyId });
+
             return new CompanyDTO() {
                 Id = data.Id,
                 Name = data.Name,
@@ -50,6 +54,7 @@ public class GetById {
                 Email = data.Email,
                 Defaults = defaults,
                 Info = data.Info?.Value ?? new(),
+                Contacts = contacts,
                 Address = new() {
                     Line1 = data.Line1,
                     Line2 = data.Line2,
