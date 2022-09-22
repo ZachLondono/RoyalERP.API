@@ -28,7 +28,7 @@ public class RemoveRoleFromContact {
 
             if (contact is null) return new NotFoundResult();
 
-            contact.RemoveRole(request.NewRole.Role);
+            contact.RemoveRole(request.ExistingRole.Role);
 
             await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
