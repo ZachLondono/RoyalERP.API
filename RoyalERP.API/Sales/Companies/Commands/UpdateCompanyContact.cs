@@ -4,9 +4,9 @@ using RoyalERP.API.Contracts.Companies;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
-public class AddComanyContact {
+public class UpdateCompanyContact {
 
-    public record Command(Guid CompanyId, NewContact NewContact) : IRequest<IActionResult>;
+    public record Command(Guid CompanyId, Guid ContactId, UpdateContact Update) : IRequest<IActionResult>;
 
     public class Handler : IRequestHandler<Command, IActionResult> {
         
@@ -19,12 +19,24 @@ public class AddComanyContact {
         }
 
         public async Task<IActionResult> Handle(Command request, CancellationToken cancellationToken) {
-            
+
             var company = await _work.Companies.GetAsync(request.CompanyId);
 
             if (company is null) return new NotFoundResult();
 
-            company.AddContact(request.NewContact.Name, request.NewContact.Email, request.NewContact.Phone, new(request.NewContact.Roles));
+            var contact = company.Contacts.FirstOrDefault(c => c.Id.Equals(request.ContactId));
+            
+            if (contact is null) return new NotFoundResult();
+
+            if (request.Update.Name is not null)
+                contact.SetName(request.Update.Name);
+
+            if (request.Update.Email is not null)
+                contact.SetEmail(request.Update.Email);
+
+            if (request.Update.Phone is not null)
+                contact.SetPhone(request.Update.Phone);
+
             await _work.Companies.UpdateAsync(company);
             await _work.CommitAsync();
 

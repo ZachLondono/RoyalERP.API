@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RoyalERP.API.Sales.Companies.Commands;
 
-public class RemoveComanyContact {
+public class RemoveCompanyContact {
 
     public record Command(Guid CompanyId, Guid ContactId) : IRequest<IActionResult>;
 
