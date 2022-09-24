@@ -108,6 +108,7 @@ public class Company : AggregateRoot {
                 Name = contact.Name,
                 Email = contact.Email,
                 Phone = contact.Phone,
+                Roles = contact.Roles.ToArray()
             });
         }
 
