@@ -23,7 +23,7 @@ public class GetAll {
 
             var connection = _connectionFactory.CreateConnection();
 
-            const string query = @"SELECT sales.companies.id as id, version, name, contact, email, sales.addresses.id as addressid, line1, line2, city, state, zip
+            const string query = @"SELECT sales.companies.id as id, version, name, sales.addresses.id as addressid, line1, line2, city, state, zip
                                 FROM sales.companies
                                 LEFT JOIN sales.addresses
                                 ON sales.companies.id = sales.addresses.companyid;";
