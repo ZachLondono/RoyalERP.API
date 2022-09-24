@@ -503,6 +503,7 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
         updatedCompany!.Contacts.Should().HaveCount(0);
 
     }
@@ -540,14 +541,16 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updatedCompany!.Contacts.Should().HaveCount(2);
+        updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany!.Contacts.Should().HaveCount(1);
         var updatedContact = updatedCompany!.Contacts.First();
+        updatedContact.Roles.Should().HaveCount(2);
         updatedContact.Roles.Should().ContainSingle(r => r.Equals(role.Role));
 
     }
 
     [Fact]
-    public async Task RemoveRoleToContact_ShouldRemoveExistingRole() {
+    public async Task RemoveRoleFromContact_ShouldRemoveExistingRole() {
 
         // Arrange
         var faker = new Faker<NewCompany>().RuleFor(c => c.Name, f => f.Company.CompanyName());
@@ -574,7 +577,8 @@ public class CompanyTests : DbTests {
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updatedCompany!.Contacts.Should().HaveCount(0);
+        updatedCompany = await response.Content.ReadFromJsonAsync<CompanyDTO>();
+        updatedCompany!.Contacts.First().Roles.Should().HaveCount(0);
 
     }
 
