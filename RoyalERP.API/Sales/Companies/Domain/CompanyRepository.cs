@@ -192,7 +192,9 @@ public class CompanyRepository : ICompanyRepository {
 
             } else if (domainEvent is Events.CompanyContactRemoved contactRemoved) {
 
-                throw new NotImplementedException();
+                const string command = "DELETE FROM sales.companycontacts WHERE id = @ContactId;";
+
+                await _connection.ExecuteAsync(command, new { contactRemoved.ContactId }, _transaction);
 
             }
 
@@ -258,7 +260,7 @@ public class CompanyRepository : ICompanyRepository {
 
             } else if (domainEvent is Events.CompanyContactRoleAdded roleAdded) {
 
-                const string command = "UPDATE sales.companycontacts SET roles = array_append(roles, @Role) WHERE id = @ContactId;";
+                const string command = "UPDATE sales.companycontacts SET roles = array_append(roles, @Role::character varying) WHERE id = @ContactId;";
 
                 int rows = await connection.ExecuteAsync(command, new {
                     roleAdded.ContactId,
@@ -267,7 +269,7 @@ public class CompanyRepository : ICompanyRepository {
 
             } else if (domainEvent is Events.CompanyContactRoleRemoved roleRemoved) {
 
-                const string command = "UPDATE sales.companycontacts SET roles = array_remove(roles, @Role) WHERE id = @ContactId;";
+                const string command = "UPDATE sales.companycontacts SET roles = array_remove(roles, @Role::character varying) WHERE id = @ContactId;";
 
                 int rows = await connection.ExecuteAsync(command, new {
                     roleRemoved.ContactId,
